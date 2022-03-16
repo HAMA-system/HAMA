@@ -15,7 +15,7 @@ if __name__ == '__main__':
     driver = set_chromedriver()
     driver.get('https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx')
 
-    file = xlsxFileContro가ller.load_xls('example.xlsx')
+    file = xlsxFileController.load_xls('example.xlsx')
     data = xlsxFileController.get_cell_data(file, 'Sheet1', 'B4')
 
     print(data)
