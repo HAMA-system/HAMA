@@ -5,7 +5,7 @@ import errorController
 
 def set_chromedriver():
     try:
-        driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
+        driver = webdriver.Chrome("./chromedriver")
     except:
         errorController.errorMsg(0)
     url = 'https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx'
