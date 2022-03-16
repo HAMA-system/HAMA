@@ -1,11 +1,12 @@
 import openpyxl
+import errorController
 
 def load_xls(filename):
     try:
         xlsfile = openpyxl.load_workbook(filename)
         return xlsfile
     except:
-        print("can't open " + filename + " file")
+        errorController.errorMsg(1)
 
 def get_cell_data(filename, sheetname ,cell):
     sheet = filename.get_sheet_by_name(sheetname)
@@ -16,7 +17,7 @@ def get_singleline_data(filename, sheetname, firstcell, lastcell):
     data = []
 
     if firstcell[1:]!=lastcell[1:]:
-        print("첫 셀과 마지막 셀이 같은 행에 있지 않음")
+        errorController.errorMsg(1)
         return data
 
     while cell!=lastcell:
