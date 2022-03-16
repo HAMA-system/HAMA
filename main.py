@@ -11,7 +11,6 @@ def set_chromedriver():
     url = 'https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx'
     return driver
 
-
 if __name__ == '__main__':
     driver = set_chromedriver()
     driver.get('https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx')
