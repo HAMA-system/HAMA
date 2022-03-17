@@ -21,11 +21,13 @@ def login(driver):
     fname(driver,'USER_ID','jpjung')
     fname(driver,'PASSWD',passwd)
     ename(driver,'PASSWD')
-    time.sleep(2)
+    # driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
+    print("확인 후 아무 키나 입력해주세요")
+    a = input()
+    driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
 
     # ename(driver,'PASSWD')
-    result = driver.switch_to_alert()
-    result.dismiss()
+
     # ename(driver,'PASSWD')
     # time.sleep(1)
     # alert = driver.switch_to_alert
