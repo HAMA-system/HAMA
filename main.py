@@ -1,8 +1,10 @@
 from selenium import webdriver
 import xlsxFileController
+import dateController
 import errorController
 import autoLogin
-import time
+import manage
+
 
 def set_chromedriver():
     try:
@@ -19,12 +21,13 @@ if __name__ == '__main__':
         print("원하시는 서비스를 입력하세요. (조회/작성/종료)")
         select = input()
         if select == '조회':
-            autoLogin.cpath(driver,
-                  '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[2]/span/a')
+            manage.lookup(driver)
         elif select == '작성':
-            autoLogin.cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[1]/span/a')
+            manage.write(driver)
         elif select == '종료':
             break
+    # print(dateController.date1year())
+
     # file = xlsxFileController.load_xls('example.xlsx')
     # data = xlsxFileController.get_cell_data(file, 'Sheet1', 'B4')
     #

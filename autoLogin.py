@@ -6,16 +6,20 @@ from webdriver_manager.chrome import ChromeDriverManager
 import time
 
 def fname(driver,name,value):
+    driver.find_element_by_name(name).clear()
+    time.sleep(0.3)
     driver.find_element_by_name(name).send_keys(value)
 def cname(driver,name):
     driver.find_element_by_name(name).click()
 def ename(driver,name):
     driver.find_element_by_name(name).send_keys(Keys.ENTER)
-def cpath(driver,name):
-    driver.find_element_by_xpath(name).click()
+def fpath(driver,path,value):
+    driver.find_element_by_xpath(path).send_keys(value)
+def cpath(driver,path):
+    driver.find_element_by_xpath(path).click()
 
 def login(driver):
-
+    print("비밀번호 끝 두자리를 입력해주세요.")
     passwd = 'jinsu781'
     passwd = passwd + input()
     fname(driver,'USER_ID','jpjung')
