@@ -16,14 +16,21 @@ def cpath(driver,name):
 
 def login(driver):
 
+    passwd = 'jinsu781'
+    passwd = passwd + input()
     fname(driver,'USER_ID','jpjung')
-    fname(driver,'PASSWD','jinsu781!!')
+    fname(driver,'PASSWD',passwd)
     ename(driver,'PASSWD')
-    ename(driver,'PASSWD')
+    time.sleep(2)
 
+    # ename(driver,'PASSWD')
+    result = driver.switch_to_alert()
+    result.dismiss()
+    # ename(driver,'PASSWD')
     # time.sleep(1)
     # alert = driver.switch_to_alert
     # alert.dismiss()
+    print(1)
     # 비밀번호 변경 필요 알림 제거용
 
 
