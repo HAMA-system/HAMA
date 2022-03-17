@@ -1,22 +1,29 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
+
 import time
 
 def fname(driver,name,value):
-    driver.find_element_by_name(name).clear()
-    time.sleep(0.3)
-    driver.find_element_by_name(name).send_keys(value)
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
+    element.clear()
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
+    element.send_keys(value)
 def cname(driver,name):
-    driver.find_element_by_name(name).click()
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
+    element.click()
 def ename(driver,name):
-    driver.find_element_by_name(name).send_keys(Keys.ENTER)
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
+    element.send_keys(Keys.ENTER)
 def fpath(driver,path,value):
-    driver.find_element_by_xpath(path).send_keys(value)
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
+    element.send_keys(value)
 def cpath(driver,path):
-    driver.find_element_by_xpath(path).click()
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
+    element.click()
 
 def login(driver):
     print("비밀번호 끝 두자리를 입력해주세요.")
@@ -29,13 +36,13 @@ def login(driver):
     print("확인 후 아무 키나 입력해주세요")
     a = input()
     driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
-    time.sleep(1)
+    # time.sleep(1)
     cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/a')
-    time.sleep(0.3)
+    # time.sleep(0.3)
     cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/a')
-    time.sleep(0.3)
+    # time.sleep(0.3)
     cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/a')
-    time.sleep(0.3)
+    # time.sleep(0.3)
     cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/a')
     return driver
     # time.sleep(0.3)
