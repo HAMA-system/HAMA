@@ -13,7 +13,7 @@ def set_chromedriver():
 if __name__ == '__main__':
     driver = set_chromedriver()
     driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx#')
-    driver = login(driver)
+    driver = autoLogin.login(driver)
     file = xlsxFileController.load_xls('example.xlsx')
     data = xlsxFileController.get_cell_data(file, 'Sheet1', 'B4')
 
