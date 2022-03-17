@@ -12,7 +12,7 @@ def cname(driver,name):
 def ename(driver,name):
     driver.find_element_by_name(name).send_keys(Keys.ENTER)
 def cpath(driver,name):
-    driver.find_element_by_path(name).click()
+    driver.find_element_by_xpath(name).click()
 
 def login(driver):
 
@@ -25,14 +25,24 @@ def login(driver):
     print("확인 후 아무 키나 입력해주세요")
     a = input()
     driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
-
+    time.sleep(1)
+    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/a')
+    time.sleep(0.3)
+    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/a')
+    time.sleep(0.3)
+    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/a')
+    time.sleep(0.3)
+    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/a')
+    return driver
+    # time.sleep(0.3)
+    # cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[2]/span/a')
     # ename(driver,'PASSWD')
 
     # ename(driver,'PASSWD')
     # time.sleep(1)
     # alert = driver.switch_to_alert
     # alert.dismiss()
-    print(1)
+    # print(1)
     # 비밀번호 변경 필요 알림 제거용
 
 
@@ -49,7 +59,7 @@ def login(driver):
 
 
 
-    return driver
+    # return driver
 
 
 if __name__ == '__main__':
