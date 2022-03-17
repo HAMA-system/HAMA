@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 def lookup(driver):
-    # time.sleep(1)
+    time.sleep(1)
     autoLogin.cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[2]/span/a')
     time.sleep(3)
     driver.switch_to.frame('ifr_d4_AHG029S')
