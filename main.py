@@ -26,6 +26,8 @@ if __name__ == '__main__':
             manage.write(driver)
         elif select == '종료':
             break
+        else:
+            print("잘못된 입력입니다.")
     # print(dateController.date1year())
 
     # file = xlsxFileController.load_xls('example.xlsx')

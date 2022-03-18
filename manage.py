@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 def lookup(driver):
+    driver.switch_to.default_content()
     time.sleep(1)
     autoLogin.cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[2]/span/a')
     time.sleep(3)
@@ -32,6 +33,14 @@ def lookup(driver):
         autoLogin.fname(driver,'DpToDt',dateController.dateToday())
         autoLogin.cname(driver,'CSMenuButton1$List')
 def write(driver):
+    input_data = ['계정과목','관리코드1','관리코드2','예산부서']
     driver.switch_to.default_content()
     autoLogin.cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[1]/span/a')
-    autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[1]/td[2]/input[2]','test')
+
+    driver.switch_to.frame('ifr_d4_AHG020P')
+    autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[1]/td[2]/input[2]',input_data[0])
+    autoLogin.epath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[1]/td[2]/input[2]')
+
+    # autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[1]/td[3]/input[2]',input_data[1])
+    # autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[2]/td[1]/input[2]',input_data[2])
+    # autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[2]/td[3]/input[2]',input_data[3])

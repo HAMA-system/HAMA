@@ -25,18 +25,25 @@ def ename(driver,name):
     element.send_keys(Keys.ENTER)
 def fpath(driver,path,value):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
+    element.clear()
     element.send_keys(value)
 def cpath(driver,path):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
     element.click()
+def epath(driver,path):
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
+    element.send_keys(Keys.ENTER)
 
 def login(driver):
     fname(driver,'USER_ID',loginData.ID)
     fname(driver,'PASSWD',loginData.PW)
     ename(driver,'PASSWD')
-    # driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
-    print("확인 후 아무 키나 입력해주세요")
-    a = input()
+    time.sleep(1)
+    # alert 없을 때 오류 제어 추가 필요
+    driver.switch_to.alert.accept()
+    # print("확인 후 아무 키나 입력해주세요")
+    # a = input()
+    # element =  WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/header/ul/li[1]/p/img')))
     driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
     # time.sleep(1)
     cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/a')
