@@ -8,19 +8,33 @@ def load_xls(filename):
     except:
         errorController.errorMsg(1)
 
-def get_cell_data(filename, sheetname ,cell):
-    sheet = filename.get_sheet_by_name(sheetname)
+def get_cell_data(file, sheetname ,cell):
+    sheet = file.get_sheet_by_name(sheetname)
     return sheet[cell].value
 
-def get_singleline_data(filename, sheetname, firstcell, lastcell):
+def get_singleline_data(file, sheetname, firstcell, lastcell):
     cell = firstcell
     data = []
 
     if firstcell[1:]!=lastcell[1:]:
-        errorController.errorMsg(1)
+        errorController.errorMsg(2)
         return data
 
     while cell!=lastcell:
-        data.append(get_cell_data(filename,sheetname,cell))
+        data.append(get_cell_data(file,sheetname,cell))
         cell = chr(ord(cell[:1])+1) + cell[1:]
+    return data
+
+def all_data_fetch(file, sheetname, firstcell, lastcell):
+    fcell = firstcell
+    lcell = lastcell
+
+    data = []
+
+    while get_cell_data(file, sheetname, fcell)!=None:
+        data.append(get_singleline_data(file, sheetname, fcell, lcell))
+        fcell = fcell[:1] + str(int(fcell[1:]) + 1)
+        lcell = lcell[:1] + str(int(lcell[1:]) + 1)
+        print(fcell + ' ' + lcell)
+
     return data
