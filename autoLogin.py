@@ -30,6 +30,11 @@ def fpath(driver,path,value):
 def cpath(driver,path):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
     element.click()
+def cpathDouble(driver,path):
+    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
+    element.click()
+    element.click()
+
 def epath(driver,path):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
     element.send_keys(Keys.ENTER)
