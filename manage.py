@@ -22,9 +22,16 @@ def lookup(driver):
             autoLogin.fname(driver,'DpFrDt',dateController.date6month())
         elif month == '12':
             autoLogin.fname(driver,'DpFrDt',dateController.date1year())
+        # elif month == '학기':
+        #     autoLogin.fname(driver,'DpFrDt') # DpToDt 고쳐야 함
+
         elif month == '종료':
             break
+        else:
+            print("잘못된 입력입니다.")
         autoLogin.fname(driver,'DpToDt',dateController.dateToday())
         autoLogin.cname(driver,'CSMenuButton1$List')
 def write(driver):
+    driver.switch_to.default_content()
     autoLogin.cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[1]/span/a')
+    autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[1]/td[2]/input[2]','test')

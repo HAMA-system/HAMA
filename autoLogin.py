@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+import loginData
 import time
 
 def fname(driver,name,value):
@@ -30,11 +31,8 @@ def cpath(driver,path):
     element.click()
 
 def login(driver):
-    print("비밀번호 끝 두자리를 입력해주세요.")
-    passwd = 'jinsu781'
-    passwd = passwd + input()
-    fname(driver,'USER_ID','jpjung')
-    fname(driver,'PASSWD',passwd)
+    fname(driver,'USER_ID',loginData.ID)
+    fname(driver,'PASSWD',loginData.PW)
     ename(driver,'PASSWD')
     # driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
     print("확인 후 아무 키나 입력해주세요")
