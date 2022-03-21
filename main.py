@@ -29,13 +29,3 @@ if __name__ == '__main__':
             break
         else:
             print("잘못된 입력입니다.")
-    # print(dateController.date1year())
-
-    # file = xlsxFileController.load_xls('example.xlsx')
-    # data = xlsxFileController.get_cell_data(file, 'Sheet1', 'B4')
-    #
-    # print(data)
-    #
-    # data2 = xlsxFileController.get_singleline_data(file,'Sheet1','B4','G4')
-    # print(data2)
-    # print('h')
