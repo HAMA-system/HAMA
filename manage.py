@@ -13,7 +13,6 @@ def lookup(driver):
     driver.switch_to.default_content()
     time.sleep(1)
     autoLogin.cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[2]/span/a')
-    # time.sleep(3)
     driver.switch_to.frame('ifr_d4_AHG029S')
     while True:
         print("원하시는 기간을 선택하세요.(1/3/6/12/종료)")
@@ -59,20 +58,16 @@ def write(driver):
     input_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'),'결의내역','B3','R3')
     print(len(input_data))
     for i in range(len(input_data)):
-        print(1)
-        # driver.switch_to.default_content()
-        # autoLogin.cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/ul/li[1]/span/a')
-        # driver.switch_to.frame('ifr_d4_AHG020P')
         select = Select(driver.find_element_by_id('ddlResolutionDiv'))
         if input_data[i][1] == '수입결의서':
             select.select_by_index(0)
         elif input_data[i][1] == '지출결의서':
             select.select_by_index(1)
         autoLogin.fpath(driver,사업코드,input_data[i][0])
-        time.sleep(0.5)
+        time.sleep(1)
         autoLogin.epath(driver,사업코드)
         driver.switch_to.frame('frmPopup')
-        time.sleep(0.5)
+        time.sleep(1)
         autoLogin.epath(driver,'/html/body/form/div[3]/div[3]/ul/li/input')
         driver.switch_to.default_content()
         driver.switch_to.frame('ifr_d4_AHG020P')
@@ -84,8 +79,6 @@ def write(driver):
         autoLogin.fpath(driver,지출,input_data[i][12])
         autoLogin.fpath(driver,적요,input_data[i][13])
         autoLogin.cpath(driver,결의내역_제출)
-        time.sleep(1)
+        time.sleep(3)
 
     time.sleep(1000)
-    # autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[2]/td[1]/input[2]',input_data[2])
-    # autoLogin.fpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[2]/td[3]/input[2]',input_data[3])
