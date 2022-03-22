@@ -52,7 +52,10 @@ def login(driver):
     ename(driver,'PASSWD')
     # time.sleep(1)
     # alert 없을 때 오류 제어 추가 필요
-    driver.switch_to.alert.accept()
+    try:
+        driver.switch_to.alert.accept()
+    except:
+        pass
     # print("확인 후 아무 키나 입력해주세요")
     # a = input()
     # element =  WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/header/ul/li[1]/p/img')))
