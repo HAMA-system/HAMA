@@ -24,10 +24,14 @@ def ename(driver,name):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
     element.send_keys(Keys.ENTER)
 def fpath(driver,path,value):
+    time.sleep(0.2)
+    driver.find_element_by_xpath(path).clear()
     time.sleep(0.1)
-    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
-    element.clear()
-    element.send_keys(value)
+    driver.find_element_by_xpath(path).send_keys(value)
+    # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
+    # element.clear()
+    # time.sleep(1)
+    # element.send_keys(value)
 def cpath(driver,path):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
     element.click()
@@ -37,8 +41,10 @@ def cpathDouble(driver,path):
     element.click()
 
 def epath(driver,path):
-    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
-    element.send_keys(Keys.ENTER)
+    time.sleep(0.1)
+    driver.find_element_by_xpath(path).send_keys(Keys.ENTER)
+    # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
+    # element.send_keys(Keys.ENTER)
 
 def login(driver):
     fname(driver,'USER_ID',loginData.ID)
