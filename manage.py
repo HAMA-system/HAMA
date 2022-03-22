@@ -68,7 +68,7 @@ def write(driver):
         elif input_data[i][1] == '지출결의서':
             select.select_by_index(1)
         print(2.5)
-        # time.sleep(2) # !!!!!!!!!!
+        time.sleep(5) # !!!!!!!!!!
         autoLogin.fpath(driver,사업코드,input_data[i][0])
         # time.sleep(2)
         print(3)
@@ -91,4 +91,4 @@ def write(driver):
         autoLogin.cpath(driver,결의내역_제출)
         time.sleep(1)
 
-    time.sleep(1000)
+    time.sleep(1)
