@@ -19,8 +19,8 @@ if __name__ == '__main__':
     driver = autoLogin.login(driver)
     while True:
         print("원하시는 서비스를 입력하세요. (조회/작성/종료)")
-        # select = input()
-        select = '작성'
+        select = input()
+        # select = '작성'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':

@@ -10,10 +10,10 @@ import time
 
 def fname(driver,name,value):
     # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
-    # time.sleep(0.3)
+    time.sleep(0.2)
     driver.find_element_by_name(name).clear()
     # element.clear()
-    # time.sleep(0.3)
+    time.sleep(0.1)
     driver.find_element_by_name(name).send_keys(value)
     # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
     # element.send_keys(value)

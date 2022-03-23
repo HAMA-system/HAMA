@@ -15,9 +15,29 @@ def lookup(driver):
     cpath(driver,결의서_조회)
     driver.switch_to.frame(조회_프레임)
     while True:
-        print("원하시는 기간을 선택하세요.(1/3/6/12/종료)")
+        # TODO 오타 처리를 위해 하나씩 받는게 나을 듯?
+        # print("기간 회계구분 결의서구분을 입력해주세요. ex) 2020 등록금 수입")
+        print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022/종료)")
         month = input()
+        print("회계구분 및 결의서구분을 입력해주세요. ex) 등록금 수입")
+        acc, res = map(str,input().split())
+
         fname(driver,'txtSAcctYear','2021')
+
+        select = Select(driver.find_element_by_xpath(회계구분))
+        if acc == '등록금':
+            select.select_by_index(0)
+        elif acc == '비등록금':
+            select.select_by_index(1)
+
+        select = Select(driver.find_element_by_xpath(결의서구분))
+        if res == '수입':
+            select.select_by_index(1)
+        elif res == '지출':
+            select.select_by_index(2)
+        elif res == '대체':
+            select.select_by_index(3)
+
         if month == '1':
             fname(driver,'DpFrDt',dateController.date1month())
         elif month == '3':
@@ -39,9 +59,11 @@ def write(driver):
 
     # TODO 증빙 만들어야함
     # TODO 추가 누르면 해당탭 이동 취소 확인
-    # TODO 관리코드 필요 없는 과목 있음
+    # TODO 관리코드 필요 없는 과목 있음 if문 추가 필요
     # TODO 계산서 구분
     # TODO 거래처 선택 해야함
+    # TODO 지출결의서 - 지급처
+    # TODO 수입 세금계산
 
     driver.switch_to.default_content()
     cpath(driver,결의서_작성)
@@ -117,8 +139,9 @@ def write(driver):
             cpath(driver,세금계산_제출)
             time.sleep(2)
             cpath(driver,결의내역_탭)
-        time.sleep(1)
+        time.sleep(10000)
 
 
 
     time.sleep(1000)
+
