@@ -9,8 +9,8 @@ import sys, os, time
 def set_chromedriver():
     try:
         # driver = webdriver.Chrome("./chromedriver")
-        driver = webdriver.Chrome("C:\auto")
-        # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
+        # driver = webdriver.Chrome("C:\auto\chromedriver")
+        driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
         # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/dist/chromedriver")
 
     except:
