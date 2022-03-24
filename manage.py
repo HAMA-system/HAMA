@@ -15,13 +15,28 @@ def lookup(driver):
     cpath(driver,결의서_조회)
     driver.switch_to.frame(조회_프레임)
     while True:
-        print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022)")
-        month = input()
-        print("회계구분을 입력해주세요. ex) 등록금/비등록금 ")
-        # acc, res = map(str,input().split())
-        acc = input()
-        print("결의서 구분을 입력해주세요. ex) 수입/지출/대체")
-        res = input()
+        while True:
+            print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022)")
+            month = input().strip()
+            if len(month) == 1 or len(month) == 2 or len(month) == 4:
+                break
+            print("잘못된 입력입니다.")
+
+        while True:
+            print("회계구분을 입력해주세요. ex) 등록금/비등록금 ")
+                # acc, res = map(str,input().split())
+            acc = input().strip()
+            if acc == '등록금' or acc == '비등록금':
+                break
+            print("잘못된 입력입니다.")
+
+        while True:
+            print("결의서 구분을 입력해주세요. ex) 수입/지출/대체")
+            res = input().strip()
+            if res == '수입' or res == '지출' or res == '대체':
+                break
+            print("잘못된 입력입니다.")
+
         if len(month) == 4:
             fname(driver,'txtSAcctYear',month)
         else:
@@ -49,7 +64,7 @@ def lookup(driver):
         elif month == '12':
             fname(driver,'DpFrDt',dateController.date1year())
         elif len(month) == 4:
-            fname(driver,'DpFrDt',month+'0301') # DpToDt 고쳐야 함
+            fname(driver,'DpFrDt',month+'0301')
             fname(driver,'DpToDt',str(int(month)+1)+'0228')
 
         elif month == '종료':
@@ -59,6 +74,7 @@ def lookup(driver):
         if len(month) != 4:
             fname(driver,'DpToDt',dateController.dateToday())
         cname(driver,'CSMenuButton1$List')
+        print("--------------------------------------------")
 def write(driver):
 
     # TODO 증빙 만들어야함
