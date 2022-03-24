@@ -15,15 +15,17 @@ def lookup(driver):
     cpath(driver,결의서_조회)
     driver.switch_to.frame(조회_프레임)
     while True:
-        # TODO 오타 처리를 위해 하나씩 받는게 나을 듯?
-        # print("기간 회계구분 결의서구분을 입력해주세요. ex) 2020 등록금 수입")
-        print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022/종료)")
+        print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022)")
         month = input()
-        print("회계구분 및 결의서구분을 입력해주세요. ex) 등록금 수입")
-        acc, res = map(str,input().split())
-
-        fname(driver,'txtSAcctYear','2021')
-
+        print("회계구분을 입력해주세요. ex) 등록금/비등록금 ")
+        # acc, res = map(str,input().split())
+        acc = input()
+        print("결의서 구분을 입력해주세요. ex) 수입/지출/대체")
+        res = input()
+        if len(month) == 4:
+            fname(driver,'txtSAcctYear',month)
+        else:
+            fname(driver,'txtSAcctYear','2021')
         select = Select(driver.find_element_by_xpath(회계구분))
         if acc == '등록금':
             select.select_by_index(0)
@@ -46,14 +48,16 @@ def lookup(driver):
             fname(driver,'DpFrDt',dateController.date6month())
         elif month == '12':
             fname(driver,'DpFrDt',dateController.date1year())
-        # elif month == '학기':
-        #     fname(driver,'DpFrDt') # DpToDt 고쳐야 함
+        elif len(month) == 4:
+            fname(driver,'DpFrDt',month+'0301') # DpToDt 고쳐야 함
+            fname(driver,'DpToDt',str(int(month)+1)+'0228')
 
         elif month == '종료':
             break
         else:
             print("잘못된 입력입니다.")
-        fname(driver,'DpToDt',dateController.dateToday())
+        if len(month) != 4:
+            fname(driver,'DpToDt',dateController.dateToday())
         cname(driver,'CSMenuButton1$List')
 def write(driver):
 
