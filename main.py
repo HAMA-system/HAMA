@@ -8,8 +8,8 @@ import sys, os, time
 
 def set_chromedriver():
     try:
-        # driver = webdriver.Chrome("./chromedriver")
-        # driver = webdriver.Chrome("C:\auto\chromedriver")
+        # driver = webdriver.Chrome("./chromedriver.exe")
+        # driver = webdriver.Chrome("C:/auto/chromedriver.exe")
         driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
         # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/dist/chromedriver")
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     while True:
         # print("원하시는 서비스를 입력하세요. (조회/작성/종료)")
         # select = input()
-        select = '조회'
+        select = '작성'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':

@@ -15,25 +15,26 @@ def lookup(driver):
     cpath(driver,결의서_조회)
     driver.switch_to.frame(조회_프레임)
     while True:
+
+        while True:
+            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금) ")
+                # acc, res = map(str,input().split())
+            acc = input().strip()
+            if acc == '1' or acc == '2':
+                break
+            print("잘못된 입력입니다.")
+
+        while True:
+            print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
+            res = input().strip()
+            if res == '1' or res == '2' or res == '3' or res == '4':
+                break
+            print("잘못된 입력입니다.")
+
         while True:
             print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022)")
             month = input().strip()
             if len(month) == 1 or len(month) == 2 or len(month) == 4:
-                break
-            print("잘못된 입력입니다.")
-
-        while True:
-            print("회계구분을 입력해주세요. ex) 등록금/비등록금 ")
-                # acc, res = map(str,input().split())
-            acc = input().strip()
-            if acc == '등록금' or acc == '비등록금':
-                break
-            print("잘못된 입력입니다.")
-
-        while True:
-            print("결의서 구분을 입력해주세요. ex) 수입/지출/대체")
-            res = input().strip()
-            if res == '수입' or res == '지출' or res == '대체':
                 break
             print("잘못된 입력입니다.")
 
@@ -42,17 +43,19 @@ def lookup(driver):
         else:
             fname(driver,'txtSAcctYear','2021')
         select = Select(driver.find_element_by_xpath(회계구분))
-        if acc == '등록금':
+        if acc == '1':
             select.select_by_index(0)
-        elif acc == '비등록금':
+        elif acc == '2':
             select.select_by_index(1)
 
         select = Select(driver.find_element_by_xpath(결의서구분))
-        if res == '수입':
+        if res == '1':
             select.select_by_index(1)
-        elif res == '지출':
+        elif res == '2':
+            select.select_by_index(1)
+        elif res == '3':
             select.select_by_index(2)
-        elif res == '대체':
+        elif res == '4':
             select.select_by_index(3)
 
         if month == '1':
@@ -152,9 +155,16 @@ def write(driver):
                 select.select_by_index(3)
 
             # TODO 거래처 고르는 것 어떡할 지 생각. tax[][2]
-            fpath(driver,거래처,'미니스톱')
+            fpath(driver,거래처,'')
             epath(driver,거래처)
             time.sleep(1) # 없어도 돌아가긴 함
+
+            driver.switch_to.frame('frmPopup')
+
+            fpath(driver,사업자번호,tax_data[0][2])
+            epath(driver,사업자번호)
+            driver.switch_to.default_content()
+            driver.switch_to.frame('ifr_d4_AHG020P')
             # TODO 공급가액은 지출일때만 자동 (수입은 세금 없는 것 같음)
             cpath(driver,세금계산_제출)
             time.sleep(2)
