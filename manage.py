@@ -42,7 +42,7 @@ def lookup(driver):
             fname(driver,'txtSAcctYear',month)
         else:
             fname(driver,'txtSAcctYear','2021')
-        select = Select(driver.find_element_by_xpath(회계구분))
+        select = Select(driver.find_element_by_xpath(회계구분_조회))
         if acc == '1':
             select.select_by_index(0)
         elif acc == '2':
@@ -80,78 +80,121 @@ def lookup(driver):
         print("--------------------------------------------")
 def write(driver):
 
-    # TODO 증빙 만들어야함
-    # TODO 추가 누르면 해당탭 이동 취소 확인
-    # TODO 관리코드 필요 없는 과목 있음 if문 추가 필요
-    # TODO 계산서 구분
-    # TODO 거래처 선택 해야함
-    # TODO 지출결의서 - 지급처
-    # TODO 수입 세금계산
+    # TODO
+    #   지급처 추가
+    #   엑셀의 없음을 빈 칸으로 변경 (편의성)
+    #   해결할 것 :
+    #   - 세금이 자동으로 뜨는 것 과 다를 때(버스임대) <- 버스같은 경우 톨비는 세금이 안나와서 세금 되는 금액만 포함
+    #   - 증빙세금 8개인데 세금탭에는 2개 <- 관리비 임대료 묶어서 부가세 포함 4개가 1세트
+    #   => 구조 변경 방법 생각 해 봐야 할듯
+    #   일단 세금계산서도 다 작성 하는걸로 하고 고칠 수 있으면 고치는걸로
+
+
+
+
 
     driver.switch_to.default_content()
     cpath(driver,결의서_작성)
     driver.switch_to.frame(작성_프레임)
 
-    input_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'),'결의내역','B3','R3')
+    input_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'),'결의내역','A3','R3')
     # print(len(input_data))
+    # TODO
+    # prev = input_data[0][0]
     for i in range(len(input_data)):
-        print(1)
+        print(i+3,'행 입력중입니다.',sep='')
+        # TODO
+        # if prev != input_data[i][0]:
+        #   cpath(driver,제출)
+        #   time.sleep(3)
+        select = Select(driver.find_element_by_xpath(회계구분_작성))
+        if input_data[i][1] == '등록금':
+            select.select_by_index(0)
+        elif input_data[i][1] == '비등록금':
+            select.select_by_index(1)
+
+
+        # print(1)
         # time.sleep(1)
         select = Select(driver.find_element_by_id('ddlResolutionDiv'))
-        print(2)
+        # print(2)
         # time.sleep(1)
-        if input_data[i][1] == '수입결의서':
+        if input_data[i][2] == '수입결의서':
             select.select_by_index(0)
-        elif input_data[i][1] == '지출결의서':
+        elif input_data[i][2] == '지출결의서':
             select.select_by_index(1)
-        print(2.5)
+        # print(2.5)
         # time.sleep(5) # !!!!!!!!!!
-        time.sleep(3)
-        fpath(driver,사업코드,input_data[i][0])
+        time.sleep(1)
+        fpath(driver,사업코드,input_data[i][1])
         # time.sleep(2)
-        print(3)
+        # print(3)
         epath(driver,사업코드)
-        print(3.5)
+        # print(3.5)
         # time.sleep(1) # !!!!!!!!!!
         driver.switch_to.frame('frmPopup')
         # time.sleep(1)
-        print(4)
+        # print(4)
         epath(driver,사업팝업)
         driver.switch_to.default_content()
         driver.switch_to.frame('ifr_d4_AHG020P')
-        fpath(driver,계정과목,input_data[i][3])
+        fpath(driver,계정과목,input_data[i][4])
         epath(driver,계정과목)
-        fpath(driver,관리코드,input_data[i][4])
-        fpath(driver,예산부서,input_data[i][7])
+        if input_data[i][5] is not None:
+            fpath(driver,관리코드,input_data[i][5])
+            epath(driver,관리코드)
+            driver.switch_to.frame('frmPopup')
+            epath(driver,관리팝업)
+            driver.switch_to.default_content()
+            driver.switch_to.frame('ifr_d4_AHG020P')
+        fpath(driver,예산부서,input_data[i][8])
         select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
-        input_data[i][8] = '세금'
-        if input_data[i][8] == '세금':
+
+        if input_data[i][9] == '없음':
+            select.select_by_index(0)
+        elif input_data[i][9] == '세금':
             select.select_by_index(1)
-        elif input_data[i][8] == '기타':
+        elif input_data[i][9] == '기타':
             select.select_by_index(2)
-        elif input_data[i][8] == '영수증':
+        elif input_data[i][9] == '영수증':
             select.select_by_index(3)
 
-        fpath(driver,수입,input_data[i][11])
-        fpath(driver,지출,input_data[i][12])
-        fpath(driver,적요,input_data[i][13])
+        if input_data[i][12] is not None:
+            fpath(driver,지출,input_data[i][12])
+        if input_data[i][13] is not None:
+            fpath(driver,수입,input_data[i][13])
+        fpath(driver,적요,input_data[i][14])
         cpath(driver,결의내역_제출)
-        if input_data[i][8] == '세금':
+
+        if input_data[i][9] == '세금':
+            time.sleep(0.3)
+            driver.switch_to.alert.dismiss()
+
+        # TODO
+        #   세금 계산서 마지막에 한번에 해야함 구조 변경 필요
+        #   위의 prev 조건문 안에 넣으면 될 듯
+
+        '''
+        if input_data[i][9] == '세금':
             time.sleep(1)
-            # TODO 구분 검색해서 맞는 세금 계산 찾아서 tax_data[같은 구분 줄] 해야 함. 한칸씩 미뤄야 함
-            # epath(driver,결의내역_제출) # alert
-            # driver.switch_to.default_content()
             driver.switch_to.alert.accept()
-            tax_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'), '세금계산', 'B3', 'J3')
-            print(tax_data)
-            fpath(driver,발행일자,tax_data[0][1].strftime("%Y%m%d"))
+
+
+            # for j 돌려서 결의내역 A값과 같은 것 찾음
+            tax_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'), '세금계산', 'A3', 'J3')
+            for j in range(len(tax_data)):
+                if tax_data[j][0] == input_data[i][0]:
+                    break
+
+            # print(tax_data)
+            fpath(driver,발행일자,tax_data[j][2].strftime("%Y%m%d"))
             epath(driver,발행일자)
             select = Select(driver.find_element_by_id('ddlBillDiv'))
-            if tax_data[0][5] == '일반':
+            if tax_data[j][6] == '일반':
                 select.select_by_index(1)
-            elif tax_data[0][5] == '전자':
+            elif tax_data[j][6] == '전자':
                 select.select_by_index(2)
-            elif tax_data[0][5] == '영수증':
+            elif tax_data[j][6] == '영수증':
                 select.select_by_index(3)
 
             # TODO 거래처 고르는 것 어떡할 지 생각. tax[][2]
@@ -161,7 +204,7 @@ def write(driver):
 
             driver.switch_to.frame('frmPopup')
 
-            fpath(driver,사업자번호,tax_data[0][2])
+            fpath(driver,사업자번호,tax_data[j][3])
             epath(driver,사업자번호)
             driver.switch_to.default_content()
             driver.switch_to.frame('ifr_d4_AHG020P')
@@ -169,9 +212,11 @@ def write(driver):
             cpath(driver,세금계산_제출)
             time.sleep(2)
             cpath(driver,결의내역_탭)
-        time.sleep(10000)
+        time.sleep(1)
+        '''
+        # prev = input_data[i][0]
 
 
-
-    time.sleep(1000)
+    print("입력이 완료되었습니다.")
+    time.sleep(10000)
 

@@ -35,6 +35,6 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
         data.append(get_singleline_data(file, sheetname, fcell, lcell))
         fcell = fcell[:1] + str(int(fcell[1:]) + 1)
         lcell = lcell[:1] + str(int(lcell[1:]) + 1)
-        print(fcell + ' ' + lcell)
+        # print(fcell + ' ' + lcell)
 
     return data
