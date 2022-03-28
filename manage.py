@@ -91,6 +91,7 @@ def write(driver):
     #   관리코드 필요없는데 작성하는거 alert 처리
     #   미지급금 관리코드 오류 처리
     #   거래처 코드 11 처럼 두자리면 클릭해야함
+    #   비밀번호 파이썬 파일 말고 따로 생성
 
 
 
@@ -104,7 +105,6 @@ def write(driver):
     prev = input_data[0][0]
     tax = 0
     for i in range(len(input_data)):
-        print(i+3,'행 입력중입니다.',sep='')
 
         # TODO
         if prev != input_data[i][0]:
@@ -115,7 +115,7 @@ def write(driver):
             driver.switch_to.alert.accept()
             cpath(driver,신규)
             time.sleep(0.5)
-
+        print(i + 3, '행 입력중입니다.', sep='')
         select = Select(driver.find_element_by_xpath(회계구분_작성))
         if input_data[i][2] is not None:
             if input_data[i][2] == '등록금':
@@ -177,51 +177,6 @@ def write(driver):
             tax = 1
             driver.switch_to.alert.dismiss()
         prev = input_data[i][0]
-        # TODO
-        #   세금 계산서 마지막에 한번에 해야함 구조 변경 필요
-        #   위의 prev 조건문 안에 넣으면 될 듯
-
-        '''
-        if input_data[i][9] == '세금':
-            time.sleep(1)
-            driver.switch_to.alert.accept()
-
-
-            # for j 돌려서 결의내역 A값과 같은 것 찾음
-            tax_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'), '세금계산', 'A3', 'J3')
-            for j in range(len(tax_data)):
-                if tax_data[j][0] == input_data[i][0]:
-                    break
-
-            # print(tax_data)
-            fpath(driver,발행일자,tax_data[j][2].strftime("%Y%m%d"))
-            epath(driver,발행일자)
-            select = Select(driver.find_element_by_id('ddlBillDiv'))
-            if tax_data[j][6] == '일반':
-                select.select_by_index(1)
-            elif tax_data[j][6] == '전자':
-                select.select_by_index(2)
-            elif tax_data[j][6] == '영수증':
-                select.select_by_index(3)
-
-            # TODO 거래처 고르는 것 어떡할 지 생각. tax[][2]
-            fpath(driver,거래처,'')
-            epath(driver,거래처)
-            time.sleep(1) # 없어도 돌아가긴 함
-
-            driver.switch_to.frame('frmPopup')
-
-            fpath(driver,사업자번호,tax_data[j][3])
-            epath(driver,사업자번호)
-            driver.switch_to.default_content()
-            driver.switch_to.frame('ifr_d4_AHG020P')
-            # TODO 공급가액은 지출일때만 자동 (수입은 세금 없는 것 같음)
-            cpath(driver,세금계산_제출)
-            time.sleep(2)
-            cpath(driver,결의내역_탭)
-        time.sleep(1)
-        '''
-        # prev = input_data[i][0]
 
     if i == len(input_data)-1:
         if tax == 1:
@@ -278,4 +233,5 @@ def taxWrite(driver, num):
             cpath(driver, 세금계산_제출)
             time.sleep(0.5)
     cpath(driver, 결의내역_탭)
+    print("세금처리가 완료되었습니다.")
     return 0

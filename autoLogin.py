@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import loginData
 import time
+import xlsxFileController
 
 def fname(driver,name,value):
     # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
@@ -47,8 +48,9 @@ def epath(driver,path):
     # element.send_keys(Keys.ENTER)
 
 def login(driver):
-    fname(driver,'USER_ID',loginData.ID)
-    fname(driver,'PASSWD',loginData.PW)
+    login_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('loginData.xlsx'), '로그인', 'B60', 'C60')
+    fname(driver,'USER_ID',login_data[0])
+    fname(driver,'PASSWD',login_data[1])
     ename(driver,'PASSWD')
     # time.sleep(1)
     # alert 없을 때 오류 제어 추가 필요
