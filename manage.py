@@ -98,7 +98,7 @@ def write(driver):
     cpath(driver,결의서_작성)
     driver.switch_to.frame(작성_프레임)
 
-    input_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'),'결의내역','A3','R3')
+    input_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'),'결의내역','A3','S3')
     # print(len(input_data))
     # TODO
     prev = input_data[0][0]
@@ -159,65 +159,62 @@ def write(driver):
             time.sleep(1)
 
         select = Select(driver.find_element_by_xpath(회계구분_작성))
-        if input_data[i][1] == '등록금':
-            select.select_by_index(0)
-        elif input_data[i][1] == '비등록금':
-            select.select_by_index(1)
-        time.sleep(0.3)
+        if input_data[i][2] is not None:
+            if input_data[i][2] == '등록금':
+                select.select_by_index(0)
+            elif input_data[i][2] == '비등록금':
+                select.select_by_index(1)
+            time.sleep(0.3)
 
         # print(1)
         # time.sleep(1)
         select = Select(driver.find_element_by_id('ddlResolutionDiv'))
         # print(2)
         # time.sleep(1)
-        if input_data[i][2] == '수입결의서':
-            select.select_by_index(0)
-        elif input_data[i][2] == '지출결의서':
-            select.select_by_index(1)
-        # print(2.5)
-        # time.sleep(5) # !!!!!!!!!!
-        time.sleep(1)
-        fpath(driver,사업코드,input_data[i][1])
-        # time.sleep(2)
-        # print(3)
-        epath(driver,사업코드)
-        # print(3.5)
-        # time.sleep(1) # !!!!!!!!!!
-        driver.switch_to.frame('frmPopup')
-        # time.sleep(1)
-        # print(4)
-        epath(driver,사업팝업)
-        driver.switch_to.default_content()
-        driver.switch_to.frame('ifr_d4_AHG020P')
-        fpath(driver,계정과목,input_data[i][4])
+        if input_data[i][3] is not None:
+            if input_data[i][3] == '수입결의서':
+                select.select_by_index(0)
+            elif input_data[i][3] == '지출결의서':
+                select.select_by_index(1)
+            time.sleep(1)
+            fpath(driver,사업코드,input_data[i][2])
+            epath(driver,사업코드)
+            driver.switch_to.frame('frmPopup')
+            epath(driver,사업팝업)
+            driver.switch_to.default_content()
+            driver.switch_to.frame('ifr_d4_AHG020P')
+
+        if input_data[i][1] is not None:
+            fpath(driver,결의서_제목,input_data[i][1])
+        fpath(driver,계정과목,input_data[i][5])
         epath(driver,계정과목)
-        if input_data[i][5] is not None:
-            fpath(driver,관리코드,input_data[i][5])
+        if input_data[i][6] is not None:
+            fpath(driver,관리코드,input_data[i][6])
             epath(driver,관리코드)
             driver.switch_to.frame('frmPopup')
             epath(driver,관리팝업)
             driver.switch_to.default_content()
             driver.switch_to.frame('ifr_d4_AHG020P')
-        fpath(driver,예산부서,input_data[i][8])
+        fpath(driver,예산부서,input_data[i][9])
         select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
 
-        if input_data[i][9] == '없음':
+        if input_data[i][10] == '없음':
             select.select_by_index(0)
-        elif input_data[i][9] == '세금':
+        elif input_data[i][10] == '세금':
             select.select_by_index(1)
-        elif input_data[i][9] == '기타':
+        elif input_data[i][10] == '기타':
             select.select_by_index(2)
-        elif input_data[i][9] == '영수증':
+        elif input_data[i][10] == '영수증':
             select.select_by_index(3)
 
-        if input_data[i][12] is not None:
-            fpath(driver,지출,input_data[i][12])
         if input_data[i][13] is not None:
-            fpath(driver,수입,input_data[i][13])
-        fpath(driver,적요,input_data[i][14])
+            fpath(driver,지출,input_data[i][13])
+        if input_data[i][14] is not None:
+            fpath(driver,수입,input_data[i][14])
+        fpath(driver,적요,input_data[i][15])
         cpath(driver,결의내역_제출)
 
-        if input_data[i][9] == '세금':
+        if input_data[i][10] == '세금':
             time.sleep(0.3)
             tax = 1
             driver.switch_to.alert.dismiss()

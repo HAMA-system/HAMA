@@ -4,3 +4,4 @@ main_backup.py
 manage_backup.py
 *.spec
 dist
+build
