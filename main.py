@@ -5,7 +5,6 @@ import errorController
 import autoLogin
 import manage
 import sys, os, time
-
 def set_chromedriver():
     try:
         # driver = webdriver.Chrome("./chromedriver.exe")

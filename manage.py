@@ -7,16 +7,31 @@ from selenium.webdriver.support import expected_conditions as EC
 from autoLogin import *
 from linkData import *
 import xlsxFileController
-
+import ignoreAutoLogout
+import threading
+sema = 0
+d = ''
+def refresh():
+    # TODO
+    #   작성에서도 되게 바꿔야 함.
+    cpath(d,조회)
 
 def lookup(driver):
+    global sema
+    global d
+    d = driver
+    ig = threading.Thread(target=ignoreAutoLogout.startTimer)
+    ig.daemon = True
+    ig.start()
+
     driver.switch_to.default_content()
     time.sleep(1)
     cpath(driver,결의서_조회)
     driver.switch_to.frame(조회_프레임)
     while True:
-
         while True:
+            ignoreAutoLogout.timer = 0
+            sema = 0
             print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금) ")
                 # acc, res = map(str,input().split())
             acc = input().strip()
@@ -25,6 +40,7 @@ def lookup(driver):
             print("잘못된 입력입니다.")
 
         while True:
+            sema = 1
             print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
             res = input().strip()
             if res == '1' or res == '2' or res == '3' or res == '4':
@@ -91,7 +107,9 @@ def write(driver):
     #   거래처 코드 11 처럼 두자리면 클릭해야함
     #   한국후지필름 11, 8687 등등 있는데 아무거나 해도 되는지 (엑셀엔 8687, 결의서 내역엔 11)
 
-
+    global sema
+    global d
+    d = driver
 
     driver.switch_to.default_content()
     cpath(driver,결의서_작성)
