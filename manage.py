@@ -32,11 +32,13 @@ def lookup(driver):
             print("잘못된 입력입니다.")
 
         while True:
-            print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022)")
+            print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022")
             month = input().strip()
             if len(month) == 1 or len(month) == 2 or len(month) == 4:
                 break
             print("잘못된 입력입니다.")
+        print("원하는 검색어를 입력해주세요. (없으면 공백)")
+        search = input().strip()
 
         if len(month) == 4:
             fname(driver,'txtSAcctYear',month)
@@ -76,22 +78,18 @@ def lookup(driver):
             print("잘못된 입력입니다.")
         if len(month) != 4:
             fname(driver,'DpToDt',dateController.dateToday())
+        # if search is not None:
+        fpath(driver,제목_검색,search)
         cname(driver,'CSMenuButton1$List')
         print("--------------------------------------------")
 def write(driver):
 
     # TODO
     #   지급처 추가
-    #   엑셀의 없음을 빈 칸으로 변경 (편의성)
     #   해결할 것 :
-    #   - 세금이 자동으로 뜨는 것 과 다를 때(버스임대) <- 버스같은 경우 톨비는 세금이 안나와서 세금 되는 금액만 포함
-    #   - 증빙세금 8개인데 세금탭에는 2개 <- 관리비 임대료 묶어서 부가세 포함 4개가 1세트
-    #   => 구조 변경 방법 생각 해 봐야 할듯
-    #   일단 세금계산서도 다 작성 하는걸로 하고 고칠 수 있으면 고치는걸로
-    #   관리코드 필요없는데 작성하는거 alert 처리
     #   미지급금 관리코드 오류 처리
     #   거래처 코드 11 처럼 두자리면 클릭해야함
-    #   비밀번호 파이썬 파일 말고 따로 생성
+    #   한국후지필름 11, 8687 등등 있는데 아무거나 해도 되는지 (엑셀엔 8687, 결의서 내역엔 11)
 
 
 
@@ -149,10 +147,14 @@ def write(driver):
         if input_data[i][6] is not None:
             fpath(driver,관리코드,input_data[i][6])
             epath(driver,관리코드)
-            driver.switch_to.frame('frmPopup')
-            epath(driver,관리팝업)
-            driver.switch_to.default_content()
-            driver.switch_to.frame('ifr_d4_AHG020P')
+
+            try:
+                driver.switch_to.alert.accept()
+            except:
+                driver.switch_to.frame('frmPopup')
+                epath(driver,관리팝업)
+                driver.switch_to.default_content()
+                driver.switch_to.frame('ifr_d4_AHG020P')
         fpath(driver,예산부서,input_data[i][9])
         select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
 
