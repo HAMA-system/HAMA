@@ -44,4 +44,6 @@ def put_cell_data(file, sheetname, cell, text):
     w = file.active
     w.title = sheetname
     w[cell] = text
+
+def save_xls(file):
     file.save("./data.xlsx")
