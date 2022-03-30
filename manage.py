@@ -137,10 +137,12 @@ def write(driver):
                 except:
                     pass
                 cpath(driver,신규)
-                # for p in range (len(input_data)):
-                #     if input_data[p][0] == prev:
-                #         print('E'+str(p+3))
-                #         xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+3), '-1')
+                for p in range (len(input_data)):
+                    if input_data[p][0] == prev:
+                        print('E'+str(p+3))
+                        xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+3), '-1')
+                xlsxFileController.save_xls(file)
+
                 time.sleep(0.5)
             print(i + 3, '행 입력중입니다.', sep='')
             select = Select(driver.find_element_by_xpath(회계구분_작성))
@@ -219,7 +221,12 @@ def write(driver):
             if tax == 1:
                 tax = taxWrite(driver, input_data[i][0])
             cpath(driver,저장)
-            time.sleep(2)
+            for p in range(len(input_data)):
+                if input_data[p][0] == prev:
+                    print('E' + str(p + 3))
+                    xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p + 3), '-1')
+            xlsxFileController.save_xls(file)
+            time.sleep(1)
             try:
                 driver.switch_to.alert.dismiss()
             except:
