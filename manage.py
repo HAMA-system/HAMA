@@ -161,10 +161,12 @@ def write(driver):
             # print(2)
             # time.sleep(1)
             if input_data[i][4] is not None:
-                if input_data[i][4] == '수입결의서':
+                if input_data[i][4] == '수입':
                     select.select_by_index(0)
-                elif input_data[i][4] == '지출결의서':
+                elif input_data[i][4] == '지출':
                     select.select_by_index(1)
+                elif input_data[i][4] == '대체':
+                    select.select_by_index(2)
                 time.sleep(1)
                 fpath(driver,사업코드,input_data[i][3])
                 epath(driver,사업코드)
@@ -197,7 +199,7 @@ def write(driver):
                 select.select_by_index(1)
             elif input_data[i][11] == '기타':
                 select.select_by_index(2)
-            elif input_data[i][11] == '영수증':
+            elif input_data[i][11] == '현금':
                 select.select_by_index(3)
 
             if input_data[i][14] is not None:
@@ -285,7 +287,7 @@ def taxWrite(driver, num):
                 select.select_by_index(1)
             elif tax_data[j][6] == '전자':
                 select.select_by_index(2)
-            elif tax_data[j][6] == '영수증':
+            elif tax_data[j][6] == '현금':
                 select.select_by_index(3)
 
             cpath(driver, 세금계산_제출)
