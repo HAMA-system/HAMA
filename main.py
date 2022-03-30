@@ -28,9 +28,9 @@ if __name__ == '__main__':
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
     while True:
-        # print("원하시는 서비스를 입력하세요. (조회/작성/종료)")
-        # select = input()
-        select = '작성'
+        print("원하시는 서비스를 입력하세요. (조회/작성/종료)")
+        select = input()
+        # select = '작성'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':
