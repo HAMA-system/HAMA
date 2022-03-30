@@ -108,15 +108,13 @@ def write(driver):
     #   거래처 코드 11 처럼 두자리면 클릭해야함
     #   한국후지필름 11, 8687 등등 있는데 아무거나 해도 되는지 (엑셀엔 8687, 결의서 내역엔 11)
 
-    global sema
-    global d
-    d = driver
+
 
     driver.switch_to.default_content()
     cpath(driver,결의서_작성)
     driver.switch_to.frame(작성_프레임)
     file = xlsxFileController.load_xls('data.xlsx')
-    input_data = xlsxFileController.all_data_fetch(file,'결의내역','E3','V3')
+    input_data = xlsxFileController.all_data_fetch(file,'결의내역','E7','V7')
     # for x in input_data:
     #     if x[0] == -1:
     #         del x
@@ -124,12 +122,19 @@ def write(driver):
     # TODO
     prev = input_data[0][0]
     tax = 0
+    while True:
+        print("결의서를 작성하시겠습니까? 1(예)/2(아니오)")
+        yes = input()
+        if yes == '1':
+            break
+        time.sleep(2)
     for i in range(len(input_data)):
         if input_data[i][0] != '-1':
             # TODO
             if prev != input_data[i][0]:
                 if tax == 1:
                     tax = taxWrite(driver, prev)
+                    file = xlsxFileController.load_xls('data.xlsx')
                 cpath(driver,저장)
                 time.sleep(2)
                 try:
@@ -139,12 +144,12 @@ def write(driver):
                 cpath(driver,신규)
                 for p in range (len(input_data)):
                     if input_data[p][0] == prev:
-                        print('E'+str(p+3))
-                        xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+3), '-1')
+                        # print('E'+str(p+7))
+                        xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+7), '-1')
                 xlsxFileController.save_xls(file)
 
                 time.sleep(0.5)
-            print(i + 3, '행 입력중입니다.', sep='')
+            print(i + 7, '행 입력중입니다.', sep='')
             select = Select(driver.find_element_by_xpath(회계구분_작성))
             if input_data[i][3] is not None:
                 if input_data[i][3] == '등록금':
@@ -222,10 +227,11 @@ def write(driver):
         if i == len(input_data)-1:
             if tax == 1:
                 tax = taxWrite(driver, input_data[i][0])
+                file = xlsxFileController.load_xls('data.xlsx')
             cpath(driver,저장)
             for p in range(len(input_data)):
                 if input_data[p][0] == prev:
-                    xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p + 3), '-1')
+                    xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p + 7), '-1')
             xlsxFileController.save_xls(file)
             time.sleep(1)
             try:
@@ -237,7 +243,8 @@ def write(driver):
 def taxWrite(driver, num):
     time.sleep(0.3)
     cpath(driver, 세금계산_탭)
-    tax_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('data.xlsx'), '세금계산', 'E3', 'L3')
+    file = xlsxFileController.load_xls('data.xlsx')
+    tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E12', 'L12')
 
     for j in range(len(tax_data)):
         if tax_data[j][0] == num:
@@ -292,6 +299,10 @@ def taxWrite(driver, num):
 
             cpath(driver, 세금계산_제출)
             time.sleep(0.5)
+    for p in range(len(tax_data)):
+        if tax_data[p][0] == num:
+            xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p + 12), '-1')
+    xlsxFileController.save_xls(file)
     cpath(driver, 결의내역_탭)
     print("세금처리가 완료되었습니다.")
     return 0

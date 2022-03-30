@@ -7,9 +7,9 @@ import manage
 import sys, os, time
 def set_chromedriver():
     try:
-        # driver = webdriver.Chrome("./chromedriver.exe")
+        driver = webdriver.Chrome("./chromedriver")
         # driver = webdriver.Chrome("C:/auto/chromedriver.exe")
-        driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
+        # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
         # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
         # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/dist/chromedriver")
 
