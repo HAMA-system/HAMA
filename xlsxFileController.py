@@ -38,3 +38,10 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
         # print(fcell + ' ' + lcell)
 
     return data
+
+
+def put_cell_data(file, sheetname, cell, text):
+    w = file.active
+    w.title = sheetname
+    w[cell] = text
+    file.save("./data.xlsx")
