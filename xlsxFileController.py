@@ -47,3 +47,25 @@ def put_cell_data(file, sheetname, cell, text):
 
 def save_xls(file):
     file.save("./data.xlsx")
+
+def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
+    i = row
+
+    while True:
+        firstcell = firstcolumn + str(i)
+        lastcell = lastcolumn + str(i)
+        cell = firstcell
+        # print(str(i) + ': ' + firstcell + lastcell)
+
+        if get_cell_data(file, sheetname, cell) is None:
+            break
+
+        if get_cell_data(file, sheetname, cell) == -1:
+            while cell != lastcell:
+                put_cell_data(file, sheetname, cell, ' ')
+                cell = chr(ord(cell[:1]) + 1) + cell[1:]
+            # print(str(i)+' deleted')
+        i = i + 1
+
+    save_xls(file)
+    # print("all -1 row is deleted")
