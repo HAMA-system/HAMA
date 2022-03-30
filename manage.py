@@ -32,7 +32,7 @@ def lookup(driver):
         while True:
             ignoreAutoLogout.timer = 0
             sema = 0
-            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/3(뒤로가기) ")
+            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/3(종료) ")
                 # acc, res = map(str,input().split())
             acc = input().strip()
             if acc == '1' or acc == '2' or acc == '3':
@@ -223,7 +223,6 @@ def write(driver):
             cpath(driver,저장)
             for p in range(len(input_data)):
                 if input_data[p][0] == prev:
-                    print('E' + str(p + 3))
                     xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p + 3), '-1')
             xlsxFileController.save_xls(file)
             time.sleep(1)
