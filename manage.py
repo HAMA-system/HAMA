@@ -115,7 +115,7 @@ def write(driver):
     driver.switch_to.frame(작성_프레임)
     file = xlsxFileController.load_xls('data.xlsx')
     input_data = xlsxFileController.all_data_fetch(file,'결의내역','E7','V7')
-
+    w = 0
     # TODO
     prev = input_data[0][0]
     tax = 0
@@ -127,6 +127,7 @@ def write(driver):
         time.sleep(2)
     for i in range(len(input_data)):
         if input_data[i][0] != -1:
+            w = 1
             # TODO
             if prev != input_data[i][0]:
                 # time.sleep(5)
@@ -135,7 +136,7 @@ def write(driver):
                     file = xlsxFileController.load_xls('data.xlsx')
                 # time.sleep(5)
                 cpath(driver,저장)
-                time.sleep(2)
+                time.sleep(20)
                 # time.sleep(3)
                 try:
                     driver.switch_to.alert.accept()
@@ -155,7 +156,12 @@ def write(driver):
                 time.sleep(0.5)
             print(i + 7, '행 입력중입니다.', sep='')
             time.sleep(1)
-            select = Select(driver.find_element_by_xpath(회계구분_작성))
+            try:
+                select = Select(driver.find_element_by_xpath(회계구분_작성))
+            except Exception as error:
+                print(error)
+                time.sleep(10)
+
             if input_data[i][3] is not None:
                 if input_data[i][3] == '등록금':
                     select.select_by_index(0)
@@ -231,29 +237,31 @@ def write(driver):
                     pass
             prev = input_data[i][0]
 
-        if i == len(input_data)-1:
+        if i == len(input_data)-1 and w == 1:
             if tax == 1:
                 tax = taxWrite(driver, input_data[i][0])
                 file = xlsxFileController.load_xls('data.xlsx')
             cpath(driver,저장)
-            time.sleep(2)
-            try:
-                driver.switch_to.alert.dismiss()
-                for p in range(len(input_data)):
-                    if input_data[p][0] == prev:
-                        xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p + 7), -1)
-                xlsxFileController.save_xls(file)
-            except:
-                pass
+            time.sleep(20)
+            while True:
+                try:
+                    driver.switch_to.alert.dismiss()
+                    for p in range(len(input_data)):
+                        if input_data[p][0] == prev:
+                            xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p + 7), -1)
+                    xlsxFileController.save_xls(file)
+                    break
+                except:
+                    pass
 
             print("입력이 완료되었습니다.")
-    print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
-    d = input().strip()
-    if d == '1':
-        xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 7)
-        xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 12)
-        xlsxFileController.save_xls(file)
-        print("삭제가 완료되었습니다.")
+    # print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
+    # d = input().strip()
+    # if d == '1':
+    #     xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 7)
+    #     xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 12)
+    #     xlsxFileController.save_xls(file)
+    #     print("삭제가 완료되었습니다.")
 
 
 def taxWrite(driver, num):
