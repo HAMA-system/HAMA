@@ -41,8 +41,8 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
 
 
 def put_cell_data(file, sheetname, cell, text):
-    w = file.active
-    s = w[sheetname]
+    # w = file.active
+    s = file[sheetname]
     s[cell] = text
 
 def save_xls(file):
