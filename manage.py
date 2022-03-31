@@ -155,6 +155,7 @@ def write(driver):
 
                 time.sleep(0.5)
             print(i + 7, '행 입력중입니다.', sep='')
+            time.sleep(1)
             select = Select(driver.find_element_by_xpath(회계구분_작성))
             if input_data[i][3] is not None:
                 if input_data[i][3] == '등록금':
@@ -249,11 +250,11 @@ def write(driver):
                 pass
 
             print("입력이 완료되었습니다.")
-    print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
-    d = input().strip()
-    if d == '1':
-        xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 7)
-        xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 12)
+    # print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
+    # d = input().strip()
+    # if d == '1':
+    #     xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 7)
+    #     xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 12)
 
 
 def taxWrite(driver, num):
