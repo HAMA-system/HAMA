@@ -61,11 +61,12 @@ def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
             break
 
         if get_cell_data(file, sheetname, cell) == -1:
+            print(i)
             while cell != lastcell:
                 put_cell_data(file, sheetname, cell, ' ')
                 cell = chr(ord(cell[:1]) + 1) + cell[1:]
             # print(str(i)+' deleted')
         i = i + 1
 
-    save_xls(file)
+    # save_xls(file)
     # print("all -1 row is deleted")
