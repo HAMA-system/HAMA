@@ -136,7 +136,7 @@ def write(driver):
                     file = xlsxFileController.load_xls('data.xlsx')
                 # time.sleep(5)
                 cpath(driver,저장)
-                time.sleep(20)
+                # time.sleep(20)
                 # time.sleep(3)
                 try:
                     driver.switch_to.alert.accept()
@@ -156,11 +156,11 @@ def write(driver):
                 time.sleep(0.5)
             print(i + 7, '행 입력중입니다.', sep='')
             time.sleep(1)
-            try:
-                select = Select(driver.find_element_by_xpath(회계구분_작성))
-            except Exception as error:
-                print(error)
-                time.sleep(10)
+            # try:
+            select = Select(driver.find_element_by_xpath(회계구분_작성))
+            # except Exception as error:
+            #     print(error)
+            #     time.sleep(10)
 
             if input_data[i][3] is not None:
                 if input_data[i][3] == '등록금':
@@ -242,7 +242,7 @@ def write(driver):
                 tax = taxWrite(driver, input_data[i][0])
                 file = xlsxFileController.load_xls('data.xlsx')
             cpath(driver,저장)
-            time.sleep(20)
+            # time.sleep(20)
             while True:
                 try:
                     driver.switch_to.alert.dismiss()
