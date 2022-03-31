@@ -25,9 +25,9 @@ def ename(driver,name):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
     element.send_keys(Keys.ENTER)
 def fpath(driver,path,value):
-    time.sleep(0.2) # 0.5
+    time.sleep(0.4) # 0.5
     driver.find_element_by_xpath(path).clear()
-    time.sleep(0.2) # 0.4
+    time.sleep(0.3) # 0.4
     driver.find_element_by_xpath(path).send_keys(value)
     # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
     # element.clear()

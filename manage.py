@@ -139,7 +139,7 @@ def write(driver):
                 # time.sleep(5)
                 cpath(driver,저장)
                 time.sleep(2)
-                # time.sleep(5)
+                # time.sleep(3)
                 try:
                     driver.switch_to.alert.accept()
                 except:
