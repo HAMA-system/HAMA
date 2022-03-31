@@ -247,7 +247,14 @@ def write(driver):
                 driver.switch_to.alert.dismiss()
             except:
                 pass
+
             print("입력이 완료되었습니다.")
+    print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
+    d = input().strip()
+    if d == '1':
+        xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 7)
+        xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 12)
+
 
 def taxWrite(driver, num):
     time.sleep(0.3)
