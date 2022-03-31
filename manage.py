@@ -114,6 +114,7 @@ def write(driver):
     cpath(driver,결의서_작성)
     driver.switch_to.frame(작성_프레임)
     file = xlsxFileController.load_xls('data.xlsx')
+    # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
     input_data = xlsxFileController.all_data_fetch(file,'결의내역','E7','V7')
     w = 0
     # TODO
@@ -134,6 +135,7 @@ def write(driver):
                 if tax == 1:
                     tax = taxWrite(driver, prev)
                     file = xlsxFileController.load_xls('data.xlsx')
+                    # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
                 # time.sleep(5)
                 cpath(driver,저장)
                 # time.sleep(20)
@@ -241,6 +243,7 @@ def write(driver):
             if tax == 1:
                 tax = taxWrite(driver, input_data[i][0])
                 file = xlsxFileController.load_xls('data.xlsx')
+                # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
             cpath(driver,저장)
             # time.sleep(20)
             while True:
@@ -268,6 +271,7 @@ def taxWrite(driver, num):
     time.sleep(0.3)
     cpath(driver, 세금계산_탭)
     file = xlsxFileController.load_xls('data.xlsx')
+    # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
     tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E12', 'L12')
 
     for j in range(len(tax_data)):
