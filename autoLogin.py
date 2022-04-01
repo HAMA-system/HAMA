@@ -80,13 +80,16 @@ def login(driver):
         driver.switch_to.alert.accept()
     except:
         pass
-    driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
-    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/a')
-    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/a')
-    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/a')
-    cpath(driver,'/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/a')
-    return driver
 
+    return afterLogin(driver)
+
+def afterLogin(driver):
+    driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
+    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/a')
+    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/a')
+    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/a')
+    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/a')
+    return driver
 
 if __name__ == '__main__':
     driver = webdriver.Chrome('./chromedriver')

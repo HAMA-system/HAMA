@@ -21,8 +21,8 @@ if __name__ == '__main__':
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
     while True:
-        # select = '조회'
-        select = '작성'
+        select = '조회'
+        # select = '작성'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':
