@@ -3,6 +3,7 @@ import time
 import autoLogin
 import dateController
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -217,14 +218,30 @@ def write(driver):
 
                 #귀속부서
                 if input_data[i][9] is not None:
-                    fpath(driver, 귀속부서, input_data[i][9])
+                    # fpath(driver, 귀속부서, input_data[i][9])
+                    fpath(driver, 귀속부서, '기숙사')
                     epath(driver, 귀속부서)
 
-                    # try:
-                    #     driver.switch_to.alert.accept()
-                    # except:
-                    #     driver.switch_to.frame('frmPopup')
-                    #     epath(driver,귀속부서팝업)
+                    try:
+                        driver.switch_to.alert.accept()
+                    except:
+                        driver.switch_to.frame('frmPopup')
+                        epath(driver,귀속부서팝업)
+
+                        actions = ActionChains(driver)
+                        actions.move_to_element('/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
+                        time.sleep(5)
+                        actions.double_click('/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
+                        actions.perform()
+
+                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
+                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
+                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr')
+                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody')
+                        # epath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
+                        # epath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr')
+                        # epath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody')
+
                     #     # cpathDouble(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr/td[2]')
                     #     driver.switch_to.default_content()
                     #     driver.switch_to.frame('ifr_d4_AHG020P')
@@ -311,7 +328,6 @@ def taxWrite(driver, num):
         if tax_data[j][0] == num:
 
             select = Select(driver.find_element_by_xpath(과세구분))
-            # TODO 선택지 추가 필요 !!
             if tax_data[j][1] == '매입세금-불':
                 select.select_by_index(1)
             elif tax_data[j][1] == '매입세금':
