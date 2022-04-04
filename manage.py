@@ -2,6 +2,7 @@ import time
 
 import autoLogin
 import dateController
+from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -218,46 +219,53 @@ def write(driver):
 
                 #귀속부서
                 if input_data[i][9] is not None:
-                    # fpath(driver, 귀속부서, input_data[i][9])
-                    fpath(driver, 귀속부서, '기숙사')
-                    epath(driver, 귀속부서)
+                    if input_data[i][9] == '기숙사':
+                        fpath(driver, 귀속부서, '')
+                        epath(driver, 귀속부서)
 
-                    try:
-                        driver.switch_to.alert.accept()
-                    except:
-                        driver.switch_to.frame('frmPopup')
-                        epath(driver,귀속부서팝업)
-
-                        actions = ActionChains(driver)
-                        actions.move_to_element('/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
-                        time.sleep(5)
-                        actions.double_click('/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
-                        actions.perform()
-
-                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
-                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
-                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr')
-                        # cpath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody')
-                        # epath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]')
-                        # epath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr')
-                        # epath(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody')
-
-                    #     # cpathDouble(driver, '/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr/td[2]')
-                    #     driver.switch_to.default_content()
-                    #     driver.switch_to.frame('ifr_d4_AHG020P')
-                #수정부분끝
+                        try:
+                            driver.switch_to.alert.accept()
+                        except:
+                            driver.switch_to.frame('frmPopup')
+                            epath(driver,귀속부서팝업)
+                            fpath(driver,소속코드,'A33100')
+                            epath(driver,소속코드)
+                            time.sleep(0.5)
+                            actions = ActionChains(driver)
+                            doubleClick = driver.find_element_by_xpath(소속테이블)
+                            actions.move_to_element(doubleClick)
+                            actions.double_click(doubleClick)
+                            actions.perform()
+                            driver.switch_to.default_content()
+                            driver.switch_to.frame('ifr_d4_AHG020P')
+                    else:
+                        fpath(driver, 귀속부서, input_data[i][9])
+                        epath(driver, 귀속부서)
 
                 if input_data[i][10] is not None:
-                    fpath(driver,예산부서,input_data[i][10])
-                    epath(driver,예산부서)
+                    if input_data[i][10] == '기숙사':
+                        fpath(driver, 예산부서, '')
+                        epath(driver, 예산부서)
 
-                    # try:
-                    #     driver.switch_to.alert.accept()
-                    # except:
-                    #     driver.switch_to.frame('frmPopup')
-                    #     epath(driver,예산부서팝업)
-                    #     driver.switch_to.default_content()
-                    #     driver.switch_to.frame('ifr_d4_AHG020P')
+                        try:
+                            driver.switch_to.alert.accept()
+                        except:
+                            driver.switch_to.frame('frmPopup')
+                            epath(driver,예산부서팝업)
+                            fpath(driver,소속코드,'A33100')
+                            epath(driver,소속코드)
+                            time.sleep(0.5)
+                            actions = ActionChains(driver)
+                            doubleClick = driver.find_element_by_xpath(소속테이블)
+                            actions.move_to_element(doubleClick)
+                            actions.double_click(doubleClick)
+                            actions.perform()
+                            driver.switch_to.default_content()
+                            driver.switch_to.frame('ifr_d4_AHG020P')
+                    else:
+                        fpath(driver, 예산부서, input_data[i][10])
+                        epath(driver, 예산부서)
+
 
                 select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
                 if input_data[i][11] == '없음':
@@ -305,13 +313,15 @@ def write(driver):
                         pass
 
                 print("입력이 완료되었습니다.")
-        # print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
-        # d = input().strip()
-        # if d == '1':
-        #     xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 7)
-        #     xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 12)
-        #     xlsxFileController.save_xls(file)
-        #     print("삭제가 완료되었습니다.")
+
+        print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
+        d = input().strip()
+        if d == '1':
+            xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 7)
+            xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 12)
+            xlsxFileController.save_xls(file)
+            print("삭제가 완료되었습니다.")
+
     except:
         print('오류가 발생하여 초기화면으로 돌아갑니다')
         driver.refresh()
