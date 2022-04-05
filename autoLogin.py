@@ -94,7 +94,7 @@ def afterLogin(driver):
 
 
 def checkWork(driver):
-    driver.get('hrm.hongik.ac.kr/new/')
+    driver.get('https://hrm.hongik.ac.kr/new/')
     cpath(driver, '출근버튼')
 
 

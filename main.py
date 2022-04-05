@@ -18,6 +18,7 @@ def set_chromedriver():
 
 if __name__ == '__main__':
     driver = set_chromedriver()
+    driver.implicitly_wait(time_to_wait=10)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
     while True:
