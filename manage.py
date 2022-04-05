@@ -20,6 +20,10 @@ def refresh():
     #   작성에서도 되게 바꿔야 함.
     cpath(d,조회)
 
+def printProgress(i, max):
+    c = int(i*max)
+    stdout.write('\r['+'#'*c+' '*(max-c-1)+']\t\t['+ str(int(i*100)) +'%]')
+
 def lookup(driver):
     global sema
     global d
@@ -104,7 +108,7 @@ def lookup(driver):
         cname(driver,'CSMenuButton1$List')
         print("\n=====================================================")
 def write(driver):
-
+    progress = 0.0
     # TODO
     #   지급처 추가
     #   해결할 것 :
@@ -167,6 +171,9 @@ def write(driver):
 
                     time.sleep(0.5)
                 print(i + 7, '행 입력중입니다.', sep='')
+                # stdout.flush()
+                # printProgress(progress, progress_size)
+
                 time.sleep(1)
                 # try:
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
