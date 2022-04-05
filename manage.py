@@ -13,6 +13,8 @@ from linkData import *
 import xlsxFileController
 import ignoreAutoLogout
 import threading
+from sys import stdout
+
 sema = 0
 d = ''
 def refresh():
@@ -108,7 +110,6 @@ def lookup(driver):
         cname(driver,'CSMenuButton1$List')
         print("\n=====================================================")
 def write(driver):
-    progress = 0.0
     # TODO
     #   지급처 추가
     #   해결할 것 :
@@ -123,6 +124,9 @@ def write(driver):
         driver.switch_to.frame(작성_프레임)
         file = xlsxFileController.load_xls('data.xlsx')
         # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
+        # progress = 0.0
+        # progrexx_max = xlsxFileController.get_max_row(file,'결의내역','E')
+        # progress_size = 30
         input_data = xlsxFileController.all_data_fetch(file,'결의내역','E7','V7')
         w = 0
         # TOD0
@@ -172,7 +176,8 @@ def write(driver):
                     time.sleep(0.5)
                 print(i + 7, '행 입력중입니다.', sep='')
                 # stdout.flush()
-                # printProgress(progress, progress_size)
+                # printProgress(progress/progrexx_max, progress_size)
+                # progress += progress/progrexx_max
 
                 time.sleep(1)
                 # try:

@@ -12,6 +12,18 @@ def get_cell_data(file, sheetname ,cell):
     sheet = file.get_sheet_by_name(sheetname)
     return sheet[cell].value
 
+def get_max_row(file, sheetname, column):
+    i = row
+    count = 0
+    while True:
+        cell = column + str(i)
+
+        if get_cell_data(file, sheetname, cell) is None:
+            return count
+        else :
+            count += 1
+        i = i + 1
+
 def get_singleline_data(file, sheetname, firstcell, lastcell):
     cell = firstcell
     data = []
