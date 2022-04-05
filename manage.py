@@ -139,14 +139,13 @@ def write(driver):
             if yes == '1':
                 break
             time.sleep(2)
-        if input_data[0][0] == -1:
+        if input_data[0][0] != -1:
             print("구분번호 :",input_data[0][0])
         for i in range(len(input_data)):
-            if input_data[i][0] != -1:
+            if input_data[i][0] != -1 or prev != -1:
                 w = 1
                 # TOD0
                 if prev != input_data[i][0]:
-                    print("구분번호 :", input_data[i][0])
                     # time.sleep(5)
                     if tax == 1:
                         tax = taxWrite(driver, prev)
@@ -156,6 +155,14 @@ def write(driver):
                     cpath(driver,저장)
                     # time.sleep(20)
                     # time.sleep(3)
+                    time.sleep(0.3)
+
+                # -1 -1 -1 7 -1 -1 -1 경우 위함
+                    if input_data[i][0] == -1:
+                        prev = input_data[i][0]
+                        continue
+
+                    # TODO 이것때문에 속도 느려지는지 테스트
                     while True:
                         try:
                             driver.switch_to.alert.accept()
@@ -168,6 +175,7 @@ def write(driver):
                         except:
                             pass
                     cpath(driver,신규)
+                    print("구분번호 :", input_data[i][0])
                     for p in range (len(input_data)):
                         if input_data[p][0] == prev:
                             xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+7), -1)
@@ -310,7 +318,7 @@ def write(driver):
                             break
                         except:
                             pass
-                prev = input_data[i][0]
+            prev = input_data[i][0]
 
             if i == len(input_data)-1 and w == 1:
                 if tax == 1:
@@ -318,6 +326,8 @@ def write(driver):
                     file = xlsxFileController.load_xls('data.xlsx')
                     # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
                 cpath(driver,저장)
+                time.sleep(0.3)
+
                 # time.sleep(20)
                 while True:
                     try:
@@ -351,7 +361,6 @@ def taxWrite(driver, num):
     file = xlsxFileController.load_xls('data.xlsx')
     # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
     tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E12', 'L12')
-
     for j in range(len(tax_data)):
         if tax_data[j][0] == num:
 
@@ -385,26 +394,28 @@ def taxWrite(driver, num):
 
             driver.switch_to.frame('frmPopup')
 
-            if ord(str(tax_data[j][3])[0]) < 58:
+            if 48 <= ord(str(tax_data[j][3])[0]) <= 57:
                 fpath(driver, 사업자번호, tax_data[j][3])
                 epath(driver, 사업자번호)
             else:
                 fpath(driver, 거래처명, tax_data[j][3])
                 epath(driver, 거래처명)
-            while True:
-                try:
-                    epath(driver, 거래처명)
-                    print("상세 거래처를 클릭 후 잠시 기다려주세요.")
-                    time.sleep(3)
-                except:
-                    break
+            # print(1)
+            # while True:
+            #     try:
+            #         epath(driver, 거래처명)
+            #         print("상세 거래처를 클릭 후 잠시 기다려주세요.")
+            #         time.sleep(3)
+            #     except:
+            #         break
+            # print(2)
             driver.switch_to.default_content()
             driver.switch_to.frame('ifr_d4_AHG020P')
 
             if tax_data[j][4] is not None:
                 fpath(driver, 공급가액, tax_data[j][4])
                 fpath(driver, 세액, tax_data[j][5])
-
+            # print(3)
             select = Select(driver.find_element_by_id('ddlBillDiv'))
             if tax_data[j][6] == '일반':
                 select.select_by_index(1)
@@ -412,7 +423,7 @@ def taxWrite(driver, num):
                 select.select_by_index(2)
             elif tax_data[j][6] == '현금':
                 select.select_by_index(3)
-
+            # print(4)
             cpath(driver, 세금계산_제출)
             time.sleep(0.5)
     for p in range(len(tax_data)):
