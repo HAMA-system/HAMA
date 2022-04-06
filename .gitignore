@@ -6,6 +6,6 @@ manage_backup.py
 *.spec
 dist
 build
-data.xlsx
+#data.xlsx
 dataBackup.xlsx
 dataBackup2.xlsx
