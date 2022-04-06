@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from linkData import *
 import loginData
 import time
 import xlsxFileController
@@ -95,7 +96,9 @@ def afterLogin(driver):
 
 def checkWork(driver):
     driver.get('https://hrm.hongik.ac.kr/new/')
-    cpath(driver, '출근버튼')
+    # cpath(driver, 출근버튼)
+    # cpath(driver, 출근버튼a)
+    # cpath(driver, 출근버튼b)
 
 
 if __name__ == '__main__':
