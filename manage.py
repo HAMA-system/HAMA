@@ -133,7 +133,6 @@ def write(driver):
     #   한국후지필름 11, 8687 등등 있는데 아무거나 해도 되는지 (엑셀엔 8687, 결의서 내역엔 11)
     #   세금처리에서 문제 생기면 세금계산 시트 -1 안되도록
     #   저장 빼놓기
-    file = xlsxFileController.load_xls('data.xlsx')
     try:
 
         driver.switch_to.default_content()
@@ -150,6 +149,8 @@ def write(driver):
             yes = input()
             if yes == '1':
                 break
+        file = xlsxFileController.load_xls('data.xlsx')
+        # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
         input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','V15')
         w = 0
         prev = input_data[0][0]
@@ -170,13 +171,13 @@ def write(driver):
                         # file = xlsxFileController.load_xls('data.xlsx')
                         # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
                     # time.sleep(5)
-                    while True:
-                        print("저장하시겠습니까? 1(예)/ 2(아니오)")
-                        save = input()
-                        if save == '1':
-                            break
-                        else:
-                            time.sleep(3)
+                    # while True:
+                    #     print("저장하시겠습니까? 1(예)/ 2(아니오)")
+                    #     save = input()
+                    #     if save == '1':
+                    #         break
+                    #     else:
+                    #         time.sleep(3)
                     cpath(driver,저장)
                     # time.sleep(20)
                     # time.sleep(3)
@@ -198,8 +199,9 @@ def write(driver):
                             #         print("결의내역 -1")
                             #         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
                             # xlsxFileController.save_xls(file)
-                        finally:
                             break
+                        except:
+                            pass
 
                         # except:
                         #     pass
@@ -324,13 +326,13 @@ def write(driver):
                     # file = xlsxFileController.load_xls('data.xlsx')
                     # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
                 # upload(driver)
-                while True:
-                    print("저장하시겠습니까? 1(예)/2(아니오)")
-                    save = input()
-                    if save == '1':
-                        break
-                    else:
-                        time.sleep(3)
+                # while True:
+                #     print("저장하시겠습니까? 1(예)/2(아니오)")
+                #     save = input()
+                #     if save == '1':
+                #         break
+                #     else:
+                #         time.sleep(3)
 
                 cpath(driver,저장)
                 time.sleep(0.3)
@@ -343,14 +345,19 @@ def write(driver):
                         #     if input_data[p][0] == prev:
                         #         print("결의내역 -1")
                         #         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
-                    finally:
                         break
+                    except:
+                        pass
+                # upload(driver)
                 for p in range(len(input_data)):
                     if input_data[p][0] == prev:
                         # print("결의내역 -1")
                         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
                 print("입력이 완료되었습니다.")
                 xlsxFileController.save_xls(file)
+                # print("A")
+                # time.sleep(5)
+                # upload(driver)
 
         # print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
         # d = input().strip()
@@ -446,7 +453,8 @@ def taxWrite(driver, num, file):
 
 def upload(driver):
     print("TEST")
-    driver.switch_to.frame(작성_프레임)
+    time.sleep(2)
+    # driver.switch_to.frame(작성_프레임)
     cpath(driver, 첨부파일)
 
     time.sleep(1000)
