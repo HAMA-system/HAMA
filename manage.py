@@ -2,12 +2,8 @@ import time
 
 import autoLogin
 import dateController
-from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from autoLogin import *
 from linkData import *
 import xlsxFileController
@@ -24,7 +20,27 @@ def refresh():
 
 def printProgress(i, max):
     c = int(i*max)
-    stdout.write('\r['+'#'*c+' '*(max-c-1)+']\t\t['+ str(int(i*100)) +'%]')
+    stdout.write('\r[' + '#'*c + ' '*(max-c-1) + ']\t\t[' + str(int(i*100)) + '%]')
+
+def dorm(driver, dep, pop):
+    fpath(driver, dep, '')
+    epath(driver, dep)
+
+    try:
+        driver.switch_to.alert.accept()
+    except:
+        driver.switch_to.frame('frmPopup')
+        epath(driver, pop)
+        fpath(driver, 소속코드, 'A33100')
+        epath(driver, 소속코드)
+        time.sleep(0.5)
+        actions = ActionChains(driver)
+        doubleClick = driver.find_element_by_xpath(소속테이블)
+        actions.move_to_element(doubleClick)
+        actions.double_click(doubleClick)
+        actions.perform()
+        driver.switch_to.default_content()
+        driver.switch_to.frame('ifr_d4_AHG020P')
 
 def lookup(driver):
     global sema
@@ -43,7 +59,6 @@ def lookup(driver):
             ignoreAutoLogout.timer = 0
             sema = 0
             print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/3(종료) ")
-                # acc, res = map(str,input().split())
             acc = input().strip()
             if acc == '1' or acc == '2' or acc == '3':
                 break
@@ -118,31 +133,32 @@ def write(driver):
     #   한국후지필름 11, 8687 등등 있는데 아무거나 해도 되는지 (엑셀엔 8687, 결의서 내역엔 11)
     #   세금처리에서 문제 생기면 세금계산 시트 -1 안되도록
     #   저장 빼놓기
-
+    file = xlsxFileController.load_xls('data.xlsx')
     try:
 
         driver.switch_to.default_content()
         cpath(driver,결의서_작성)
         driver.switch_to.frame(작성_프레임)
-        file = xlsxFileController.load_xls('data.xlsx')
         # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
         # progress = 0.0
         # progrexx_max = xlsxFileController.get_max_row(file,'결의내역','E')
         # progress_size = 30
-        input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','V15')
-        w = 0
-        # TOD0
-        prev = input_data[0][0]
-        tax = 0
+
         print("\n\n\n=================================")
         while True:
             print("결의서를 작성하시겠습니까? 1(예)/2(아니오)")
             yes = input()
             if yes == '1':
                 break
+        input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','V15')
+        w = 0
+        prev = input_data[0][0]
+        tax = 0
         if input_data[0][0] != -1:
             print("구분번호 :",input_data[0][0])
         for i in range(len(input_data)):
+            if input_data[i][2] is not None:
+                input_data[i][2] = str(input_data[i][2])[:10]
             if input_data[i][0] != -1 or prev != -1:
                 w = 1
                 # TOD0
@@ -154,10 +170,19 @@ def write(driver):
                         # file = xlsxFileController.load_xls('data.xlsx')
                         # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
                     # time.sleep(5)
+                    while True:
+                        print("저장하시겠습니까? 1(예)/ 2(아니오)")
+                        save = input()
+                        if save == '1':
+                            break
+                        else:
+                            time.sleep(3)
                     cpath(driver,저장)
                     # time.sleep(20)
                     # time.sleep(3)
                     time.sleep(0.3)
+                    # upload(driver)
+                    # time.sleep(100)
 
                     if input_data[i][0] == -1:
                         prev = input_data[i][0]
@@ -167,18 +192,22 @@ def write(driver):
                     while True:
                         try:
                             driver.switch_to.alert.accept()
-                            cpath(driver, 신규)
-                            for p in range(len(input_data)):
-                                if input_data[p][0] == prev:
-                                    xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
+                            # cpath(driver, 신규)
+                            # for p in range(len(input_data)):
+                            #     if input_data[p][0] == prev:
+                            #         print("결의내역 -1")
+                            #         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
                             # xlsxFileController.save_xls(file)
+                        finally:
                             break
-                        except:
-                            pass
+
+                        # except:
+                        #     pass
                     cpath(driver,신규)
                     print("구분번호 :", input_data[i][0])
-                    for p in range (len(input_data)):
+                    for p in range(len(input_data)):
                         if input_data[p][0] == prev:
+                            # print("결의내역 -1")
                             xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+15), -1)
                     # xlsxFileController.save_xls(file)
 
@@ -198,8 +227,9 @@ def write(driver):
                 if input_data[i][3] is not None:
                     if input_data[i][3] == '등록금':
                         select.select_by_index(0)
-                    elif input_data[i][3] == '비등록금':
+                    elif input_data[i][3] == '비등록금' or input_data[i][3] == '(서울)기숙사':
                         select.select_by_index(1)
+
                     time.sleep(0.3)
                 if input_data[i][2] is not None:
                     fpath(driver,결의일자_번호,input_data[i][2])
@@ -243,51 +273,17 @@ def write(driver):
                         driver.switch_to.default_content()
                         driver.switch_to.frame('ifr_d4_AHG020P')
 
-                #귀속부서
+                # 귀속부서
                 if input_data[i][9] is not None:
                     if input_data[i][9] == '기숙사':
-                        fpath(driver, 귀속부서, '')
-                        epath(driver, 귀속부서)
-
-                        try:
-                            driver.switch_to.alert.accept()
-                        except:
-                            driver.switch_to.frame('frmPopup')
-                            epath(driver,귀속부서팝업)
-                            fpath(driver,소속코드,'A33100')
-                            epath(driver,소속코드)
-                            time.sleep(0.5)
-                            actions = ActionChains(driver)
-                            doubleClick = driver.find_element_by_xpath(소속테이블)
-                            actions.move_to_element(doubleClick)
-                            actions.double_click(doubleClick)
-                            actions.perform()
-                            driver.switch_to.default_content()
-                            driver.switch_to.frame('ifr_d4_AHG020P')
+                        dorm(driver, 귀속부서, 귀속부서팝업)
                     else:
                         fpath(driver, 귀속부서, input_data[i][9])
                         epath(driver, 귀속부서)
 
                 if input_data[i][10] is not None:
                     if input_data[i][10] == '기숙사':
-                        fpath(driver, 예산부서, '')
-                        epath(driver, 예산부서)
-
-                        try:
-                            driver.switch_to.alert.accept()
-                        except:
-                            driver.switch_to.frame('frmPopup')
-                            epath(driver,예산부서팝업)
-                            fpath(driver,소속코드,'A33100')
-                            epath(driver,소속코드)
-                            time.sleep(0.5)
-                            actions = ActionChains(driver)
-                            doubleClick = driver.find_element_by_xpath(소속테이블)
-                            actions.move_to_element(doubleClick)
-                            actions.double_click(doubleClick)
-                            actions.perform()
-                            driver.switch_to.default_content()
-                            driver.switch_to.frame('ifr_d4_AHG020P')
+                        dorm(driver, 예산부서, 예산부서팝업)
                     else:
                         fpath(driver, 예산부서, input_data[i][10])
                         epath(driver, 예산부서)
@@ -327,21 +323,32 @@ def write(driver):
                     tax = 0
                     # file = xlsxFileController.load_xls('data.xlsx')
                     # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
+                # upload(driver)
+                while True:
+                    print("저장하시겠습니까? 1(예)/2(아니오)")
+                    save = input()
+                    if save == '1':
+                        break
+                    else:
+                        time.sleep(3)
+
                 cpath(driver,저장)
                 time.sleep(0.3)
-
-                # time.sleep(20)
+                # upload(driver)
+                # time.sleep(100)
                 while True:
                     try:
                         driver.switch_to.alert.dismiss()
-                        for p in range(len(input_data)):
-                            if input_data[p][0] == prev:
-                                xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
-                        # xlsxFileController.save_xls(file)
+                        # for p in range(len(input_data)):
+                        #     if input_data[p][0] == prev:
+                        #         print("결의내역 -1")
+                        #         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
+                    finally:
                         break
-                    except:
-                        pass
-
+                for p in range(len(input_data)):
+                    if input_data[p][0] == prev:
+                        # print("결의내역 -1")
+                        xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
                 print("입력이 완료되었습니다.")
                 xlsxFileController.save_xls(file)
 
@@ -387,10 +394,8 @@ def taxWrite(driver, num, file):
             elif tax_data[j][1] == '매입세금-간':
                 select.select_by_index(9)
 
-            # TODO elif 추가
             fpath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
             epath(driver, 발행일자)
-            # TODO 거래처 고르는 것 어떡할 지 생각. tax[][2]
             fpath(driver, 거래처, '')
             epath(driver, 거래처)
             time.sleep(0.5)  # 없어도 돌아가긴 함
@@ -419,6 +424,7 @@ def taxWrite(driver, num, file):
                 fpath(driver, 공급가액, tax_data[j][4])
                 fpath(driver, 세액, tax_data[j][5])
             # print(3)
+
             select = Select(driver.find_element_by_id('ddlBillDiv'))
             if tax_data[j][6] == '일반':
                 select.select_by_index(1)
@@ -427,14 +433,20 @@ def taxWrite(driver, num, file):
             elif tax_data[j][6] == '현금':
                 select.select_by_index(3)
             # print(4)
+            # print(1)
             cpath(driver, 세금계산_제출)
+            # print(2)
             time.sleep(0.5)
-    start = time.time()
     for p in range(len(tax_data)):
         if tax_data[p][0] == num:
             xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
-    # xlsxFileController.save_xls(file)
-    # print(time.time() - start)
     cpath(driver, 결의내역_탭)
     print("세금처리가 완료되었습니다.")
     return file
+
+def upload(driver):
+    print("TEST")
+    driver.switch_to.frame(작성_프레임)
+    cpath(driver, 첨부파일)
+
+    time.sleep(1000)
