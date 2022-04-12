@@ -70,8 +70,7 @@ def epath(driver,path):
     # element.send_keys(Keys.ENTER)
 
 def login(driver):
-    login_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('loginData.xlsx'), '로그인', 'B60', 'C60')
-    # login_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls('C:/auto/loginData.xlsx'), '로그인', 'B60', 'C60')
+    login_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls(링크[1]), '로그인', 'B60', 'C60')
 
     fname(driver,'USER_ID',login_data[0])
     fname(driver,'PASSWD',login_data[1])
