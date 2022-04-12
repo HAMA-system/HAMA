@@ -146,8 +146,7 @@ def write(driver):
             yes = input()
             if yes == '1':
                 break
-        file = xlsxFileController.load_xls('data.xlsx')
-        # file = xlsxFileController.load_xls('C:/auto/data.xlsx')
+        file = xlsxFileController.load_xls(링크[2])
         input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','V15')
         w = 0
         prev = input_data[0][0]

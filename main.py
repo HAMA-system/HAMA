@@ -5,10 +5,10 @@ import errorController
 import autoLogin
 import manage
 import sys, os, time
+from linkData import *
 def set_chromedriver():
     try:
-        driver = webdriver.Chrome("./chromedriver")
-        # driver = webdriver.Chrome("C:/auto/chromedriver.exe")
+        driver = webdriver.Chrome(링크[0])
         # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
         # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
 
