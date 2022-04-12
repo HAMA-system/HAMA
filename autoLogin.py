@@ -99,6 +99,7 @@ def checkWork(driver):
     # cpath(driver, 출근버튼)
     # cpath(driver, 출근버튼a)
     # cpath(driver, 출근버튼b)
+    time.sleep(10000)
 
 
 if __name__ == '__main__':
