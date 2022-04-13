@@ -17,6 +17,12 @@ def set_chromedriver():
     return driver
 
 if __name__ == '__main__':
+    # path = "/Users/MS/PycharmProjects/HAMA/1"
+    # uploadFile = path + '/'
+    # for x in os.listdir(path):
+    #     uploadFile += x + '\n'
+    # print(uploadFile)
+    # time.sleep(10000)
     driver = set_chromedriver()
     driver.implicitly_wait(time_to_wait=10)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
