@@ -3,7 +3,7 @@ import errorController
 
 def load_xls(filename):
     try:
-        xlsfile = openpyxl.load_workbook(filename)
+        xlsfile = openpyxl.load_workbook(filename, data_only=True)
         return xlsfile
     except:
         errorController.errorMsg(1)
