@@ -308,7 +308,7 @@ def write(driver):
                         break
                     except:
                         pass
-                # upload(driver, prev)
+                upload(driver, prev)
                 for p in range(len(input_data)):
                     if input_data[p][0] == prev:
                         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
@@ -400,15 +400,8 @@ def upload(driver, num):
     for f in os.listdir(path):
         driver.find_element_by_xpath(파일선택).send_keys(path + f)
         time.sleep(0.3)
-        path(driver, 파일업로드)
-    # driver.find_element_by_xpath(파일선택).send_keys("/Users/MS/PycharmProjects/HAMA/1/test1.pdf")
-    # time.sleep(0.3)
-    # cpath(driver, 파일업로드)
-    # time.sleep(1)
-    # driver.find_element_by_xpath(파일선택).send_keys("/Users/MS/PycharmProjects/HAMA/1/test4.pdf")
+        cpath(driver, 파일업로드)
 
-    # time.sleep(0.3)
-    # cpath(driver, 파일업로드)
 
 # TEST
 if __name__ == '__main__':

@@ -27,6 +27,7 @@ def ename(driver,name):
     element.send_keys(Keys.ENTER)
 def fpath(driver,path,value):
     # time.sleep(0.35) # 0.5
+    time.sleep(0.1)
     while True:
         try:
             driver.find_element_by_xpath(path).clear()
