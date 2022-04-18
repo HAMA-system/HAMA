@@ -175,6 +175,7 @@ def write(driver):
 
                     cpath(driver,저장)
                     time.sleep(0.3)
+
                     if input_data[i][0] == -1:
                         prev = input_data[i][0]
                         continue
@@ -187,7 +188,9 @@ def write(driver):
                         except:
                             pass
 
+                    upload(driver, prev)
                     cpath(driver,신규)
+
                     print("구분번호 :", input_data[i][0])
                     for p in range(len(input_data)):
                         if input_data[p][0] == prev:
@@ -308,7 +311,7 @@ def write(driver):
                         break
                     except:
                         pass
-                # upload(driver, prev)
+                upload(driver, prev)
                 for p in range(len(input_data)):
                     if input_data[p][0] == prev:
                         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
@@ -393,25 +396,19 @@ def taxWrite(driver, num, file):
     return file
 
 def upload(driver, num):
-    num = str(num)
-    cpath(driver, 첨부파일)
-    driver.switch_to.window(driver.window_handles[1])
-    path = "/Users/MS/PycharmProjects/HAMA/" + num + '/'
-    for f in os.listdir(path):
-        driver.find_element_by_xpath(파일선택).send_keys(path + f)
+    path = "/Users/MS/PycharmProjects/HAMA/" + str(num) + '/'
+    if os.listdir(path):
+        cpath(driver, 첨부파일)
+        driver.switch_to.window(driver.window_handles[1])
+        for f in os.listdir(path):
+            driver.find_element_by_xpath(파일선택).send_keys(path + f)
+            time.sleep(0.3)
+            cpath(driver, 파일업로드)
+            print(f, "파일 업로드 완료")
+
+        # 나중에 조정해야함
+        time.sleep(0.5)
+
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
         time.sleep(0.3)
-        path(driver, 파일업로드)
-    # driver.find_element_by_xpath(파일선택).send_keys("/Users/MS/PycharmProjects/HAMA/1/test1.pdf")
-    # time.sleep(0.3)
-    # cpath(driver, 파일업로드)
-    # time.sleep(1)
-    # driver.find_element_by_xpath(파일선택).send_keys("/Users/MS/PycharmProjects/HAMA/1/test4.pdf")
-
-    # time.sleep(0.3)
-    # cpath(driver, 파일업로드)
-
-# TEST
-if __name__ == '__main__':
-    driver = webdriver.Chrome(링크[0])
-    driver.get("https://convertio.co/kr/image-converter/")
-    driver.find_element_by_css_selector("input[type='file']").send_keys("/Users/MS/PycharmProjects/HAMA/1/test1.pdf\n/Users/MS/PycharmProjects/HAMA/1/test2.pdf")
