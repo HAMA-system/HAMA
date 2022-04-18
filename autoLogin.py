@@ -46,7 +46,7 @@ def fpath(driver,path,value):
     # time.sleep(1)
     # element.send_keys(value)
 def cpath(driver,path):
-    # time.sleep(0.5)
+    time.sleep(0.1)
     while True:
         try:
             element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
