@@ -148,6 +148,7 @@ def write(driver):
             yes = input()
             if yes == '1':
                 break
+
         file = xlsxFileController.load_xls(링크[2])
         input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','V15')
         w = 0
@@ -396,7 +397,7 @@ def taxWrite(driver, num, file):
     return file
 
 def upload(driver, num):
-    path = "/Users/MS/PycharmProjects/HAMA/" + str(num) + '/'
+    path = 링크[3] + str(num) + '/'
     if os.listdir(path):
         cpath(driver, 첨부파일)
         driver.switch_to.window(driver.window_handles[1])
