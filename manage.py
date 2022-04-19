@@ -162,8 +162,10 @@ def write(driver):
             # 아니면 target_data = input_data
             if input_data[i][18] == 1:
                 target_data = monthly_data
+                isMonthly = True
             else:
                 target_data = input_data
+                isMonthly = False
 
             if target_data[i][2] is not None:
                 target_data[i][2] = str(target_data[i][2])[:10]
@@ -302,7 +304,7 @@ def write(driver):
 
             if i == len(target_data)-1 and w == 1:
                 if tax == 1:
-                    file = taxWrite(driver, target_data[i][0], file)
+                    file = taxWrite(driver, target_data[i][0], file, isMonthly)
                     tax = 0
                 # while True:
                 #     print("저장하시겠습니까? 1(예)/2(아니오)")
@@ -342,10 +344,13 @@ def write(driver):
         autoLogin.afterLogin(driver)
         xlsxFileController.save_xls(file)
 
-def taxWrite(driver, num, file):
+def taxWrite(driver, num, file, isMonthly):
     time.sleep(0.3)
     cpath(driver, 세금계산_탭)
-    tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
+    if isMonthly:
+        tax_data = xlsxFileController.all_data_fetch(file, '세금계산(정기)', 'E20', 'L20')
+    else:
+        tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
     for j in range(len(tax_data)):
         if tax_data[j][0] == num:
             select = Select(driver.find_element_by_xpath(과세구분))
