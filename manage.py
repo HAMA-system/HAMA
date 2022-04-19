@@ -150,18 +150,26 @@ def write(driver):
                 break
 
         file = xlsxFileController.load_xls(링크[2])
-        input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','V15')
+        input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','W15')
+        monthly_data = xlsxFileController.all_data_fetch(file,'결의내역(정기)','E15','W15')
         w = 0
         prev = input_data[0][0]
         tax = 0
         if input_data[0][0] != -1:
             print("구분번호 :",input_data[0][0])
         for i in range(len(input_data)):
-            if input_data[i][2] is not None:
-                input_data[i][2] = str(input_data[i][2])[:10]
-            if input_data[i][0] != -1 or prev != -1:
+            # 정기체크 후 정기면 target_data = monthly_data
+            # 아니면 target_data = input_data
+            if input_data[i][18] == 1:
+                target_data = monthly_data
+            else:
+                target_data = input_data
+
+            if target_data[i][2] is not None:
+                target_data[i][2] = str(target_data[i][2])[:10]
+            if target_data[i][0] != -1 or prev != -1:
                 w = 1
-                if prev != input_data[i][0]:
+                if prev != target_data[i][0]:
                     if tax == 1:
                         file = taxWrite(driver, prev, file)
                         tax = 0
@@ -177,8 +185,8 @@ def write(driver):
                     cpath(driver,저장)
                     time.sleep(0.3)
 
-                    if input_data[i][0] == -1:
-                        prev = input_data[i][0]
+                    if target_data[i][0] == -1:
+                        prev = target_data[i][0]
                         continue
 
                     # TODO 이것때문에 속도 느려지는지 테스트
@@ -192,9 +200,9 @@ def write(driver):
                     upload(driver, prev)
                     cpath(driver,신규)
 
-                    print("구분번호 :", input_data[i][0])
-                    for p in range(len(input_data)):
-                        if input_data[p][0] == prev:
+                    print("구분번호 :", target_data[i][0])
+                    for p in range(len(target_data)):
+                        if target_data[p][0] == prev:
                             xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+15), -1)
 
                     time.sleep(0.5)
@@ -206,38 +214,38 @@ def write(driver):
                 time.sleep(0.5)
 
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
-                if input_data[i][3] is not None:
-                    if input_data[i][3] == '등록금':
+                if target_data[i][3] is not None:
+                    if target_data[i][3] == '등록금':
                         select.select_by_index(0)
-                    elif input_data[i][3] == '비등록금' or input_data[i][3] == '(서울)기숙사':
+                    elif target_data[i][3] == '비등록금' or target_data[i][3] == '(서울)기숙사':
                         select.select_by_index(1)
 
                     time.sleep(0.2)
-                if input_data[i][2] is not None:
-                    fpath(driver,결의일자_번호,input_data[i][2])
+                if target_data[i][2] is not None:
+                    fpath(driver,결의일자_번호,target_data[i][2])
 
                 select = Select(driver.find_element_by_id('ddlResolutionDiv'))
-                if input_data[i][4] is not None:
-                    if input_data[i][4] == '수입':
+                if target_data[i][4] is not None:
+                    if target_data[i][4] == '수입':
                         select.select_by_index(0)
-                    elif input_data[i][4] == '지출':
+                    elif target_data[i][4] == '지출':
                         select.select_by_index(1)
-                    elif input_data[i][4] == '대체':
+                    elif target_data[i][4] == '대체':
                         select.select_by_index(2)
-                    fpath(driver,사업코드,input_data[i][3])
+                    fpath(driver,사업코드,target_data[i][3])
                     epath(driver,사업코드)
                     driver.switch_to.frame('frmPopup')
                     epath(driver,사업팝업)
                     driver.switch_to.default_content()
                     driver.switch_to.frame('ifr_d4_AHG020P')
 
-                if input_data[i][1] is not None:
-                    fpath(driver,결의서_제목,input_data[i][1])
-                fpath(driver,계정과목,input_data[i][6])
+                if target_data[i][1] is not None:
+                    fpath(driver,결의서_제목,target_data[i][1])
+                fpath(driver,계정과목,target_data[i][6])
                 epath(driver,계정과목)
 
-                if input_data[i][7] is not None:
-                    fpath(driver,관리코드,input_data[i][7])
+                if target_data[i][7] is not None:
+                    fpath(driver,관리코드,target_data[i][7])
                     epath(driver,관리코드)
                     time.sleep(0.2)
                     try:
@@ -249,40 +257,40 @@ def write(driver):
                         driver.switch_to.default_content()
                         driver.switch_to.frame('ifr_d4_AHG020P')
 
-                if input_data[i][9] is not None:
-                    if input_data[i][9] == '기숙사':
+                if target_data[i][9] is not None:
+                    if target_data[i][9] == '기숙사':
                         dorm(driver, 귀속부서, 귀속부서팝업)
                     else:
-                        fpath(driver, 귀속부서, input_data[i][9])
+                        fpath(driver, 귀속부서, target_data[i][9])
                         epath(driver, 귀속부서)
 
-                if input_data[i][10] is not None:
-                    if input_data[i][10] == '기숙사':
+                if target_data[i][10] is not None:
+                    if target_data[i][10] == '기숙사':
                         dorm(driver, 예산부서, 예산부서팝업)
                     else:
-                        fpath(driver, 예산부서, input_data[i][10])
+                        fpath(driver, 예산부서, target_data[i][10])
                         epath(driver, 예산부서)
 
                 select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
-                if input_data[i][11] == '없음':
+                if target_data[i][11] == '없음':
                     select.select_by_index(0)
-                elif input_data[i][11] == '세금':
+                elif target_data[i][11] == '세금':
                     select.select_by_index(1)
-                elif input_data[i][11] == '기타':
+                elif target_data[i][11] == '기타':
                     select.select_by_index(2)
-                elif input_data[i][11] == '현금':
+                elif target_data[i][11] == '현금':
                     select.select_by_index(3)
 
-                if input_data[i][14] is not None:
-                    fpath(driver,지출,input_data[i][14])
-                if input_data[i][15] is not None:
-                    fpath(driver,수입,input_data[i][15])
-                if input_data[i][16] is not None:
-                    fpath(driver,적요,input_data[i][16])
+                if target_data[i][14] is not None:
+                    fpath(driver,지출,target_data[i][14])
+                if target_data[i][15] is not None:
+                    fpath(driver,수입,target_data[i][15])
+                if target_data[i][16] is not None:
+                    fpath(driver,적요,target_data[i][16])
                 cpath(driver,결의내역_제출)
                 time.sleep(0.3)
 
-                if input_data[i][11] == '세금':
+                if target_data[i][11] == '세금':
                     tax = 1
                     while True:
                         try:
@@ -290,11 +298,11 @@ def write(driver):
                             break
                         except:
                             pass
-            prev = input_data[i][0]
+            prev = target_data[i][0]
 
-            if i == len(input_data)-1 and w == 1:
+            if i == len(target_data)-1 and w == 1:
                 if tax == 1:
-                    file = taxWrite(driver, input_data[i][0], file)
+                    file = taxWrite(driver, target_data[i][0], file)
                     tax = 0
                 # while True:
                 #     print("저장하시겠습니까? 1(예)/2(아니오)")
@@ -314,8 +322,8 @@ def write(driver):
                         pass
                 upload(driver, prev)
 
-                for p in range(len(input_data)):
-                    if input_data[p][0] == prev:
+                for p in range(len(target_data)):
+                    if target_data[p][0] == prev:
                         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
                 print("입력이 완료되었습니다.")
                 xlsxFileController.save_xls(file)
