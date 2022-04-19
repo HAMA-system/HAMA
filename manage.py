@@ -313,6 +313,7 @@ def write(driver):
                     except:
                         pass
                 upload(driver, prev)
+
                 for p in range(len(input_data)):
                     if input_data[p][0] == prev:
                         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
@@ -409,7 +410,15 @@ def upload(driver, num):
 
         # 나중에 조정해야함
         time.sleep(0.5)
-
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
+        time.sleep(0.1)
+        driver.switch_to.frame(작성_프레임)
+        cpath(driver, 저장)
         time.sleep(0.3)
+        while True:
+            try:
+                driver.switch_to.alert.dismiss()
+                break
+            except:
+                pass
