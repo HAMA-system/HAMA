@@ -133,6 +133,22 @@ def write(driver):
     #   세금처리에서 문제 생기면 세금계산 시트 -1 안되도록
     #   저장 빼놓기
     #   렉 걸릴때 처리할 것 추가
+    #   추가 할 것 :
+    #   i 유지 코드
+    #   가서 여러줄 받고 돌아오게 하기
+    #
+
+    # TODO
+    #   input_data[i][17] > 0, isMonthly = 1
+    #   isMonthly == 1, change sheet -> while input_data[j][0] != input_data[i][17] j++ (+ tax)
+    #   if end, return i
+    #   Solutions?
+    #       - use queue?
+    #           > for i in range -> while queue
+    #           > tax_write(driver, tax_queue)
+    #           > queue[0][0] = row num
+    #           > while queue[0][1] == input_data[row num][1], queue popleft
+    #       -
     try:
 
         driver.switch_to.default_content()
@@ -151,24 +167,29 @@ def write(driver):
 
         file = xlsxFileController.load_xls(링크[2])
         input_data = xlsxFileController.all_data_fetch(file,'결의내역','E15','W15')
-        monthly_data = xlsxFileController.all_data_fetch(file,'결의내역(정기)','E15','W15')
+        # monthly_data = xlsxFileController.all_data_fetch(file,'결의내역(정기)','E15','W15')
         w = 0
         prev = input_data[0][0]
         tax = 0
+
+        target_data = input_data
+        isMonthly = False
+
         if input_data[0][0] != -1:
             print("구분번호 :",input_data[0][0])
         for i in range(len(input_data)):
             # 정기체크 후 정기면 target_data = monthly_data
             # 아니면 target_data = input_data
-            if input_data[i][18] == 1:
-                target_data = monthly_data
-                isMonthly = True
-            else:
-                target_data = input_data
-                isMonthly = False
 
-            if target_data[i][2] is not None:
-                target_data[i][2] = str(target_data[i][2])[:10]
+            # if input_data[i][17] > 0:
+            #     # temp = i
+            #     # i = input_data[i][17]
+            #     target_data = monthly_data
+            #     isMonthly = True
+            # else:
+            #     target_data = input_data
+            #     isMonthly = False
+
             if target_data[i][0] != -1 or prev != -1:
                 w = 1
                 if prev != target_data[i][0]:
@@ -191,7 +212,6 @@ def write(driver):
                         prev = target_data[i][0]
                         continue
 
-                    # TODO 이것때문에 속도 느려지는지 테스트
                     while True:
                         try:
                             driver.switch_to.alert.accept()
@@ -214,7 +234,13 @@ def write(driver):
                 # progress += progress/progrexx_max
 
                 time.sleep(0.5)
-
+                if target_data[i][2] is not None:
+                    target_data[i][2] = str(target_data[i][2])[:10]
+                    if target_data[i][2][:4] != '2022':
+                        print(target_data[i][2][:4])
+                        fpath(driver, 회계년도, target_data[i][2][:4])
+                        time.sleep(0.2)
+                        epath(driver, 회계년도)
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
                 if target_data[i][3] is not None:
                     if target_data[i][3] == '등록금':
