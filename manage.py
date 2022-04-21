@@ -234,21 +234,23 @@ def write(driver):
                 # progress += progress/progrexx_max
 
                 time.sleep(0.5)
+
                 if target_data[i][2] is not None:
                     target_data[i][2] = str(target_data[i][2])[:10]
-                    if target_data[i][2][:4] != '2022':
-                        print(target_data[i][2][:4])
-                        fpath(driver, 회계년도, target_data[i][2][:4])
-                        time.sleep(0.2)
-                        epath(driver, 회계년도)
+                #     if target_data[i][2][:4] != '2022':
+                #         time.sleep(1)
+                #         fpath(driver, 회계년도, target_data[i][2][:2])
+                #         time.sleep(5)
+                #         time.sleep(0.2)
+
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
                 if target_data[i][3] is not None:
                     if target_data[i][3] == '등록금':
                         select.select_by_index(0)
                     elif target_data[i][3] == '비등록금' or target_data[i][3] == '(서울)기숙사':
                         select.select_by_index(1)
-
                     time.sleep(0.2)
+
                 if target_data[i][2] is not None:
                     fpath(driver,결의일자_번호,target_data[i][2])
 
@@ -438,7 +440,12 @@ def taxWrite(driver, num, file, isMonthly):
 
 def upload(driver, num):
     path = 링크[3] + str(num) + '/'
-    if os.listdir(path):
+    exist = 0
+    for x in 링크[3]:
+        if x == str(num):
+            exist = 1
+            break
+    if exist:
         cpath(driver, 첨부파일)
         driver.switch_to.window(driver.window_handles[1])
         for f in os.listdir(path):
