@@ -237,11 +237,12 @@ def write(driver):
 
                 if target_data[i][2] is not None:
                     target_data[i][2] = str(target_data[i][2])[:10]
-                #     if target_data[i][2][:4] != '2022':
-                #         time.sleep(1)
-                #         fpath(driver, 회계년도, target_data[i][2][:2])
-                #         time.sleep(5)
-                #         time.sleep(0.2)
+                    if target_data[i][2][:4] != '2022':
+                        time.sleep(1)
+                        # fpath(driver, 회계년도, target_data[i][2][:2])
+                        fpath(driver, 'txtSAcctYear', target_data[i][2][:4])
+                        time.sleep(5000)
+                        time.sleep(0.2)
 
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
                 if target_data[i][3] is not None:
@@ -441,7 +442,7 @@ def taxWrite(driver, num, file, isMonthly):
 def upload(driver, num):
     path = 링크[3] + str(num) + '/'
     exist = 0
-    for x in 링크[3]:
+    for x in os.listdir(링크[3]):
         if x == str(num):
             exist = 1
             break
