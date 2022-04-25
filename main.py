@@ -4,6 +4,7 @@ import dateController
 import errorController
 import autoLogin
 import manage
+import manageRefactoring
 import sys, os, time
 from linkData import *
 def set_chromedriver():
@@ -33,7 +34,7 @@ if __name__ == '__main__':
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':
-            manage.write(driver)
+            manageRefactoring.write(driver)
         # elif select == '종료':
         #     break
         # else:
