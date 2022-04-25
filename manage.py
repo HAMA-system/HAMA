@@ -175,7 +175,7 @@ def write(driver):
 
         target_data = input_data
         isMonthly = False
-
+        row = 15
         if input_data[0][0] != -1:
             print("구분번호 :",input_data[0][0])
         for i in range(len(input_data)):
@@ -195,8 +195,9 @@ def write(driver):
                 w = 1
                 if prev != target_data[i][0]:
                     if tax == 1:
-                        file = taxWrite(driver, prev, file)
+                        file = taxWrite(driver, prev, file, isMonthly, row)
                         tax = 0
+                    row = i
 
                     save(driver)
 
@@ -305,7 +306,7 @@ def write(driver):
 
             if i == len(target_data)-1 and w == 1:
                 if tax == 1:
-                    file = taxWrite(driver, target_data[i][0], file, isMonthly)
+                    file = taxWrite(driver, target_data[i][0], file, isMonthly, row)
                     tax = 0
 
                 save(driver)
@@ -325,13 +326,13 @@ def write(driver):
         autoLogin.afterLogin(driver)
         xlsxFileController.save_xls(file)
 
-def taxWrite(driver, num, file, isMonthly):
+def taxWrite(driver, num, file, isMonthly, row):
     time.sleep(0.3)
     cpath(driver, 세금계산_탭)
     if isMonthly:
-        tax_data = xlsxFileController.all_data_fetch(file, '세금계산(정기)', 'E20', 'L20')
-    else:
         tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
+    else:
+        tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E'+str(row), 'L'+(row))
     for j in range(len(tax_data)):
         if tax_data[j][0] == num:
             test = {"매입세금-불" : 1, "매입세금" : 2, "매입계산" : 3, "매출세금" : 4, "매출계산" : 5,
@@ -365,9 +366,13 @@ def taxWrite(driver, num, file, isMonthly):
             test1 = {"일반" : 1, "전자" : 2, "현금" : 3}
             select.select_by_index(test1[tax_data[j][6]])
             time.sleep(0.5)
+        else:
+            break
     for p in range(len(tax_data)):
         if tax_data[p][0] == num:
             xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
+        else:
+            break
     cpath(driver, 결의내역_탭)
     print("세금처리가 완료되었습니다.")
     return file
