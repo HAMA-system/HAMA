@@ -335,7 +335,9 @@ def taxWrite(driver, num, file, isMonthly, row):
     cpath(driver, 세금계산_탭)
     print(num, isMonthly, row)
     if isMonthly:
+        print("T0")
         tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB'+str(row), 'AJ'+str(row))
+        print("T0.5")
     else:
         tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
     print("T1")

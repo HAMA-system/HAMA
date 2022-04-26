@@ -1,5 +1,7 @@
 import openpyxl
 import errorController
+import linkData
+
 
 def load_xls(filename):
     try:
@@ -24,21 +26,25 @@ def get_max_row(file, sheetname, column):
             count += 1
         i = i + 1
 
+# Z ~ AA 케이스 고려 안함
 def get_singleline_data(file, sheetname, firstcell, lastcell):
     cell = firstcell
     data = []
 
     if firstcell[1:] != lastcell[1:]:
-        if firstcell[1] >= 65 and firstcell[1] <= 90:
+        if 65 <= ord(firstcell[1]) <= 90:
             if firstcell[2:] != lastcell[2:]:
                 errorController.errorMsg(2)
         else:
             errorController.errorMsg(2)
         return data
 
-    while cell!=lastcell:
+    while cell != lastcell:
         data.append(get_cell_data(file,sheetname,cell))
-        cell = chr(ord(cell[:1])+1) + cell[1:]
+        if 65 <= ord(cell[1]) <= 90:
+            cell = cell[0] + chr(ord(cell[1])+1) + cell[2:]
+        else:
+            cell = chr(ord(cell[:1])+1) + cell[1:]
     return data
 
 def all_data_fetch(file, sheetname, firstcell, lastcell):
@@ -49,8 +55,12 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
 
     while get_cell_data(file, sheetname, fcell)!=None:
         data.append(get_singleline_data(file, sheetname, fcell, lcell))
-        fcell = fcell[:1] + str(int(fcell[1:]) + 1)
-        lcell = lcell[:1] + str(int(lcell[1:]) + 1)
+        if 65 <= ord(fcell[1]) <= 90:
+            fcell = fcell[:2] + str(int(fcell[2:]) + 1)
+            lcell = lcell[:2] + str(int(lcell[2:]) + 1)
+        else:
+            fcell = fcell[:1] + str(int(fcell[1:]) + 1)
+            lcell = lcell[:1] + str(int(lcell[1:]) + 1)
         # print(fcell + ' ' + lcell)
 
     return data
@@ -62,7 +72,7 @@ def put_cell_data(file, sheetname, cell, text):
     s[cell] = text
 
 def save_xls(file):
-    file.save("./data.xlsx")
+    file.save(linkData.링크[2])
 
 def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
     i = row
