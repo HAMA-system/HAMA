@@ -28,8 +28,12 @@ def get_singleline_data(file, sheetname, firstcell, lastcell):
     cell = firstcell
     data = []
 
-    if firstcell[1:]!=lastcell[1:]:
-        errorController.errorMsg(2)
+    if firstcell[1:] != lastcell[1:]:
+        if firstcell[1] >= 65 and firstcell[1] <= 90:
+            if firstcell[2:] != lastcell[2:]:
+                errorController.errorMsg(2)
+        else:
+            errorController.errorMsg(2)
         return data
 
     while cell!=lastcell:
