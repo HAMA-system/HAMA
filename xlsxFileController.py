@@ -11,6 +11,7 @@ def load_xls(filename):
         errorController.errorMsg(1)
 
 def get_cell_data(file, sheetname ,cell):
+    # print(sheetname)
     sheet = file.get_sheet_by_name(sheetname)
     return sheet[cell].value
 
@@ -35,9 +36,10 @@ def get_singleline_data(file, sheetname, firstcell, lastcell):
         if 65 <= ord(firstcell[1]) <= 90:
             if firstcell[2:] != lastcell[2:]:
                 errorController.errorMsg(2)
+                return data
         else:
             errorController.errorMsg(2)
-        return data
+            return data
 
     while cell != lastcell:
         data.append(get_cell_data(file,sheetname,cell))
@@ -52,8 +54,8 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
     lcell = lastcell
 
     data = []
-
     while get_cell_data(file, sheetname, fcell)!=None:
+        # print(fcell, lcell)
         data.append(get_singleline_data(file, sheetname, fcell, lcell))
         if 65 <= ord(fcell[1]) <= 90:
             fcell = fcell[:2] + str(int(fcell[2:]) + 1)
@@ -96,3 +98,8 @@ def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
 
     # save_xls(file)
     # print("all -1 row is deleted")
+
+# if __name__ == '__main__':
+#     file = load_xls(linkData.링크[2])
+#     test = all_data_fetch(file, '결의내역', 'AB19', 'AI19')
+#     print(test)
