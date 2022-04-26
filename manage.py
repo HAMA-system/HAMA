@@ -1,6 +1,4 @@
 import os
-import time
-
 import autoLogin
 import dateController
 from selenium.webdriver.support.ui import Select
@@ -124,15 +122,11 @@ def lookup(driver):
         fpath(driver,제목_검색,search)
         cname(driver,'CSMenuButton1$List')
         print("\n=====================================================")
+
 def write(driver):
     # TODO
-    #   지급처 추가
     #   해결할 것 :
-    #   미지급금 관리코드 오류 처리
     #   거래처 코드 11 처럼 두자리면 클릭해야함
-    #   한국후지필름 11, 8687 등등 있는데 아무거나 해도 되는지 (엑셀엔 8687, 결의서 내역엔 11)
-    #   세금처리에서 문제 생기면 세금계산 시트 -1 안되도록
-    #   저장 빼놓기
     #   렉 걸릴때 처리할 것 추가
     #   추가 할 것 :
     #   i 유지 코드
@@ -178,18 +172,19 @@ def write(driver):
         row = 15
         if input_data[0][0] != -1:
             print("구분번호 :",input_data[0][0])
-        for i in range(len(input_data)):
-            # 정기체크 후 정기면 target_data = monthly_data
-            # 아니면 target_data = input_data
 
-            # if input_data[i][17] > 0:
-            #     # temp = i
-            #     # i = input_data[i][17]
-            #     target_data = monthly_data
-            #     isMonthly = True
-            # else:
-            #     target_data = input_data
-            #     isMonthly = False
+        # Main loop
+        for i in range(len(input_data)):
+            isMonthly = False
+
+            # 정기 체크
+            if target_data[i][1] is not None:
+                isMonthly = True
+                target_data[i][15] = str(target_data[i][15])
+                for j in range(len(target_data[i][15])):
+                    if target_data[i][15][j] == '월':
+                        target_data[i][15][j-1] = input_data[i][2]
+                print(target_data[i][15])
 
             if target_data[i][0] != -1 or prev != -1:
                 w = 1
@@ -222,8 +217,8 @@ def write(driver):
 
                 time.sleep(0.5)
 
-                if target_data[i][2] is not None:
-                    target_data[i][2] = str(target_data[i][2])[:10]
+                if target_data[i][4] is not None:
+                    target_data[i][4] = str(target_data[i][4])[:10]
                     # if target_data[i][2][:4] != '2022':
                     #     time.sleep(1)
                     #     fpath(driver, 회계년도, target_data[i][2][:2])
@@ -232,35 +227,35 @@ def write(driver):
                     #     time.sleep(0.2)
 
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
-                if target_data[i][3] is not None:
-                    if target_data[i][3] == '등록금':
+                if target_data[i][5] is not None:
+                    if target_data[i][5] == '등록금':
                         select.select_by_index(0)
-                    elif target_data[i][3] == '비등록금' or target_data[i][3] == '(서울)기숙사':
+                    elif target_data[i][5] == '비등록금' or target_data[i][5] == '(서울)기숙사':
                         select.select_by_index(1)
                     time.sleep(0.2)
 
-                if target_data[i][2] is not None:
-                    fpath(driver,결의일자_번호,target_data[i][2])
+                if target_data[i][4] is not None:
+                    fpath(driver,결의일자_번호,target_data[i][4])
 
                 select = Select(driver.find_element_by_id('ddlResolutionDiv'))
-                if target_data[i][4] is not None:
+                if target_data[i][6] is not None:
                     test3 = {"수입" : 0, "지출" : 1, "대체" : 2}
-                    select.select_by_index(test3[target_data[i][4]])
+                    select.select_by_index(test3[target_data[i][6]])
 
-                    fpath(driver,사업코드,target_data[i][3])
+                    fpath(driver,사업코드,target_data[i][5])
                     epath(driver,사업코드)
                     driver.switch_to.frame('frmPopup')
                     epath(driver,사업팝업)
                     driver.switch_to.default_content()
                     driver.switch_to.frame('ifr_d4_AHG020P')
 
-                if target_data[i][1] is not None:
-                    fpath(driver,결의서_제목,target_data[i][1])
-                fpath(driver,계정과목,target_data[i][6])
+                if target_data[i][3] is not None:
+                    fpath(driver,결의서_제목,target_data[i][3])
+                fpath(driver,계정과목,target_data[i][8])
                 epath(driver,계정과목)
 
-                if target_data[i][7] is not None:
-                    fpath(driver,관리코드,target_data[i][7])
+                if target_data[i][9] is not None:
+                    fpath(driver,관리코드,target_data[i][9])
                     epath(driver,관리코드)
                     time.sleep(0.2)
                     try:
@@ -272,34 +267,34 @@ def write(driver):
                         driver.switch_to.default_content()
                         driver.switch_to.frame('ifr_d4_AHG020P')
 
-                if target_data[i][9] is not None:
-                    if target_data[i][9] == '기숙사':
+                if target_data[i][11] is not None:
+                    if target_data[i][11] == '기숙사':
                         dorm(driver, 귀속부서, 귀속부서팝업)
                     else:
-                        fpath(driver, 귀속부서, target_data[i][9])
+                        fpath(driver, 귀속부서, target_data[i][11])
                         epath(driver, 귀속부서)
 
-                if target_data[i][10] is not None:
-                    if target_data[i][10] == '기숙사':
+                if target_data[i][12] is not None:
+                    if target_data[i][12] == '기숙사':
                         dorm(driver, 예산부서, 예산부서팝업)
                     else:
-                        fpath(driver, 예산부서, target_data[i][10])
+                        fpath(driver, 예산부서, target_data[i][12])
                         epath(driver, 예산부서)
 
                 select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
                 test2 = {"없음" : 0, "세금" : 1, "기타" : 2, "현금" : 3}
-                select.select_by_index(test2[target_data[i][11]])
+                select.select_by_index(test2[target_data[i][13]])
 
-                if target_data[i][14] is not None:
-                    fpath(driver,지출,target_data[i][14])
-                if target_data[i][15] is not None:
-                    fpath(driver,수입,target_data[i][15])
                 if target_data[i][16] is not None:
-                    fpath(driver,적요,target_data[i][16])
+                    fpath(driver,지출,target_data[i][16])
+                if target_data[i][17] is not None:
+                    fpath(driver,수입,target_data[i][17])
+                if target_data[i][18] is not None:
+                    fpath(driver,적요,target_data[i][18])
                 cpath(driver,결의내역_제출)
                 time.sleep(0.3)
 
-                if target_data[i][11] == '세금':
+                if target_data[i][13] == '세금':
                     tax = 1
                     dismiss(driver)
             prev = target_data[i][0]
@@ -330,9 +325,9 @@ def taxWrite(driver, num, file, isMonthly, row):
     time.sleep(0.3)
     cpath(driver, 세금계산_탭)
     if isMonthly:
-        tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
+        tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AA'+str(row), 'AI'+str(row))
     else:
-        tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E'+str(row), 'L'+(row))
+        tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
     for j in range(len(tax_data)):
         if tax_data[j][0] == num:
             test = {"매입세금-불" : 1, "매입세금" : 2, "매입계산" : 3, "매출세금" : 4, "매출계산" : 5,
@@ -370,7 +365,10 @@ def taxWrite(driver, num, file, isMonthly, row):
             break
     for p in range(len(tax_data)):
         if tax_data[p][0] == num:
-            xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
+            if isMonthly:
+                xlsxFileController.put_cell_data(file, '결의내역', 'AA' + str(p + row), -1)
+            else:
+                xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
         else:
             break
     cpath(driver, 결의내역_탭)

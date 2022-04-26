@@ -6,8 +6,8 @@ manage_backup.py
 *.spec
 dist
 build
+.idea
 data.xlsx
 dataBackup.xlsx
 dataBackup1.xlsx
-
-
+data_자동완성버전.xlsx
