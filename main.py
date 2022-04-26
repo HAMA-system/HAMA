@@ -34,7 +34,7 @@ if __name__ == '__main__':
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':
-            manageRefactoring.write(driver)
+            manage.write(driver)
         # elif select == '종료':
         #     break
         # else:

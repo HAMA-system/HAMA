@@ -1,4 +1,4 @@
-def dismiss(driver):
+def dismissAlert(driver):
     while True:
         try:
             driver.switch_to.alert.dismiss()
@@ -7,7 +7,7 @@ def dismiss(driver):
             pass
 
 
-def accept(driver):
+def acceptAlert(driver):
     while True:
         try:
             driver.switch_to.alert.accept()
