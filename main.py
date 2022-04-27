@@ -4,6 +4,7 @@ import dateController
 import errorController
 import autoLogin
 import manage
+import manageRefactoring
 import sys, os, time
 from linkData import *
 def set_chromedriver():
