@@ -163,7 +163,6 @@ def write(driver):
         isMonthly = False
         # Main loop
         for i in range(len(target_data)):
-            # 정기 체크
             if target_data[i][0] != -1 or prev != -1:
                 w = 1
                 if prev != target_data[i][0]:
@@ -188,18 +187,75 @@ def write(driver):
                     print("구분번호 :", target_data[i][0])
 
                 print(i + 15, '행 입력중입니다.', sep='')
+
+                # 정기 체크
                 if target_data[i][1] is not None and target_data[i][1] != '':
                     isMonthly = True
                     target_data[i][18] = str(target_data[i][18])
+                    target_data[i][2] = str(target_data[i][2])
+                    # 단일 월
+                    if len(target_data[i][2]) <= 2:
+                        for j in range(len(target_data[i][18])):
+                            if target_data[i][18][j] == '월':
+                                l = j-1
+                                if j > 1 and 49 <= ord(target_data[i][18][j-2]) < 58:
+                                    l -= 1
+                                target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:j], target_data[i][2])
+                        if target_data[i][3] is not None and target_data[i][3] != '':
+                            target_data[i][3] = str(target_data[i][3])
+                            for j in range(len(target_data[i][3])):
+                                if target_data[i][3][j] == '월':
+                                    l = j-1
+                                    if j > 1 and 49 <= ord(target_data[i][3][j-2]) < 58:
+                                        l -= 1
+                                    target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:j], target_data[i][2])
+                    # 1,2 월
+                    else:
+                        for j in range(len(target_data[i][18])):
+                            if target_data[i][18][j] == '월':
+                                l = -1
+                                r = -1
+                                for k in range(j-1, -1, -1):
+                                    if 49 <= ord(target_data[i][18][k]) < 58:
+                                        r = k
+                                        break
+                                if r == -1:
+                                    print(row,"행 적요사항에 월을 찾을 수 없습니다.",sep='')
+                                    break
+                                for k in range(r-2, -1, -1):
+                                    if 49 <= ord(target_data[i][18][k]) < 58:
+                                        l = k
+                                        if k > 0 and 49 <= ord(target_data[i][18][k-1]) < 58:
+                                            l -= 1
+                                        break
+                                if l == -1:
+                                    print(row,"행 적요사항에 이전 월을 찾을 수 없습니다.",sep='')
+                                    break
+                                target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:r+1], target_data[i][2])
 
-                    for j in range(len(target_data[i][18])):
-                        if target_data[i][18][j] == '월':
-                            target_data[i][18] = target_data[i][18].replace(str(target_data[i][18][j-1]), str(target_data[i][2]))
-                    if target_data[i][3] is not None and target_data[i][3] != '':
-                        target_data[i][3] = str(target_data[i][3])
-                        for j in range(len(target_data[i][3])):
-                            if target_data[i][3][j] == '월':
-                                target_data[i][3] = target_data[i][3].replace(str(target_data[i][3][j-1]), str(target_data[i][2]))
+                        if target_data[i][3] is not None and target_data[i][3] != '':
+                            target_data[i][3] = str(target_data[i][3])
+                            for j in range(len(target_data[i][3])):
+                                if target_data[i][3][j] == '월':
+                                    l = -1
+                                    r = -1
+                                    for k in range(j-1, -1, -1):
+                                        if 49 <= ord(target_data[i][3][k]) < 58:
+                                            r = k
+                                            break
+                                    if r == -1:
+                                        print(row, "행 월을 찾을 수 없습니다.",sep='')
+                                        break
+                                    for k in range(r-2, -1, -1):
+                                        if 49 <= ord(target_data[i][3][k]) < 58:
+                                            l = k
+                                            if k > 0 and 49 <= ord(target_data[i][3][k-1]) < 58:
+                                                l -= 1
+                                                break
+                                    if l == -1:
+                                        print(row, "행 이전 월을 찾을 수 없습니다.",sep='')
+                                        break
+                                    target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:r+1], target_data[i][2])
 
                 # stdout.flush()
                 # printProgress(progress/progrexx_max, progress_size)
