@@ -35,7 +35,7 @@ def dorm(driver, dep, pop):
         epath(driver, pop)
         fpath(driver, 소속코드, 'A33100')
         epath(driver, 소속코드)
-        time.sleep(0.5)
+        time.sleep(0.3)
         actions = ActionChains(driver)
         doubleClick = driver.find_element_by_xpath(소속테이블)
         actions.move_to_element(doubleClick)
