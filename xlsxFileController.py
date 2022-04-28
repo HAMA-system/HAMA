@@ -5,7 +5,7 @@ import linkData
 
 def load_xls(filename):
     try:
-        xlsfile = openpyxl.load_workbook(filename, data_only=True)
+        xlsfile = openpyxl.load_workbook(filename, read_only=True)
         return xlsfile
     except:
         errorController.errorMsg(1)

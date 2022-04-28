@@ -167,7 +167,6 @@ def write(driver):
                 w = 1
                 if prev != target_data[i][0]:
                     if tax == 1:
-                        print("TEST",prev,file,isMonthly,row)
                         file = taxWrite(driver, prev, file, isMonthly, row)
                         tax = 0
                     row = 15 + i
@@ -180,9 +179,9 @@ def write(driver):
 
                     upload(driver, prev)
                     cpath(driver,신규)
-                    for p in range(len(target_data)):
-                        if target_data[p][0] == prev:
-                            xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+15), -1)
+                    # for p in range(len(target_data)):
+                    #     if target_data[p][0] == prev:
+                    #         xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+15), -1)
                     time.sleep(0.5)
 
                     print("구분번호 :", target_data[i][0])
@@ -356,37 +355,30 @@ def write(driver):
                 save(driver)
                 upload(driver, prev)
 
-                for p in range(len(target_data)):
-                    if target_data[p][0] == prev:
-                        xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
+                # for p in range(len(target_data)):
+                #     if target_data[p][0] == prev:
+                #         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
                 print("입력이 완료되었습니다.")
-                xlsxFileController.save_xls(file)
+                print("구분번호 미변경시 중복 입력될 수 있으니 확인 부탁드립니다.")
+                # xlsxFileController.save_xls(file)
         # delete(file)
 
     except:
         print('오류가 발생하여 초기화면으로 돌아갑니다')
         # driver.refresh()
         autoLogin.afterLogin(driver)
-        xlsxFileController.save_xls(file)
+        # xlsxFileController.save_xls(file)
 
 
 
 def taxWrite(driver, num, file, isMonthly, row):
     time.sleep(0.3)
-    print(1)
     cpath(driver, 세금계산_탭)
-    print(2)
     tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB' + str(row), 'AJ' + str(row))
-    print(3)
-    # if isMonthly:
-    #     tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB'+str(row), 'AJ'+str(row))
-    # else:
-    #     tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
     for j in range(len(tax_data)):
         if tax_data[j][0] == num:
             test = {"매입세금-불" : 1, "매입세금" : 2, "매입계산" : 3, "매출세금" : 4, "매출계산" : 5,
                     "매출세금-불" : 6, "수입세금" : 7, "수입계산" : 8, "매입세금-간" : 9}
-
             select = Select(driver.find_element_by_xpath(과세구분))
             select.select_by_index(test[tax_data[j][1]])
             fpath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
@@ -394,7 +386,6 @@ def taxWrite(driver, num, file, isMonthly, row):
             fpath(driver, 거래처, '')
             epath(driver, 거래처)
             time.sleep(0.5)  # 없어도 돌아가긴 함
-
             driver.switch_to.frame('frmPopup')
             if 48 <= ord(str(tax_data[j][3])[0]) <= 57:
                 fpath(driver, 사업자번호, tax_data[j][3])
@@ -404,8 +395,7 @@ def taxWrite(driver, num, file, isMonthly, row):
                 epath(driver, 거래처명)
             driver.switch_to.default_content()
             driver.switch_to.frame('ifr_d4_AHG020P')
-
-            if tax_data[j][4] is not None and tax_data[j][4] != '' and tax_data[j][4] == '_':
+            if tax_data[j][4] is not None and tax_data[j][4] != '' and tax_data[j][4] != '_':
                 fpath(driver, 공급가액, tax_data[j][4])
                 fpath(driver, 세액, tax_data[j][5])
 
@@ -414,13 +404,12 @@ def taxWrite(driver, num, file, isMonthly, row):
             select.select_by_index(test1[tax_data[j][6]])
             cpath(driver, 세금계산_제출)
             time.sleep(0.5)
-
-    for p in range(len(tax_data)):
-        if tax_data[p][0] == num:
-            if isMonthly:
-                xlsxFileController.put_cell_data(file, '결의내역', 'AB' + str(p+row), -1)
-            else:
-                xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
+    # for p in range(len(tax_data)):
+    #     if tax_data[p][0] == num:
+    #         if isMonthly:
+    #             xlsxFileController.put_cell_data(file, '결의내역', 'AB' + str(p+row), -1)
+    #         else:
+    #             xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
     cpath(driver, 결의내역_탭)
     print("세금처리가 완료되었습니다.")
     return file
@@ -471,7 +460,7 @@ def delete(file):
     if d == '1':
         xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 15)
         xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 20)
-        xlsxFileController.save_xls(file)
+        # xlsxFileController.save_xls(file)
         print("삭제가 완료되었습니다.")
 
 def modify(driver):
