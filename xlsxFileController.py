@@ -54,7 +54,7 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
     lcell = lastcell
 
     data = []
-    while get_cell_data(file, sheetname, fcell)!=None:
+    while get_cell_data(file, sheetname, fcell) != None and get_cell_data(file, sheetname, fcell) != '_':
         # print(fcell, lcell)
         data.append(get_singleline_data(file, sheetname, fcell, lcell))
         if 65 <= ord(fcell[1]) <= 90:
