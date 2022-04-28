@@ -373,10 +373,11 @@ def write(driver):
 def taxWrite(driver, num, file, isMonthly, row):
     time.sleep(0.3)
     cpath(driver, 세금계산_탭)
-    if isMonthly:
-        tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB'+str(row), 'AJ'+str(row))
-    else:
-        tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
+    tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB' + str(row), 'AJ' + str(row))
+    # if isMonthly:
+    #     tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB'+str(row), 'AJ'+str(row))
+    # else:
+    #     tax_data = xlsxFileController.all_data_fetch(file, '세금계산', 'E20', 'L20')
     for j in range(len(tax_data)):
         if tax_data[j][0] == num:
             test = {"매입세금-불" : 1, "매입세금" : 2, "매입계산" : 3, "매출세금" : 4, "매출계산" : 5,
@@ -468,3 +469,145 @@ def delete(file):
         xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 20)
         xlsxFileController.save_xls(file)
         print("삭제가 완료되었습니다.")
+
+def modify(driver):
+    global sema
+    global d
+    d = driver
+    ig = threading.Thread(target=ignoreAutoLogout.startTimer)
+    ig.daemon = True
+    ig.start()
+
+    driver.switch_to.default_content()
+    cpath(driver,결의서_조회)
+    driver.switch_to.frame(조회_프레임)
+
+    while True:
+        while True:
+            ignoreAutoLogout.timer = 0
+            sema = 0
+            # print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/3(종료) ")
+            # acc = input().strip()
+            acc = '2'
+            if acc == '1' or acc == '2' or acc == '3':
+                break
+            print("잘못된 입력입니다.")
+        if acc == '3':
+            break
+        while True:
+            sema = 1
+            # print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
+            # res = input().strip()
+            res = '1'
+            if res == '1' or res == '2' or res == '3' or res == '4':
+                break
+            print("잘못된 입력입니다.")
+
+        while True:
+            # print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022")
+            # month = input().strip()
+            month = '2022'
+            if len(month) == 1 or len(month) == 2 or len(month) == 4:
+                break
+            print("잘못된 입력입니다.")
+        # print("원하는 검색어를 입력해주세요. (없으면 공백)")
+        # search = input().strip()
+        search = "비틀"
+        if len(month) == 4:
+            fname(driver,'txtSAcctYear',month)
+        else:
+            fname(driver,'txtSAcctYear','2021')
+        select = Select(driver.find_element_by_xpath(회계구분_조회))
+        if acc == '1':
+            select.select_by_index(0)
+        elif acc == '2':
+            select.select_by_index(1)
+
+        select = Select(driver.find_element_by_xpath(결의서구분))
+        if res == '1':
+            select.select_by_index(0)
+        elif res == '2':
+            select.select_by_index(1)
+        elif res == '3':
+            select.select_by_index(2)
+        elif res == '4':
+            select.select_by_index(3)
+
+        if month == '1':
+            fname(driver,'DpFrDt',dateController.date1month())
+        elif month == '3':
+            fname(driver,'DpFrDt',dateController.date3month())
+        elif month == '6':
+            fname(driver,'DpFrDt',dateController.date6month())
+        elif month == '12':
+            fname(driver,'DpFrDt',dateController.date1year())
+        elif len(month) == 4:
+            fname(driver,'DpFrDt',month+'0301')
+            fname(driver,'DpToDt',str(int(month)+1)+'0228')
+        elif month == '종료':
+            break
+        else:
+            print("잘못된 입력입니다.")
+        if len(month) != 4:
+            fname(driver,'DpToDt',dateController.dateToday())
+        fpath(driver,제목_검색,search)
+        cname(driver,'CSMenuButton1$List')
+
+        # -----------------------
+        print("modify test")
+
+
+        # time.sleep(3)
+        # print("test 1")
+        # actions = ActionChains(driver)
+        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/thead')
+        # actions.move_to_element(doubleClick)
+        # actions.double_click(doubleClick)
+        # actions.perform()
+
+        # time.sleep(3)
+        # print("test 2")
+        # actions = ActionChains(driver)
+        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/thead')
+        # actions.move_to_element(doubleClick)
+        # actions.double_click(doubleClick)
+        # actions.perform()
+
+        time.sleep(1)
+        table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
+        tbody = table.find_element(by=By.TAG_NAME,value="tbody")
+        rows = tbody.find_elements(by=By.TAG_NAME,value="th")
+        print(rows)
+        for index, value in enumerate(rows):
+            body = value.find_elements(by=By.TAG_NAME,value="td")[0]
+            print("test",body.text)
+        print("test end")
+        time.sleep(10000)
+
+        print("test 3")
+        actions = ActionChains(driver)
+        doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
+        actions.move_to_element(doubleClick)
+        actions.double_click(doubleClick)
+        actions.perform()
+
+        # 2번째 행
+        # time.sleep(3)
+        # print("test 3")
+        # actions = ActionChains(driver)
+        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[2]')
+        # actions.move_to_element(doubleClick)
+        # actions.double_click(doubleClick)
+        # actions.perform()
+
+        '''
+        '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/thead'
+        '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody'
+        '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]'
+        
+        '''
+
+        time.sleep(10000)
+        # -----------------------
+
+        print("\n=====================================================")
