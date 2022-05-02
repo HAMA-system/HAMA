@@ -1,6 +1,5 @@
 import os
-import time
-
+import re
 import autoLogin
 import dateController
 from selenium.webdriver.support.ui import Select
@@ -505,6 +504,10 @@ def modify(driver):
             print("잘못된 입력입니다.")
         # print("원하는 검색어를 입력해주세요. (없으면 공백)")
         # search = input().strip()
+
+        # TODO
+        time.sleep(3)
+
         search = "비틀"
         if len(month) == 4:
             fname(driver,'txtSAcctYear',month)
@@ -566,14 +569,29 @@ def modify(driver):
         # actions.double_click(doubleClick)
         # actions.perform()
 
-        time.sleep(1)
+        time.sleep(3)
         table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
-        tbody = table.find_element(by=By.TAG_NAME,value="tbody")
-        rows = tbody.find_elements(by=By.TAG_NAME,value="th")
-        print(rows)
-        for index, value in enumerate(rows):
-            body = value.find_elements(by=By.TAG_NAME,value="td")[0]
-            print("test",body.text)
+
+
+        # # thead
+        # thead = table.find_element_by_tag_name("thead")
+        # # thead > tr > th
+        # thead_th = thead.find_element_by_tag_name("tr").find_elements_by_tag_name("th")
+        # for th in thead_th:
+        #     print(th.text)  # text 속성 읽기
+
+        # tbody
+        tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+
+        # test = tbody.find_elements(by=By.TAG_NAME, value="tr")
+        # 가능함
+        # print(test[1].get_attribute("innerText"))
+
+        for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+            for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+                print(td.get_attribute("innerText"), end='\t')
+            print()
+
         print("test end")
         time.sleep(10000)
 
@@ -604,3 +622,19 @@ def modify(driver):
         # -----------------------
 
         print("\n=====================================================")
+
+def monthly_textReplace(prev,month):
+    r = re.compile('(\D*)(\d*\d+)(월)(\D*)')
+    text_list = prev.split()
+    result_string = ""
+
+    for p in text_list:
+        # print(p)
+        m = r.match(p)
+        if m:
+            result_string += re.sub('(\D*)(\d*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
+        else:
+            result_string += p + " "
+
+    print(result_string)
+    return result_string

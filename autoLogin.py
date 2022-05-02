@@ -35,6 +35,7 @@ def fpath(driver,path,value):
         except:
             pass
     # time.sleep(0.25) # 0.4
+    time.sleep(0.2)
     while True:
         try:
             driver.find_element_by_xpath(path).send_keys(value)
@@ -59,10 +60,6 @@ def cpath(driver,path):
             break
         except:
             pass
-def cpathDouble(driver,path):
-    element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
-    element.click()
-    element.click()
 
 def epath(driver,path):
     time.sleep(0.2)

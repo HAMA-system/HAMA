@@ -1,37 +1,36 @@
-from selenium import webdriver
-import xlsxFileController
-import dateController
-import errorController
 import autoLogin
 import manage
-import manageRefactoring
-import sys, os, time
+import time
+from selenium import webdriver
 from linkData import *
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 def set_chromedriver():
-    try:
-        driver = webdriver.Chrome(링크[0])
-        # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
-        # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
+    while True:
+        try:
+            chrome_options = webdriver.ChromeOptions()
+            driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+            # driver = webdriver.Chrome(executable_path=링크[0])
+            break
+            # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
+            # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
 
-    except:
-        errorController.errorMsg(0)
+        except:
+            pass
+            # errorController.errorMsg(0)
     return driver
 
 if __name__ == '__main__':
-    # path = "/Users/MS/PycharmProjects/HAMA/1"
-    # uploadFile = path + '/'
-    # for x in os.listdir(path):
-    #     uploadFile += x + '\n'
-    # print(uploadFile)
-    # time.sleep(10000)
+    start = time.time()
     driver = set_chromedriver()
     driver.implicitly_wait(time_to_wait=10)
+    print(time.time()-start)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
     while True:
         # select = '조회'
-        select = '작성'
-        # select = '수정'
+        # select = '작성'
+        select = '수정'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':
