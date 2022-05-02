@@ -209,69 +209,11 @@ def write(driver):
                     isMonthly = True
                     target_data[i][18] = str(target_data[i][18])
                     target_data[i][2] = str(target_data[i][2])
-                    # 단일 월
-                    if len(target_data[i][2]) <= 2:
-                        for j in range(len(target_data[i][18])):
-                            if target_data[i][18][j] == '월':
-                                l = j-1
-                                if j > 1 and 49 <= ord(target_data[i][18][j-2]) < 58:
-                                    l -= 1
-                                target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:j], target_data[i][2])
-                        if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
-                            target_data[i][3] = str(target_data[i][3])
-                            for j in range(len(target_data[i][3])):
-                                if target_data[i][3][j] == '월':
-                                    l = j-1
-                                    if j > 1 and 49 <= ord(target_data[i][3][j-2]) < 58:
-                                        l -= 1
-                                    target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:j], target_data[i][2])
-                    # 1,2 월
-                    else:
-                        for j in range(len(target_data[i][18])):
-                            if target_data[i][18][j] == '월':
-                                l = -1
-                                r = -1
-                                for k in range(j-1, -1, -1):
-                                    if 49 <= ord(target_data[i][18][k]) < 58:
-                                        r = k
-                                        break
-                                if r == -1:
-                                    print(row,"행 적요사항에 월을 찾을 수 없습니다.",sep='')
-                                    break
-                                for k in range(r-2, -1, -1):
-                                    if 49 <= ord(target_data[i][18][k]) < 58:
-                                        l = k
-                                        if k > 0 and 49 <= ord(target_data[i][18][k-1]) < 58:
-                                            l -= 1
-                                        break
-                                if l == -1:
-                                    print(row,"행 적요사항에 이전 월을 찾을 수 없습니다.",sep='')
-                                    break
-                                target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:r+1], target_data[i][2])
+                    target_data[i][18] = monthly_textReplace(target_data[i][18], target_data[i][2])
 
-                        if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
-                            target_data[i][3] = str(target_data[i][3])
-                            for j in range(len(target_data[i][3])):
-                                if target_data[i][3][j] == '월':
-                                    l = -1
-                                    r = -1
-                                    for k in range(j-1, -1, -1):
-                                        if 49 <= ord(target_data[i][3][k]) < 58:
-                                            r = k
-                                            break
-                                    if r == -1:
-                                        print(row, "행 월을 찾을 수 없습니다.",sep='')
-                                        break
-                                    for k in range(r-2, -1, -1):
-                                        if 49 <= ord(target_data[i][3][k]) < 58:
-                                            l = k
-                                            if k > 0 and 49 <= ord(target_data[i][3][k-1]) < 58:
-                                                l -= 1
-                                                break
-                                    if l == -1:
-                                        print(row, "행 이전 월을 찾을 수 없습니다.",sep='')
-                                        break
-                                    target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:r+1], target_data[i][2])
+                    if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
+                        target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
+
 
                 # stdout.flush()
                 # printProgress(progress/progrexx_max, progress_size)
@@ -459,8 +401,8 @@ def upload(driver, num):
 def save(driver):
     while True:
         print("저장하시겠습니까? 1(예)/ 2(아니오)")
-        # sv = input()
-        sv = '1'
+        sv = input()
+        # sv = '1'
         if sv == '1':
             break
         else:
@@ -641,7 +583,7 @@ def modify(driver):
         print("\n=====================================================")
 
 def monthly_textReplace(prev,month):
-    r = re.compile('(\D*)(\d*\d+)(월)(\D*)')
+    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
     text_list = prev.split()
     result_string = ""
 
@@ -649,9 +591,8 @@ def monthly_textReplace(prev,month):
         # print(p)
         m = r.match(p)
         if m:
-            result_string += re.sub('(\D*)(\d*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
+            result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
         else:
             result_string += p + " "
 
-    print(result_string)
     return result_string
