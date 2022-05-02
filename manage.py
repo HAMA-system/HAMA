@@ -23,6 +23,23 @@ def printProgress(i, max):
     c = int(i*max)
     stdout.write('\r[' + '#'*c + ' '*(max-c-1) + ']\t\t[' + str(int(i*100)) + '%]')
 
+def monthly_textReplace(prev,month):
+    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
+    text_list = prev.split()
+    result_string = ""
+
+    for p in text_list:
+        # print(p)
+        m = r.match(p)
+        if m:
+            # print(m)
+            result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
+        else:
+            result_string += p + " "
+
+    print(result_string)
+    return result_string
+
 def dorm(driver, dep, pop):
     fpath(driver, dep, '')
     epath(driver, dep)
