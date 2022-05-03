@@ -511,55 +511,44 @@ def modify(driver):
         # -----------------------
         print("modify test")
 
-
-        # time.sleep(3)
-        # print("test 1")
-        # actions = ActionChains(driver)
-        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/thead')
-        # actions.move_to_element(doubleClick)
-        # actions.double_click(doubleClick)
-        # actions.perform()
-
-        # time.sleep(3)
-        # print("test 2")
-        # actions = ActionChains(driver)
-        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/thead')
-        # actions.move_to_element(doubleClick)
-        # actions.double_click(doubleClick)
-        # actions.perform()
-
         time.sleep(3)
         table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
-
-
-        # # thead
-        # thead = table.find_element_by_tag_name("thead")
-        # # thead > tr > th
-        # thead_th = thead.find_element_by_tag_name("tr").find_elements_by_tag_name("th")
-        # for th in thead_th:
-        #     print(th.text)  # text 속성 읽기
-
-        # tbody
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-
-        # test = tbody.find_elements(by=By.TAG_NAME, value="tr")
-        # 가능함
-        # print(test[1].get_attribute("innerText"))
 
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
             for td in tr.find_elements(by=By.TAG_NAME, value="td"):
                 print(td.get_attribute("innerText"), end='\t')
             print()
 
-        print("test end")
-        time.sleep(10000)
+        # while True:
+        #     print("추가하실 월을 입력해주세요")
+        #     month = input()
+        #     if re.fullmatch(r'\d\d?', month):
+        #         break
+        #     print("잘못된 입력입니다.")
 
-        print("test 3")
         actions = ActionChains(driver)
         doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
         actions.move_to_element(doubleClick)
         actions.double_click(doubleClick)
         actions.perform()
+
+        time.sleep(3)
+        driver.switch_to.default_content()
+        driver.switch_to.frame('ifr_d4_AHG029S')
+        driver.switch_to.frame('frmPopup')
+        cpath(driver, 복사)
+
+        time.sleep(1)
+
+        alert = driver.switch_to.alert
+        alert.send_keys('2022-05-08')
+        alert.accept()
+
+        print("test end")
+
+        time.sleep(10000)
+        alert.accept()
 
         # 2번째 행
         # time.sleep(3)
@@ -582,6 +571,9 @@ def modify(driver):
 
         print("\n=====================================================")
 
+
+# TODO
+#   /d/d? 꼴로 바꾸기
 def monthly_textReplace(prev,month):
     r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
     text_list = prev.split()
