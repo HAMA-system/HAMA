@@ -1,5 +1,7 @@
 import os
 import re
+import time
+
 import autoLogin
 import dateController
 from selenium.webdriver.support.ui import Select
@@ -14,6 +16,9 @@ from sys import stdout
 
 sema = 0
 d = ''
+mod_month = "-1"
+tax_date = []
+res = []
 def refresh():
     # TODO
     #   작성에서도 되게 바꿔야 함.
@@ -511,60 +516,140 @@ def modify(driver):
         # -----------------------
         print("modify test")
 
-        time.sleep(3)
+        title = []
+        # res = []
+        # tax = []
+        time.sleep(2)
+
         table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-
+        first = 1
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+            i = 0
             for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+                if first:
+                    if i == 1 or i == 4:
+                        title.append(td.get_attribute("innerText"))
                 print(td.get_attribute("innerText"), end='\t')
+                i += 1
+            first = 0
             print()
-
-        # while True:
-        #     print("추가하실 월을 입력해주세요")
-        #     month = input()
-        #     if re.fullmatch(r'\d\d?', month):
-        #         break
-        #     print("잘못된 입력입니다.")
 
         actions = ActionChains(driver)
         doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
         actions.move_to_element(doubleClick)
         actions.double_click(doubleClick)
         actions.perform()
-
-        time.sleep(3)
+        time.sleep(1)
         driver.switch_to.default_content()
         driver.switch_to.frame('ifr_d4_AHG029S')
         driver.switch_to.frame('frmPopup')
-        cpath(driver, 복사)
+
+
+
+        # TODO
+        #   연도 바뀌는 것 생각
+        change = str(int(title[0][5:7])%12+1)
+        if int(change) < 10:
+            change = "0" + change
+        title[0] = title[0][:5] + change + title[0][7:]
 
         time.sleep(1)
-
+        cpath(driver, 복사)
         alert = driver.switch_to.alert
-        alert.send_keys('2022-05-08')
+        alert.send_keys(title[0])
         alert.accept()
+        time.sleep(0.3)
+        alert.accept()
+        time.sleep(0.3)
+        alert.accept()
+
+        # TODO
+        #   tr[1] 처리하는 시간이 매우 큼
+        #   일단은 thread로 input 빼서 시간 단축
+        #   처리 필요
+        d = driver
+        fr = threading.Thread(target=find_res)
+        fr.daemon = True
+        fr.start()
+        ft = threading.Thread(target=find_tax)
+        ft.daemon = True
+        ft.start()
+        mi = threading.Thread(target=modify_input)
+        mi.daemon = True
+        mi.start()
+
+
+        # table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table')
+        # tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+        # for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+        #     i = 0
+        #     for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+        #         i += 1
+        #         print(td.get_attribute("innerText"), end='\t')
+        #         if i == 10:
+        #             res.append(td.get_attribute("innerText"))
+        #     print()
+        # print()
+
+        # while mi.is_alive():
+        #     pass
+        # month = mod_month
+
+        while fr.is_alive():
+            pass
+        for x in res:
+            x.join()
+        print(title, res)
+        while mi.is_alive():
+            pass
+        month = mod_month
+
+        title[1] = monthly_textReplace(title[1], month)
+        for i in range(len(res)):
+            res[i] = monthly_textReplace(res[i], month)
+        print(title, res)
+
+        res_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table/tbody/tr'
+        for i in range(len(res)):
+            cpath(driver, res_link + '[' + str(i+2) + ']')
+            fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[4]/td[3]/input', res[i])
+            cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[3]/ul/li[7]/span/input[2]')
+
+        cpath(driver, 세금계산_탭)
+
+        # table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div')
+        # tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+        # tax_date = []
+        # for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+        #     i = 0
+        #     for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+        #         i += 1
+        #         print(td.get_attribute("innerText"), end='\t')
+        #         if i == 4:
+        #             tax_date.append(td.get_attribute("innerText"))
+        #     print()
+        # print()
+
+        # while ft.is_alive():
+        #     pass
+        for i in range(len(tax_date)):
+            change = str(int(tax_date[i][5:7]) % 12 + 1)
+            if int(change) < 10:
+                change = "0" + change
+            tax_date[i] = tax_date[i][:5] + change + tax_date[i][7:]
+        print(tax_date)
+
+        tax_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div/table/tbody/tr'
+        for i in range(len(tax_date)):
+            cpath(driver, tax_link + '[' + str(i+2) + ']')
+            fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[1]/tbody/tr[1]/td[2]/input', tax_date[i])
+            cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[2]/tbody/tr/td/div/span[3]/input[2]')
 
         print("test end")
 
         time.sleep(10000)
-        alert.accept()
 
-        # 2번째 행
-        # time.sleep(3)
-        # print("test 3")
-        # actions = ActionChains(driver)
-        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[2]')
-        # actions.move_to_element(doubleClick)
-        # actions.double_click(doubleClick)
-        # actions.perform()
-
-        '''
-        '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/thead'
-        '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody'
-        '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]'
-        
-        '''
 
         time.sleep(10000)
         # -----------------------
@@ -574,7 +659,7 @@ def modify(driver):
 
 # TODO
 #   /d/d? 꼴로 바꾸기
-def monthly_textReplace(prev,month):
+def monthly_textReplace(prev, month):
     r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
     text_list = prev.split()
     result_string = ""
@@ -583,8 +668,63 @@ def monthly_textReplace(prev,month):
         # print(p)
         m = r.match(p)
         if m:
-            result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
+            result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4>', p)
         else:
             result_string += p + " "
 
     return result_string
+
+def modify_input():
+    global mod_month
+    while True:
+        print("추가하실 월을 입력해주세요")
+        month = input()
+        if re.fullmatch(r'\d\d?', month):
+            break
+        print("잘못된 입력입니다.")
+    mod_month = month
+
+def find_res():
+    global d
+    driver = d
+    print("res thread start")
+    table = driver.find_element_by_xpath(
+        '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table')
+    tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+    while res:
+        res.pop()
+    test = 0
+    for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+        i = 0
+        for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+            i += 1
+            print(td.get_attribute("innerText"), end='\t')
+            if i == 10:
+                res.append(td.get_attribute("innerText"))
+        print()
+        test += 1
+    print()
+    print("res thread end",res)
+    return
+    # ft = threading.Thread(target=find_tax)
+    # ft.daemon = True
+    # ft.start()
+
+def find_tax():
+    global d
+    driver = d
+    "tax thread start"
+    table = driver.find_element_by_xpath(
+        '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div')
+    tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+    while tax_date:
+        tax_date.pop()
+    for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+        i = 0
+        for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+            i += 1
+            print(td.get_attribute("innerText"), end='\t')
+            if i == 4:
+                tax_date.append(td.get_attribute("innerText"))
+        print()
+    print()
