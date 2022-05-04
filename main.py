@@ -1,31 +1,48 @@
-from selenium import webdriver
-import xlsxFileController
-import dateController
-import errorController
 import autoLogin
 import manage
-import manageRefactoring
-import sys, os, time
+import time
+from selenium import webdriver
 from linkData import *
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 def set_chromedriver():
-    try:
-        driver = webdriver.Chrome(링크[0])
-        # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
-        # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
+    while True:
+        try:
+            options = webdriver.ChromeOptions()  # 크롬 옵션 객체 생성
+            # options.add_argument('headless')  # headless 모드 설정
+            # options.add_argument("window-size=1920x1080")  # 화면크기(전체화면)
+            options.add_argument("disable-gpu")
+            # options.add_argument("disable-infobars")
+            # options.add_argument("--disable-extensions")
 
-    except:
-        errorController.errorMsg(0)
+            # prefs = {'profile.default_content_setting_values': {'cookies': 2, 'images': 2, 'plugins': 2, 'popups': 2,
+            #                                                     'geolocation': 2, 'notifications': 2,
+            #                                                     'auto_select_certificate': 2, 'fullscreen': 2,
+            #                                                     'mouselock': 2, 'mixed_script': 2, 'media_stream': 2,
+            #                                                     'media_stream_mic': 2, 'media_stream_camera': 2,
+            #                                                     'protocol_handlers': 2, 'ppapi_broker': 2,
+            #                                                     'automatic_downloads': 2, 'midi_sysex': 2,
+            #                                                     'push_messaging': 2, 'ssl_cert_decisions': 2,
+            #                                                     'metro_switch_to_desktop': 2,
+            #                                                     'protected_media_identifier': 2, 'app_banner': 2,
+            #                                                     'site_engagement': 2, 'durable_storage': 2}}
+            # options.add_experimental_option('prefs', prefs)
+            driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+            # driver = webdriver.Chrome(executable_path=링크[0])
+            break
+            # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
+            # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
+
+        except:
+            pass
+            # errorController.errorMsg(0)
     return driver
 
 if __name__ == '__main__':
-    # path = "/Users/MS/PycharmProjects/HAMA/1"
-    # uploadFile = path + '/'
-    # for x in os.listdir(path):
-    #     uploadFile += x + '\n'
-    # print(uploadFile)
-    # time.sleep(10000)
+    # start = time.time()
     driver = set_chromedriver()
     driver.implicitly_wait(time_to_wait=10)
+    # print(time.time()-start)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
     while True:
