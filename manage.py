@@ -434,11 +434,13 @@ def modify(driver):
     ig.daemon = True
     ig.start()
 
-    driver.switch_to.default_content()
+    # driver.switch_to.default_content()
     cpath(driver,결의서_조회)
-    driver.switch_to.frame(조회_프레임)
+    # driver.switch_to.frame(조회_프레임)
 
     while True:
+        driver.switch_to.default_content()
+        driver.switch_to.frame(조회_프레임)
         while True:
             ignoreAutoLogout.timer = 0
             sema = 0
@@ -674,13 +676,19 @@ def modify(driver):
             cpath(driver, '/html/body/form/div[3]/div[1]/div/ul/li/span[3]/input[1]')
             time.sleep(1)
             dismissAlert(driver)
-            cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
+            print("저장이 완료되었습니다.")
+            # driver.switch_to.default_content()
+            # driver.switch_to.frame('ifr_d4_AHG029S')
+            # cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
 
-
-
-        else:
-            return
-
+        # else:
+            # print("TEST")
+            # driver.switch_to.default_content()
+            #
+            # cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
+            # return
+        time.sleep(1)
+        print("x 버튼을 눌러주세요")
         # time.sleep(10000)
 
 

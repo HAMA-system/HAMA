@@ -8,10 +8,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 def set_chromedriver():
     while True:
         try:
-            # options = webdriver.ChromeOptions()  # 크롬 옵션 객체 생성
+            options = webdriver.ChromeOptions()  # 크롬 옵션 객체 생성
             # options.add_argument('headless')  # headless 모드 설정
             # options.add_argument("window-size=1920x1080")  # 화면크기(전체화면)
-            # options.add_argument("disable-gpu")
+            options.add_argument("disable-gpu")
             # options.add_argument("disable-infobars")
             # options.add_argument("--disable-extensions")
 
@@ -27,10 +27,10 @@ def set_chromedriver():
             #                                                     'protected_media_identifier': 2, 'app_banner': 2,
             #                                                     'site_engagement': 2, 'durable_storage': 2}}
             # options.add_experimental_option('prefs', prefs)
-            # driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+            driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
             # driver = webdriver.Chrome(executable_path=링크[0],options=options)
 
-            driver = webdriver.Chrome(링크[0])
+            # driver = webdriver.Chrome(링크[0])
 
             break
             # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
