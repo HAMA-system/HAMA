@@ -517,7 +517,11 @@ def modify(driver):
         table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         first = 1
-        error_check = 0
+        error_check = 1
+        # mi = threading.Thread(target=modify_input)
+        # mi.daemon = True
+        # mi.start()
+        time.sleep(2)
         while not title:
             for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
                 i = 0
@@ -534,6 +538,9 @@ def modify(driver):
             if error_check > 5:
                 print("시간 초과 혹은 검색어 오류입니다.")
                 return
+        mi = threading.Thread(target=modify_input)
+        mi.daemon = True
+        mi.start()
         # print(*title,sep='\n')
         actions = ActionChains(driver)
         doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
@@ -575,9 +582,9 @@ def modify(driver):
         # ft = threading.Thread(target=find_tax)
         # ft.daemon = True
         # ft.start()
-        mi = threading.Thread(target=modify_input)
-        mi.daemon = True
-        mi.start()
+        # mi = threading.Thread(target=modify_input)
+        # mi.daemon = True
+        # mi.start()
 
 
         table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table')
@@ -624,14 +631,15 @@ def modify(driver):
         for i in range(len(res)):
             res[i] = monthly_textReplace(res[i], month).rstrip()
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
-
+        time.sleep(0.5)
+        fpath(driver,'/html/body/form/div[4]/div/table/tbody/tr[1]/td[1]/input[1]', title[1])
         res_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table/tbody/tr'
         for i in range(len(res)):
             cpath(driver, res_link + '[' + str(i+2) + ']')
             fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[4]/td[3]/input', res[i])
             cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[3]/ul/li[7]/span/input[2]')
-
-        cpath(driver, 세금계산_탭)
+        if tax_date:
+            cpath(driver, 세금계산_탭)
 
         # table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div')
         # tbody = table.find_element(by=By.TAG_NAME, value="tbody")
@@ -646,20 +654,32 @@ def modify(driver):
         #     # print()
         # # print()
 
-        for i in range(len(tax_date)):
-            change = str(int(tax_date[i][5:7]) % 12 + 1)
-            if int(change) < 10:
-                change = "0" + change
-            tax_date[i] = tax_date[i][:5] + change + tax_date[i][7:]
-        print("세금 날짜", *tax_date,sep='\n')
+            for i in range(len(tax_date)):
+                change = str(int(tax_date[i][5:7]) % 12 + 1)
+                if int(change) < 10:
+                    change = "0" + change
+                tax_date[i] = tax_date[i][:5] + change + tax_date[i][7:]
+            print("세금 날짜", *tax_date,sep='\n')
 
-        tax_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div/table/tbody/tr'
-        for i in range(len(tax_date)):
-            cpath(driver, tax_link + '[' + str(i+2) + ']')
-            fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[1]/tbody/tr[1]/td[2]/input', tax_date[i])
-            cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[2]/tbody/tr/td/div/span[3]/input[2]')
+            tax_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div/table/tbody/tr'
+            for i in range(len(tax_date)):
+                cpath(driver, tax_link + '[' + str(i+2) + ']')
+                fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[1]/tbody/tr[1]/td[2]/input', tax_date[i])
+                cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[2]/tbody/tr/td/div/span[3]/input[2]')
+            cpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td[2]')
 
-        print("작성 완료 하였습니다.")
+        print("작성 되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
+        s = input()
+        if s == '1':
+            cpath(driver, '/html/body/form/div[3]/div[1]/div/ul/li/span[3]/input[1]')
+            time.sleep(1)
+            dismissAlert(driver)
+            cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
+
+
+
+        else:
+            return
 
         # time.sleep(10000)
 

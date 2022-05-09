@@ -8,3 +8,4 @@ dist
 build
 .idea
 data*.xlsx
+chromedriver.exe
