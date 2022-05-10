@@ -58,3 +58,7 @@ def hotkeyStart():
 
 # with Listener(on_press=handleKeyPress, on_release=handleKeyRelease) as listener:
     # listener.join()
+
+
+# 단축키 비동기 처리
+# 크롬 드라이버 가끔 실행하자마자 오류난다고 하심
