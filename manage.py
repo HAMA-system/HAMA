@@ -6,13 +6,17 @@ import autoLogin
 import dateController
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
+
+import hotKeyManager
 from autoLogin import *
 from linkData import *
 from alertController import *
+from hotKeyManager import *
 import xlsxFileController
 import ignoreAutoLogout
 import threading
 from sys import stdout
+import asyncio
 
 sema = 0
 d = ''
@@ -72,10 +76,10 @@ def lookup(driver):
     ig = threading.Thread(target=ignoreAutoLogout.startTimer)
     ig.daemon = True
     ig.start()
-
     driver.switch_to.default_content()
     cpath(driver,결의서_조회)
     driver.switch_to.frame(조회_프레임)
+
     while True:
         while True:
             ignoreAutoLogout.timer = 0

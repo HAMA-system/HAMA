@@ -4,10 +4,10 @@ from dateController import dateToday
 store = set()
 
 HOT_KEYS = {
-    'print_hello': set([Key.alt_l, KeyCode(char='1')]),
-    'print_hello' : set([KeyCode(char='5')]),
-    'print_today' : set([Key.ctrl_l,KeyCode(char='2')]),
-    'dateToday' : set([KeyCode(char='2')])
+    'print_hello': set([Key.alt_l, KeyCode(char='1')])
+    # ,'print_hello' : set([KeyCode(char='5')])
+    ,'print_today' : set([Key.ctrl_l,KeyCode(char='2')])
+    # ,'dateToday' : set([KeyCode(char='2')])
 
 }
 
@@ -56,5 +56,5 @@ def hotkeyStart():
     with Listener(on_press=handleKeyPress, on_release=handleKeyRelease) as listener:
         listener.join()
 
-with Listener(on_press=handleKeyPress, on_release=handleKeyRelease) as listener:
-    listener.join()
+# with Listener(on_press=handleKeyPress, on_release=handleKeyRelease) as listener:
+    # listener.join()
