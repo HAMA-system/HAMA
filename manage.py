@@ -441,6 +441,9 @@ def modify(driver):
     # driver.switch_to.default_content()
     cpath(driver,결의서_조회)
     # driver.switch_to.frame(조회_프레임)
+    hotkey_thread = threading.Thread(target=hotKeyManager.hotkeyStart)
+    hotkey_thread.daemon = True
+    hotkey_thread.start()
 
     while True:
         driver.switch_to.default_content()
@@ -528,6 +531,7 @@ def modify(driver):
         # mi.daemon = True
         # mi.start()
         time.sleep(2)
+        b = False
         while not title:
             for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
                 i = 0
@@ -543,7 +547,10 @@ def modify(driver):
             time.sleep(2)
             if error_check > 5:
                 print("시간 초과 혹은 검색어 오류입니다.")
-                return
+                b = True
+                break
+        if b==True:
+            break
         mi = threading.Thread(target=modify_input)
         mi.daemon = True
         mi.start()

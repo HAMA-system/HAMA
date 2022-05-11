@@ -57,7 +57,7 @@ def hotkeyStart():
         listener.join()
 
 # with Listener(on_press=handleKeyPress, on_release=handleKeyRelease) as listener:
-    # listener.join()
+#     listener.join()
 
 
 # 단축키 비동기 처리
