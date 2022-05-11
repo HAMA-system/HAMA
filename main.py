@@ -57,6 +57,7 @@ if __name__ == '__main__':
         elif select == '작성':
             manage.write(driver)
         elif select == '수정':
+            print("TEST2")
             manage.modify(driver)
         # elif select == '종료':
         #     break

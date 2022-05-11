@@ -547,10 +547,8 @@ def modify(driver):
             time.sleep(2)
             if error_check > 5:
                 print("시간 초과 혹은 검색어 오류입니다.")
-                b = True
-                break
-        if b==True:
-            break
+                driver.switch_to.default_content()
+                return
         mi = threading.Thread(target=modify_input)
         mi.daemon = True
         mi.start()
