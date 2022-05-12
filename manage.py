@@ -84,17 +84,20 @@ def lookup(driver):
         while True:
             ignoreAutoLogout.timer = 0
             sema = 0
-            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/3(종료) ")
+            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/0(뒤로가기) ")
             acc = input().strip()
             if acc == '1' or acc == '2' or acc == '3':
                 break
             print("잘못된 입력입니다.")
-        if acc == '3':
-            break
+        if acc == '0':
+            driver.switch_to.default_content()
+            return
         while True:
             sema = 1
             print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
             res = input().strip()
+            # TODO
+            #   modify처럼 형식 변경 필요
             if res == '1' or res == '2' or res == '3' or res == '4':
                 break
             print("잘못된 입력입니다.")
@@ -435,7 +438,8 @@ def modify(driver):
     #   오류 처리 나면 다시 실행
     #   12 -> 1월 처리
     #   잘못된 입력 받았을 때 처리 안한거 처리
-
+    #   뒤로가기 만들기 / ㅇㄹ
+    #   창 띄워 놓고 실행하면 바로 하게
 
     global sema
     global d
@@ -463,27 +467,36 @@ def modify(driver):
             if acc == '1' or acc == '2' or acc == '3':
                 break
             print("잘못된 입력입니다.")
-        if acc == '3':
-            break
+        # if acc == '3':
+        #     break
         while True:
             sema = 1
-            print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
+            print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)/0(뒤로가기)")
             res = input().strip()
             # res = '1'
-            if res == '1' or res == '2' or res == '3' or res == '4':
+            # if res == '1' or res == '2' or res == '3' or res == '4':
+            if 0 <= int(res) < 5:
                 break
             print("잘못된 입력입니다.")
+        if res == '0':
+            driver.switch_to.default_content()
+            return
 
         while True:
-            print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022")
+            print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022/0(뒤로가기)")
             month = input().strip()
             # month = '2022'
             if len(month) == 1 or len(month) == 2 or len(month) == 4:
                 break
             print("잘못된 입력입니다.")
-        print("원하는 검색어를 입력해주세요.")
+        if month == '0':
+            driver.switch_to.default_content()
+            return
+        print("원하는 검색어를 입력해주세요. 0(뒤로가기)")
         search = input().strip()
-
+        if search == '0':
+            driver.switch_to.default_content()
+            return
         if len(month) == 4:
             fname(driver,'txtSAcctYear',month)
         else:
@@ -560,12 +573,15 @@ def modify(driver):
                 driver.switch_to.default_content()
                 return
 
-        print("복사하실 결의서 번호를 입력해주세요.")
+        print("복사하실 결의서 번호를 입력해주세요. 0(뒤로가기)")
         num_title = int(input())-1
-        while num_title < 0 or num_title >= len(all):
+        while num_title < -1 or num_title >= len(all):
             print("잘못된 입력입니다.")
             print("복사하실 결의서 번호를 입력해주세요.")
             num_title = int(input())-1
+        if num_title == -1:
+            driver.switch_to.default_content()
+            return
         title = all[num_title]
 
         # 목록 뽑아오기
