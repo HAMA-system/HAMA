@@ -431,6 +431,12 @@ def delete(file):
         print("삭제가 완료되었습니다.")
 
 def modify(driver):
+    # TODO
+    #   오류 처리 나면 다시 실행
+    #   12 -> 1월 처리
+    #   잘못된 입력 받았을 때 처리 안한거 처리
+
+
     global sema
     global d
     d = driver
@@ -542,12 +548,10 @@ def modify(driver):
                 for td in tr.find_elements(by=By.TAG_NAME, value="td"):
                     if i == 1 or i == 4:
                         all[num_all].append(td.get_attribute("innerText"))
-                    print("번호",num_all,"|",td.get_attribute("innerText"), end='\t')
                     i += 1
 
-                    # 추가됐는지 확인
-                print()
-
+                if all[num_all]:
+                    print("번호", num_all+1, *all[num_all], sep='\t')
             if not all[0]:
                 error_check += 1
                 time.sleep(2)
@@ -556,10 +560,8 @@ def modify(driver):
                 driver.switch_to.default_content()
                 return
 
-        print(all)
-
         print("복사하실 결의서 번호를 입력해주세요.")
-        num_title = int(input())
+        num_title = int(input())-1
         title = all[num_title]
 
         # 목록 뽑아오기
@@ -586,7 +588,9 @@ def modify(driver):
 
         # 목록에서 선택
         actions = ActionChains(driver)
-        doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
+        select_res = '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[' + str(num_title + 1) + ']'
+        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
+        doubleClick = driver.find_element_by_xpath(select_res)
         actions.move_to_element(doubleClick)
         actions.double_click(doubleClick)
         actions.perform()
@@ -596,23 +600,30 @@ def modify(driver):
         driver.switch_to.frame('frmPopup')
 
 
-
         # TODO
         #   연도 바뀌는 것 생각
         change = str(int(title[0][5:7])%12+1)
         if int(change) < 10:
             change = "0" + change
         title[0] = title[0][:5] + change + title[0][7:]
+        if int(title[0][8:]) == 31:
+            if int(change) == 1:
+                title[0] = title[0][:8] + str(28)
+            elif int(change) != 7:
+                title[0] = title[0][:8] + str(30)
+
 
         time.sleep(1)
         cpath(driver, 복사)
         alert = driver.switch_to.alert
         alert.send_keys(title[0])
-        alert.accept()
-        time.sleep(0.3)
-        alert.accept()
-        time.sleep(0.3)
-        alert.accept()
+        for _ in range(3):
+            acceptAlert(driver)
+        # alert.accept()
+        # time.sleep(0.3)
+        # alert.accept()
+        # time.sleep(0.3)
+        # alert.accept()
 
         # d = driver
         # fr = threading.Thread(target=find_res)
@@ -670,22 +681,30 @@ def modify(driver):
         for i in range(len(res)):
             res[i] = monthly_textReplace(res[i], month).rstrip()
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
+
         time.sleep(0.5)
         fpath(driver,'/html/body/form/div[4]/div/table/tbody/tr[1]/td[1]/input[1]', title[1])
+        driver.find_element_by_xpath('/html/body/form/div[4]/div/table/tbody/tr[2]/td/textarea').clear()
         res_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table/tbody/tr'
         for i in range(len(res)):
             cpath(driver, res_link + '[' + str(i+2) + ']')
             fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[4]/td[3]/input', res[i])
             cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[3]/ul/li[7]/span/input[2]')
+            time.sleep(0.1)
         if tax_date:
             cpath(driver, 세금계산_탭)
-
 
             for i in range(len(tax_date)):
                 change = str(int(tax_date[i][5:7]) % 12 + 1)
                 if int(change) < 10:
                     change = "0" + change
                 tax_date[i] = tax_date[i][:5] + change + tax_date[i][7:]
+
+                if int(tax_date[i][8:]) == 31:
+                    if int(change) == 1:
+                        tax_date[i] = title[i][:8] + str(28)
+                    elif int(change) != 7:
+                        tax_date[i] = tax_date[i][:8] + str(30)
             print("세금 날짜", *tax_date, "",sep='\n')
 
             tax_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div/table/tbody/tr'
@@ -693,6 +712,7 @@ def modify(driver):
                 cpath(driver, tax_link + '[' + str(i+2) + ']')
                 fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[1]/tbody/tr[1]/td[2]/input', tax_date[i])
                 cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[2]/tbody/tr/td/div/span[3]/input[2]')
+                time.sleep(0.1)
             cpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td[2]')
 
         print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
