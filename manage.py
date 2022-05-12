@@ -670,7 +670,7 @@ def modify(driver):
                 if int(change) < 10:
                     change = "0" + change
                 tax_date[i] = tax_date[i][:5] + change + tax_date[i][7:]
-            print("세금 날짜", *tax_date,sep='\n')
+            print("세금 날짜", *tax_date, "",sep='\n')
 
             tax_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div/table/tbody/tr'
             for i in range(len(tax_date)):
@@ -679,16 +679,17 @@ def modify(driver):
                 cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[2]/tbody/tr/td/div/span[3]/input[2]')
             cpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td[2]')
 
-        print("작성 되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
+        print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
         s = input()
         if s == '1':
             cpath(driver, '/html/body/form/div[3]/div[1]/div/ul/li/span[3]/input[1]')
             time.sleep(1)
             dismissAlert(driver)
             print("저장이 완료되었습니다.")
-            # driver.switch_to.default_content()
-            # driver.switch_to.frame('ifr_d4_AHG029S')
-            # cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
+            time.sleep(2)
+            driver.switch_to.default_content()
+            driver.switch_to.frame('ifr_d4_AHG029S')
+            cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
 
         # else:
             # print("TEST")
@@ -697,7 +698,6 @@ def modify(driver):
             # cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
             # return
         time.sleep(1)
-        print("x 버튼을 눌러주세요")
         # time.sleep(10000)
 
 

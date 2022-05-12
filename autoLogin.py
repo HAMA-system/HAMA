@@ -93,7 +93,7 @@ def afterLogin(driver):
 
 def checkWork(driver):
     driver.get('https://hrm.hongik.ac.kr/new/')
-    # cpath(driver, 출근버튼)
+    cpath(driver, 출근버튼)
     # cpath(driver, 출근버튼a)
     # cpath(driver, 출근버튼b)
     time.sleep(10000)
