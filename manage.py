@@ -562,6 +562,10 @@ def modify(driver):
 
         print("복사하실 결의서 번호를 입력해주세요.")
         num_title = int(input())-1
+        while num_title < 0 or num_title >= len(all):
+            print("잘못된 입력입니다.")
+            print("복사하실 결의서 번호를 입력해주세요.")
+            num_title = int(input())-1
         title = all[num_title]
 
         # 목록 뽑아오기
@@ -683,8 +687,23 @@ def modify(driver):
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
 
         time.sleep(0.5)
+        # 집행 요청일
+        fpath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[2]/td[2]/input', title[0])
+        epath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[2]/td[2]/input')
+        time.sleep(0.5)
+
+        # 지급 예정일
+        fpath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[3]/td[2]/input', title[0])
+        epath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[3]/td[2]/input')
+
+        acceptAlert(driver)
+
+        # 결의서 제목
         fpath(driver,'/html/body/form/div[4]/div/table/tbody/tr[1]/td[1]/input[1]', title[1])
+        # 세부사항
         driver.find_element_by_xpath('/html/body/form/div[4]/div/table/tbody/tr[2]/td/textarea').clear()
+
+
         res_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table/tbody/tr'
         for i in range(len(res)):
             cpath(driver, res_link + '[' + str(i+2) + ']')
