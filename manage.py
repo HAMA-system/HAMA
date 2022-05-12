@@ -527,32 +527,64 @@ def modify(driver):
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         first = 1
         error_check = 1
-        # mi = threading.Thread(target=modify_input)
-        # mi.daemon = True
-        # mi.start()
         time.sleep(2)
         b = False
-        while not title:
+        all = [[]]
+        num_all = 0
+        added = 0
+        while not all[0]:
             for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+                if all[num_all]:
+                    num_all += 1
+                    all.append([])
+
                 i = 0
                 for td in tr.find_elements(by=By.TAG_NAME, value="td"):
-                    if first:
-                        if i == 1 or i == 4:
-                            title.append(td.get_attribute("innerText"))
-                    print(td.get_attribute("innerText"), end='\t')
+                    if i == 1 or i == 4:
+                        all[num_all].append(td.get_attribute("innerText"))
+                    print("번호",num_all,"|",td.get_attribute("innerText"), end='\t')
                     i += 1
-                first = 0
+
+                    # 추가됐는지 확인
                 print()
-            error_check += 1
-            time.sleep(2)
+
+            if not all[0]:
+                error_check += 1
+                time.sleep(2)
             if error_check > 5:
                 print("시간 초과 혹은 검색어 오류입니다.")
                 driver.switch_to.default_content()
                 return
+
+        print(all)
+
+        print("복사하실 결의서 번호를 입력해주세요.")
+        num_title = int(input())
+        title = all[num_title]
+
+        # 목록 뽑아오기
+        # while not title:
+        #     for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+        #         i = 0
+        #         for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+        #             if first:
+        #                 if i == 1 or i == 4:
+        #                     title.append(td.get_attribute("innerText"))
+        #             print(td.get_attribute("innerText"), end='\t')
+        #             i += 1
+        #         first = 0
+        #         print()
+        #     error_check += 1
+        #     time.sleep(2)
+        #     if error_check > 5:
+        #         print("시간 초과 혹은 검색어 오류입니다.")
+        #         driver.switch_to.default_content()
+        #         return
         mi = threading.Thread(target=modify_input)
         mi.daemon = True
         mi.start()
-        # print(*title,sep='\n')
+
+        # 목록에서 선택
         actions = ActionChains(driver)
         doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
         actions.move_to_element(doubleClick)
@@ -582,10 +614,6 @@ def modify(driver):
         time.sleep(0.3)
         alert.accept()
 
-        # TODO
-        #   tr[1] 처리하는 시간이 매우 큼
-        #   일단은 thread로 input 빼서 시간 단축
-        #   처리 필요
         # d = driver
         # fr = threading.Thread(target=find_res)
         # fr.daemon = True
@@ -652,18 +680,6 @@ def modify(driver):
         if tax_date:
             cpath(driver, 세금계산_탭)
 
-        # table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div')
-        # tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-        # tax_date = []
-        # for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
-        #     i = 0
-        #     for td in tr.find_elements(by=By.TAG_NAME, value="td"):
-        #         i += 1
-        #         # print(td.get_attribute("innerText"), end='\t')
-        #         if i == 4:
-        #             tax_date.append(td.get_attribute("innerText"))
-        #     # print()
-        # # print()
 
             for i in range(len(tax_date)):
                 change = str(int(tax_date[i][5:7]) % 12 + 1)
@@ -691,7 +707,13 @@ def modify(driver):
             driver.switch_to.frame('ifr_d4_AHG029S')
             cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
 
-        # else:
+        else:
+            print("창을 닫고 재시작을 원하시면 1 입력해주세요")
+            while input() != '1':
+                print("잘못된 입력입니다.")
+            driver.switch_to.default_content()
+            driver.switch_to.frame('ifr_d4_AHG029S')
+            cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
             # print("TEST")
             # driver.switch_to.default_content()
             #
