@@ -58,7 +58,7 @@ if __name__ == '__main__':
             manage.write(driver)
         elif select == '수정':
             manage.modify(driver)
-        # elif select == '종료':
-        #     break
+        elif select == '종료':
+            break
         # else:
         #     print("잘못된 입력입니다.")

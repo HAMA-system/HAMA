@@ -457,7 +457,7 @@ def modify(driver):
         while True:
             ignoreAutoLogout.timer = 0
             sema = 0
-            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/3(종료) ")
+            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금) ")
             acc = input().strip()
             # acc = '2'
             if acc == '1' or acc == '2' or acc == '3':
@@ -515,8 +515,8 @@ def modify(driver):
         elif len(month) == 4:
             fname(driver,'DpFrDt',month+'0301')
             fname(driver,'DpToDt',str(int(month)+1)+'0228')
-        elif month == '종료':
-            break
+        # elif month == '종료':
+        #     break
         else:
             print("잘못된 입력입니다.")
         if len(month) != 4:
