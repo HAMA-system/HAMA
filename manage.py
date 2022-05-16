@@ -540,50 +540,53 @@ def modify(driver):
 
         # -----------------------
 
+        print("검색이 완료 되었으면 엔터를 눌러주세요")
+        input()
+
         title = []
         res = []
 
-        # table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
-        # tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-        # first = 1
-        # error_check = 1
-        # time.sleep(2)
-        # b = False
-        # all = [[]]
-        # num_all = 0
-        # added = 0
-        # while not all[0]:
-        #     for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
-        #         if all[num_all]:
-        #             num_all += 1
-        #             all.append([])
-        #
-        #         i = 0
-        #         for td in tr.find_elements(by=By.TAG_NAME, value="td"):
-        #             if i == 1 or i == 4:
-        #                 all[num_all].append(td.get_attribute("innerText"))
-        #             i += 1
-        #
-        #         if all[num_all]:
-        #             print("번호", num_all+1, *all[num_all], sep='\t')
-        #     if not all[0]:
-        #         error_check += 1
-        #         time.sleep(2)
-        #     if error_check > 5:
-        #         print("시간 초과 혹은 검색어 오류입니다.")
-        #         driver.switch_to.default_content()
-        #         return
+        table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
+        tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+        first = 1
+        error_check = 1
+        time.sleep(2)
+        b = False
+        all = [[]]
+        num_all = 0
+        added = 0
+        while not all[0]:
+            for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
+                if all[num_all]:
+                    num_all += 1
+                    all.append([])
 
-        # print("복사하실 결의서 번호를 입력해주세요. 0(뒤로가기)")
-        # num_title = int(input())-1
-        # while num_title < -1 or num_title >= len(all):
-        #     print("잘못된 입력입니다.")
-        #     print("복사하실 결의서 번호를 입력해주세요.")
-        #     num_title = int(input())-1
-        # if num_title == -1:
-        #     driver.switch_to.default_content()
-        #     return
-        # title = all[num_title]
+                i = 0
+                for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+                    if i == 1 or i == 4:
+                        all[num_all].append(td.get_attribute("innerText"))
+                    i += 1
+
+                if all[num_all]:
+                    print("번호", num_all+1, *all[num_all], sep='\t')
+            if not all[0]:
+                error_check += 1
+                time.sleep(2)
+            if error_check > 5:
+                print("시간 초과 혹은 검색어 오류입니다.")
+                driver.switch_to.default_content()
+                return
+
+        print("복사하실 결의서 번호를 입력해주세요. 0(뒤로가기)")
+        num_title = int(input())-1
+        while num_title < -1 or num_title >= len(all):
+            print("잘못된 입력입니다.")
+            print("복사하실 결의서 번호를 입력해주세요.")
+            num_title = int(input())-1
+        if num_title == -1:
+            driver.switch_to.default_content()
+            return
+        title = all[num_title]
 
         # 목록 뽑아오기
         # while not title:
@@ -608,17 +611,17 @@ def modify(driver):
         # mi.start()
 
         # 목록에서 선택
-        # actions = ActionChains(driver)
-        # select_res = '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[' + str(num_title + 1) + ']'
-        # # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
-        # doubleClick = driver.find_element_by_xpath(select_res)
-        # actions.move_to_element(doubleClick)
-        # actions.double_click(doubleClick)
-        # actions.perform()
-        # time.sleep(1)
-        # driver.switch_to.default_content()
-        # driver.switch_to.frame('ifr_d4_AHG029S')
-        # driver.switch_to.frame('frmPopup')
+        actions = ActionChains(driver)
+        select_res = '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[' + str(num_title + 1) + ']'
+        # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
+        doubleClick = driver.find_element_by_xpath(select_res)
+        actions.move_to_element(doubleClick)
+        actions.double_click(doubleClick)
+        actions.perform()
+        time.sleep(1)
+        driver.switch_to.default_content()
+        driver.switch_to.frame('ifr_d4_AHG029S')
+        driver.switch_to.frame('frmPopup')
 
 
         month = modify_input()
@@ -634,7 +637,6 @@ def modify(driver):
                 title[0] = title[0][:8] + str(28)
             elif int(change) != 7:
                 title[0] = title[0][:8] + str(30)
-
 
         time.sleep(1)
         cpath(driver, 복사)
@@ -671,7 +673,6 @@ def modify(driver):
                     res.append(td.get_attribute("innerText"))
             # print()
         # print()
-
 
         table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div')
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
@@ -729,7 +730,7 @@ def modify(driver):
             fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[4]/td[3]/input', res[i])
             cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[3]/ul/li[7]/span/input[2]')
             time.sleep(0.1)
-        if tax_date:
+        if tax_date and tax_date[0] != '':
             cpath(driver, 세금계산_탭)
 
             for i in range(len(tax_date)):
@@ -807,9 +808,10 @@ def monthly_textReplace(prev, month):
 def modify_input():
     # global mod_month
     while True:
-        print("변경하실 페이지를 띄우신 후 변경하실 월을 입력해주세요")
+        # print("변경하실 페이지를 띄우신 후 변경하실 월을 입력해주세요")
+        print("변경하실 월을 입력해주세요")
         month = input()
-        if re.fullmatch(r'\d\d?', month):
+        if re.fullmatch(r'(\D*)([\d,]*\d+)', month):
             break
         print("잘못된 입력입니다.")
     # mod_month = month
