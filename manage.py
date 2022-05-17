@@ -434,14 +434,6 @@ def delete(file):
         print("삭제가 완료되었습니다.")
 
 def modify(driver):
-    # TODO
-    #   오류 처리 나면 다시 실행
-    #   12 -> 1월 처리
-    #   잘못된 입력 받았을 때 처리 안한거 처리
-    #   뒤로가기 만들기 / ㅇㄹ
-    #   창 띄워 놓고 실행하면 바로 하게
-    #   검색기능 제거 원하심
-
     global sema
     global d
     d = driver
@@ -449,12 +441,11 @@ def modify(driver):
     ig.daemon = True
     ig.start()
 
-    # driver.switch_to.default_content()
-    cpath(driver,결의서_조회)
-    # driver.switch_to.frame(조회_프레임)
     hotkey_thread = threading.Thread(target=hotKeyManager.hotkeyStart)
     hotkey_thread.daemon = True
     hotkey_thread.start()
+
+    cpath(driver,결의서_조회)
 
     # TODO
     #   년도 바뀌는 것 생각
@@ -477,6 +468,8 @@ def modify(driver):
 
     while True:
         month = modify_input()
+        # print("\n결의서 클릭이 완료되면 엔터를 눌러주세요")
+        # input()
 
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
@@ -612,6 +605,42 @@ def modify(driver):
         print("\n=====================================================")
 
 
+def monthly_check(prev):
+    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
+    n = re.compile(('\d[ , ]+\d'))
+    q = re.compile(('~'))
+    text_list = prev.split()
+    l = 0
+    ret = []
+    # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
+    key = 0
+    print(prev)
+    if n.search(prev):
+        key = 1
+    if q.search(prev):
+        key = 2
+    for p in text_list:
+        if r.match(p):
+            m = l
+            while m < len(prev):
+                # TODO
+                #   고쳐야함
+            # while m < l + len(p)
+                if '0' <= prev[m] <= '9':
+                    s = prev[m]
+
+                    # 두자리 달 케이스
+                    if '0' <= prev[m+1] <= '9':
+                        s += prev[m+1]
+                        m += 1
+                    ret.append(int(s))
+
+                m += 1
+
+            break
+        l += len(p)+1
+    return ret, key
+
 # TODO
 #   /d/d? 꼴로 바꾸기
 def monthly_textReplace(prev, month):
@@ -620,7 +649,6 @@ def monthly_textReplace(prev, month):
     result_string = ""
 
     for p in text_list:
-        # print(p)
         m = r.match(p)
         if m:
             result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
@@ -685,3 +713,26 @@ def find_tax():
                 tax_date.append(td.get_attribute("innerText"))
         print()
     print()
+
+if __name__ == '__main__':
+    # test = '서울캠(제4강의동 산학협력/창업지원준비실(111호/김영관교수) 관리비(4월분)'
+    # 5, 6월
+    test1 = '서울캠(제4강의동 산학협력/창업지원준비실(111호/김영관교수) 관리비(3,4월분)'
+    # 6월 ~ 9월
+    test2 = '테스트 3월 ~ 6월'
+    # 4월 5월
+    test3 = '임대료 3월 전기세 4월'
+    # 띄어쓰기
+    test4 = '서울캠(제4강의동 산학협력/창업지원준비실(111호/김영관교수) 관리비(3, 4월분)'
+    # 4월, 4월
+    test5 = '대학로캠퍼스 예술경영지원센터 시설사용료(4월), 관리비(4월) 입금'
+    # print(test[monthly_check(test)])
+    # print(monthly_check(test))
+    print(monthly_check(test1))
+    print(monthly_check(test2))
+    print(monthly_check(test3))
+    print(monthly_check(test4))
+    print(monthly_check(test5))
+
+    # TODO
+    #   3월 ~ 6월 => ~ 있는 지 확인

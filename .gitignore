@@ -10,3 +10,4 @@ build
 data*.xlsx
 chromedriver.exe
 test.py
+errorCase.txt
