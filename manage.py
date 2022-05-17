@@ -627,25 +627,30 @@ def modify(driver):
 
         title = []
         res_date = driver.find_element_by_xpath('/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[1]/td[1]/input[1]')
-        print(res_date.get_attribute("value"))
         title.append(res_date.get_attribute("value"))
         res_title = driver.find_element_by_xpath('/html/body/form/div[4]/div/table/tbody/tr[1]/td[1]/input[1]')
-        print(res_title.get_attribute("value"))
         title.append(res_title.get_attribute("value"))
 
 
         # month = modify_input()
         # TODO
         #   연도 바뀌는 것 생각
-        #   title 다시 받아와야 함
+        #   예외 케이스 :
+        #       1. 12월 ~ 3월
+        #       2. 2,3월 인데 2월 따로 3월 따로
+        #       3. 22.6.7 ~ 22.9.6
+        #       4. 22/04/07
+        #       5. 4월 4월 3월
+        #
         change = str(int(title[0][5:7])%12+1)
         if int(change) < 10:
             change = "0" + change
         title[0] = title[0][:5] + change + title[0][7:]
-        if int(title[0][8:]) == 31:
-            if int(change) == 1:
+        if int(change) == 1:
+            if int(title[0][8:]) > 28:
                 title[0] = title[0][:8] + str(28)
-            elif int(change) != 7:
+        if int(title[0][8:]) == 31:
+            if int(change) != 7:
                 title[0] = title[0][:8] + str(30)
 
         time.sleep(1)
