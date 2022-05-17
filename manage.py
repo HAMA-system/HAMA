@@ -456,203 +456,47 @@ def modify(driver):
     hotkey_thread.daemon = True
     hotkey_thread.start()
 
+    # TODO
+    #   년도 바뀌는 것 생각
+    #   실제 케이스 :
+    #       0. ~~~ 4월 // +1 해도 되면 예외케이스 5. 문제 X, 일단 +1 하는 것으로 선정
+    #       0. ~~~ 4,5월 -> 6,7,8월 // 가능?
+    #   예외 케이스 :
+    #       1. 12월 ~ 3월 ( x월 ~ y월 -> y월 ~ 2*y-x월 , % 고려 필수 )
+    #       2. 2,3월 인데 2월 따로 3월 따로
+    #       3. 22.6.7 ~ 22.9.6 (양옆에 . 확인)
+    #       4. 22/04/07 ( 고려 할 필요 X )
+    #       5. 4월 4월 3월 ( 무조건 +1, n월 발견시 n+1월)
+    #   고려 할 것 :
+    #       03월, 3월, 10월 다르니 월 앞 두번째 받아 숫자면 이용
+    #       1년 지나갈 수 있음
+    #   처리해야 할 순서 :
+    #       1) +1로 변경
+    #       2) 다양한 월 케이스 인식
+    #       3) 분기 넘어 갈 때 % 처리
+
     while True:
-        driver.switch_to.default_content()
-        driver.switch_to.frame(조회_프레임)
-        # while True:
-        #     ignoreAutoLogout.timer = 0
-        #     sema = 0
-        #     print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금) ")
-        #     acc = input().strip()
-        #     # acc = '2'
-        #     if acc == '1' or acc == '2' or acc == '3':
-        #         break
-        #     print("잘못된 입력입니다.")
-        # if acc == '3':
-        #     break
-        # while True:
-        #     sema = 1
-        #     print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)/0(뒤로가기)")
-        #     res = input().strip()
-        #     # res = '1'
-        #     # if res == '1' or res == '2' or res == '3' or res == '4':
-        #     if 0 <= int(res) < 5:
-        #         break
-        #     print("잘못된 입력입니다.")
-        # if res == '0':
-        #     driver.switch_to.default_content()
-        #     return
-
-        # while True:
-        #     print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022/0(뒤로가기)")
-        #     month = input().strip()
-        #     # month = '2022'
-        #     if len(month) == 1 or len(month) == 2 or len(month) == 4:
-        #         break
-        #     print("잘못된 입력입니다.")
-        # if month == '0':
-        #     driver.switch_to.default_content()
-        #     return
-        # print("원하는 검색어를 입력해주세요. 0(뒤로가기)")
-        # search = input().strip()
-        # if search == '0':
-        #     driver.switch_to.default_content()
-        #     return
-        # if len(month) == 4:
-        #     fname(driver,'txtSAcctYear',month)
-        # else:
-        #     fname(driver,'txtSAcctYear','2021')
-        # select = Select(driver.find_element_by_xpath(회계구분_조회))
-        # if acc == '1':
-        #     select.select_by_index(0)
-        # elif acc == '2':
-        #     select.select_by_index(1)
-        #
-        # select = Select(driver.find_element_by_xpath(결의서구분))
-        # if res == '1':
-        #     select.select_by_index(0)
-        # elif res == '2':
-        #     select.select_by_index(1)
-        # elif res == '3':
-        #     select.select_by_index(2)
-        # elif res == '4':
-        #     select.select_by_index(3)
-
-        # if month == '1':
-        #     fname(driver,'DpFrDt',dateController.date1month())
-        # elif month == '3':
-        #     fname(driver,'DpFrDt',dateController.date3month())
-        # elif month == '6':
-        #     fname(driver,'DpFrDt',dateController.date6month())
-        # elif month == '12':
-        #     fname(driver,'DpFrDt',dateController.date1year())
-        # elif len(month) == 4:
-        #     fname(driver,'DpFrDt',month+'0301')
-        #     fname(driver,'DpToDt',str(int(month)+1)+'0228')
-        # elif month == '종료':
-        #     break
-        # else:
-        #     print("잘못된 입력입니다.")
-        # if len(month) != 4:
-        #     fname(driver,'DpToDt',dateController.dateToday())
-        # fpath(driver,제목_검색,search)
-        # cname(driver,'CSMenuButton1$List')
-
-        # -----------------------
-
-        # print("검색이 완료 되었으면 엔터를 눌러주세요")
-        # input()
-        #
-        # title = []
-        # res = []
-        #
-        # table = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table')
-        # tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-        # first = 1
-        # error_check = 1
-        # time.sleep(2)
-        # b = False
-        # all = [[]]
-        # num_all = 0
-        # added = 0
-        # while not all[0]:
-        #     for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
-        #         if all[num_all]:
-        #             num_all += 1
-        #             all.append([])
-        #
-        #         i = 0
-        #         for td in tr.find_elements(by=By.TAG_NAME, value="td"):
-        #             if i == 1 or i == 4:
-        #                 all[num_all].append(td.get_attribute("innerText"))
-        #             i += 1
-        #
-        #         if all[num_all]:
-        #             print("번호", num_all+1, *all[num_all], sep='\t')
-        #     if not all[0]:
-        #         error_check += 1
-        #         time.sleep(2)
-        #     if error_check > 5:
-        #         print("시간 초과 혹은 검색어 오류입니다.")
-        #         driver.switch_to.default_content()
-        #         return
-        #
-        # print("복사하실 결의서 번호를 입력해주세요. 0(뒤로가기)")
-        # num_title = int(input())-1
-        # while num_title < -1 or num_title >= len(all):
-        #     print("잘못된 입력입니다.")
-        #     print("복사하실 결의서 번호를 입력해주세요.")
-        #     num_title = int(input())-1
-        # if num_title == -1:
-        #     driver.switch_to.default_content()
-        #     return
-        # title = all[num_title]
-
-        # 목록 뽑아오기
-        # while not title:
-        #     for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
-        #         i = 0
-        #         for td in tr.find_elements(by=By.TAG_NAME, value="td"):
-        #             if first:
-        #                 if i == 1 or i == 4:
-        #                     title.append(td.get_attribute("innerText"))
-        #             print(td.get_attribute("innerText"), end='\t')
-        #             i += 1
-        #         first = 0
-        #         print()
-        #     error_check += 1
-        #     time.sleep(2)
-        #     if error_check > 5:
-        #         print("시간 초과 혹은 검색어 오류입니다.")
-        #         driver.switch_to.default_content()
-        #         return
-        # mi = threading.Thread(target=modify_input)
-        # mi.daemon = True
-        # mi.start()
-
-        # 목록에서 선택
-        # actions = ActionChains(driver)
-        # select_res = '/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[' + str(num_title + 1) + ']'
-        # # doubleClick = driver.find_element_by_xpath('/html/body/form/div[3]/div[4]/div/div/div/div[3]/div[2]/table/tbody/tr[1]')
-        # doubleClick = driver.find_element_by_xpath(select_res)
-        # actions.move_to_element(doubleClick)
-        # actions.double_click(doubleClick)
-        # actions.perform()
-        # time.sleep(1)
         month = modify_input()
 
         driver.switch_to.default_content()
-        driver.switch_to.frame('ifr_d4_AHG029S')
+        driver.switch_to.frame(조회_프레임)
         driver.switch_to.frame('frmPopup')
 
+        # 결의서 제목 및 날짜 저장
         title = []
-        res_date = driver.find_element_by_xpath('/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[1]/td[1]/input[1]')
+        res_date = driver.find_element_by_xpath(결의일자_번호)
         title.append(res_date.get_attribute("value"))
-        res_title = driver.find_element_by_xpath('/html/body/form/div[4]/div/table/tbody/tr[1]/td[1]/input[1]')
+        res_title = driver.find_element_by_xpath(결의서_제목)
         title.append(res_title.get_attribute("value"))
 
-
-        # month = modify_input()
-        # TODO
-        #   년도 바뀌는 것 생각
-        #   실제 케이스 :
-        #       0. ~~~ 4월 // +1 해도 되면 예외케이스 5. 문제 X, 일단 +1 하는 것으로 선정
-        #       0. ~~~ 4,5월 -> 6,7,8월 // 가능?
-        #   예외 케이스 :
-        #       1. 12월 ~ 3월
-        #       2. 2,3월 인데 2월 따로 3월 따로
-        #       3. 22.6.7 ~ 22.9.6
-        #       4. 22/04/07
-        #       5. 4월 4월 3월
-        #   고려 할 것 :
-        #       03월, 3월, 10월 다르니 월 앞 두번째 받아 숫자면 이용
-        #
-        #   3,4월 -> 4,5
-        #   3,6
-        change = str(int(title[0][5:7])%12+1)
+        # TODO 예외 케이스 있는지 확인 해볼것, 함수화
+        # 결의서 날짜 변경
+        change = str(int(title[0][5:7])%12 + 1)
         if int(change) < 10:
             change = "0" + change
         title[0] = title[0][:5] + change + title[0][7:]
+
+        # 달마다 없는 날짜 처리
         if int(change) == 1:
             if int(title[0][8:]) > 28:
                 title[0] = title[0][:8] + str(28)
@@ -660,152 +504,110 @@ def modify(driver):
             if int(change) != 7:
                 title[0] = title[0][:8] + str(30)
 
-        time.sleep(1)
+        # 복사 창 이동
         cpath(driver, 복사)
         alert = driver.switch_to.alert
         alert.send_keys(title[0])
         for _ in range(3):
             acceptAlert(driver)
-        # alert.accept()
-        # time.sleep(0.3)
-        # alert.accept()
-        # time.sleep(0.3)
-        # alert.accept()
 
-        # d = driver
-        # fr = threading.Thread(target=find_res)
-        # fr.daemon = True
-        # fr.start()
-        # ft = threading.Thread(target=find_tax)
-        # ft.daemon = True
-        # ft.start()
-        # mi = threading.Thread(target=modify_input)
-        # mi.daemon = True
-        # mi.start()
-
-
-        table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table')
+        # 내부 데이터 수집 (결의항목)
+        table = driver.find_element_by_xpath(결의서_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
             for td in tr.find_elements(by=By.TAG_NAME, value="td"):
                 i += 1
-                # print(td.get_attribute("innerText"), end='\t')
                 if i == 10:
                     res.append(td.get_attribute("innerText"))
-            # print()
-        # print()
 
-        table = driver.find_element_by_xpath('/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div')
+        # 내부 데이터 수집 (세금)
+        table = driver.find_element_by_xpath(세금계산_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         tax_date = []
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
             for td in tr.find_elements(by=By.TAG_NAME, value="td"):
                 i += 1
-                # print(td.get_attribute("innerText"), end='\t')
                 if i == 4:
                     tax_date.append(td.get_attribute("innerText"))
-            # print()
-        # print()
 
 
-        # while mi.is_alive():
-        #     pass
-        # month = mod_month
-
-        # while fr.is_alive():
-        #     pass
-        # for x in res:
-        #     x.join()
-        # print(title, res)
-        # while mi.is_alive():
-        #     pass
-        # month = mod_month
-
+        # 불필요한 띄어쓰기 제거
         title[1] = monthly_textReplace(title[1], month).rstrip()
         for i in range(len(res)):
             res[i] = monthly_textReplace(res[i], month).rstrip()
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
 
+        # 날짜 및 제목 입력
         time.sleep(0.5)
-        # 집행 요청일
-        fpath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[2]/td[2]/input', title[0])
-        epath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[2]/td[2]/input')
+        fpath(driver, 집행요청일, title[0])
+        epath(driver, 집행요청일)
+
         time.sleep(0.5)
-
-        # 지급 예정일
-        fpath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[3]/td[2]/input', title[0])
-        epath(driver, '/html/body/form/div[3]/div[3]/div[1]/table/tbody/tr[3]/td[2]/input')
-
+        fpath(driver, 지급예정일, title[0])
+        epath(driver, 지급예정일)
         acceptAlert(driver)
 
-        # 결의서 제목
-        fpath(driver,'/html/body/form/div[4]/div/table/tbody/tr[1]/td[1]/input[1]', title[1])
-        # 세부사항
-        driver.find_element_by_xpath('/html/body/form/div[4]/div/table/tbody/tr[2]/td/textarea').clear()
+        fpath(driver,결의서_제목, title[1])
+        driver.find_element_by_xpath(세부사항).clear()
 
-
-        res_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table/tbody/tr'
+        # 결의서 작성
         for i in range(len(res)):
-            cpath(driver, res_link + '[' + str(i+2) + ']')
-            fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/table[1]/tbody/tr[4]/td[3]/input', res[i])
-            cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[3]/ul/li[7]/span/input[2]')
+            cpath(driver, 결의서_링크 + '['+str(i+2)+']')
+            fpath(driver, 적요, res[i])
+            cpath(driver, 결의내역_제출)
             time.sleep(0.1)
+
+        # 세금 작성
         if tax_date and tax_date[0] != '':
             cpath(driver, 세금계산_탭)
 
+            # TODO 함수화
+            # 세금 날짜 변경
             for i in range(len(tax_date)):
                 change = str(int(tax_date[i][5:7]) % 12 + 1)
                 if int(change) < 10:
                     change = "0" + change
                 tax_date[i] = tax_date[i][:5] + change + tax_date[i][7:]
 
+                # 달마다 없는 날짜 처리
                 if int(tax_date[i][8:]) == 31:
                     if int(change) == 1:
                         tax_date[i] = title[i][:8] + str(28)
                     elif int(change) != 7:
                         tax_date[i] = tax_date[i][:8] + str(30)
+
             print("세금 날짜", *tax_date, "",sep='\n')
 
-            tax_link = '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div/table/tbody/tr'
+            # 세금 작성
             for i in range(len(tax_date)):
-                cpath(driver, tax_link + '[' + str(i+2) + ']')
-                fpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[1]/tbody/tr[1]/td[2]/input', tax_date[i])
-                cpath(driver, '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/table[2]/tbody/tr/td/div/span[3]/input[2]')
+                cpath(driver, 세금계산_링크 + '['+str(i+2)+']')
+                fpath(driver, 발행일자, tax_date[i])
+                cpath(driver, 세금계산_제출)
                 time.sleep(0.1)
-            cpath(driver,'/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[1]/td/div/table/tbody/tr/td[2]')
+            cpath(driver,결의내역_탭)
 
         print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
         s = input()
         if s == '1':
-            cpath(driver, '/html/body/form/div[3]/div[1]/div/ul/li/span[3]/input[1]')
+            cpath(driver, 저장)
             time.sleep(1)
             dismissAlert(driver)
             print("저장이 완료되었습니다.")
             time.sleep(2)
             driver.switch_to.default_content()
-            driver.switch_to.frame('ifr_d4_AHG029S')
-            cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
+            driver.switch_to.frame(조회_프레임)
+            cpath(driver,닫기)
 
         else:
             print("창을 닫고 재시작을 원하시면 1 입력해주세요")
             while input() != '1':
                 print("잘못된 입력입니다.")
             driver.switch_to.default_content()
-            driver.switch_to.frame('ifr_d4_AHG029S')
-            cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
-            # print("TEST")
-            # driver.switch_to.default_content()
-            #
-            # cpath(driver,'/html/body/form/div[5]/div[1]/span[1]')
-            # return
+            driver.switch_to.frame(조회_프레임)
+            cpath(driver,닫기)
         time.sleep(1)
-        # time.sleep(10000)
-
-
-        # time.sleep(10000)
-        # -----------------------
 
         print("\n=====================================================")
 
