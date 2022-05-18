@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import time
 
 import autoLogin
@@ -609,35 +610,27 @@ def monthly_check(prev):
     r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
     n = re.compile(('\d[ , ]+\d'))
     q = re.compile(('~'))
-    text_list = prev.split()
-    l = 0
-    ret = []
+
     # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
-    key = 0
-    print(prev)
+    l, key = 0, 0
+    ret = []
     if n.search(prev):
         key = 1
     if q.search(prev):
         key = 2
+
+    text_list = prev.split()
     for p in text_list:
         if r.match(p):
             m = l
-            while m < len(prev):
-                # TODO
-                #   고쳐야함
-            # while m < l + len(p)
+            while m < l + len(p):
                 if '0' <= prev[m] <= '9':
                     s = prev[m]
-
-                    # 두자리 달 케이스
                     if '0' <= prev[m+1] <= '9':
                         s += prev[m+1]
                         m += 1
-                    ret.append(int(s))
-
+                    ret.append(s)
                 m += 1
-
-            break
         l += len(p)+1
     return ret, key
 
@@ -714,25 +707,26 @@ def find_tax():
         print()
     print()
 
-if __name__ == '__main__':
-    # test = '서울캠(제4강의동 산학협력/창업지원준비실(111호/김영관교수) 관리비(4월분)'
-    # 5, 6월
-    test1 = '서울캠(제4강의동 산학협력/창업지원준비실(111호/김영관교수) 관리비(3,4월분)'
-    # 6월 ~ 9월
-    test2 = '테스트 3월 ~ 6월'
-    # 4월 5월
-    test3 = '임대료 3월 전기세 4월'
-    # 띄어쓰기
-    test4 = '서울캠(제4강의동 산학협력/창업지원준비실(111호/김영관교수) 관리비(3, 4월분)'
-    # 4월, 4월
-    test5 = '대학로캠퍼스 예술경영지원센터 시설사용료(4월), 관리비(4월) 입금'
-    # print(test[monthly_check(test)])
-    # print(monthly_check(test))
-    print(monthly_check(test1))
-    print(monthly_check(test2))
-    print(monthly_check(test3))
-    print(monthly_check(test4))
-    print(monthly_check(test5))
+def monthly_next(prev, month, val):
+    n = len(prev)
+    s = ""
+    # 일반적 케이스
+    if val == 0:
+        pass
 
-    # TODO
-    #   3월 ~ 6월 => ~ 있는 지 확인
+    # 연속 달
+    if val == 1:
+        pass
+
+    # 분기 || 연단위
+    if val == 2:
+        pass
+
+if __name__ == '__main__':
+    sys.stdin = open("errorCase.txt")
+    input()
+    while True:
+        put = input()
+        if put[0] == "<":
+            break
+        print(put)
