@@ -621,6 +621,8 @@ def monthly_check(prev):
     text_list = prev.split()
     for p in text_list:
         if r.match(p):
+            # TODO 임시 처리
+            temp = []
             m = l
             while m < l + len(p):
                 if '0' <= prev[m] <= '9':
@@ -628,8 +630,13 @@ def monthly_check(prev):
                     if '0' <= prev[m+1] <= '9':
                         s += prev[m+1]
                         m += 1
-                    ret.append(s)
+                    # ret.append(s)
+                    temp.append(s)
                 m += 1
+            for tmp in temp:
+                if tmp not in ret:
+                    ret.append(tmp)
+
         l += len(p)+1
     return ret, key
 
@@ -720,28 +727,38 @@ def monthly_next(prev, month, val):
     for m in month:
         if val == 0:
             # %d월 확인
-            month.sort(reverse=True)
             next_month = month_inc(month, 1)
             for i in range(len(month)):
                 month[i] += "월"
                 next_month[i] += "월"
+            month.sort(reverse=True)
+            next_month.sort(reverse=True)
             for i in range(len(month)):
                 prev = re.sub(month[i], next_month[i], prev)
-            return prev
 
         # 연속 달
         # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지
         if val == 1:
             # %d,%d월 확인 + %d월,%d월?
-            next_month = ",".join(month_inc(month, 1))+"월"
+            value = int(month[-1]) - int(month[0]) + 1
+            next_month = ",".join(month_inc(month, value))+"월"
             month = ",".join(month)+"월"
             prev = re.sub(month,next_month,prev)
-            return prev
 
         # 분기 || 연단위
         if val == 2:
             # %d월~%d월 확인 + %d~%d월 ?
-            pass
+            value = int(month[1]) - int(month[0])
+            next_month = month_inc(month,value)
+            for i in range(2):
+                month[i] += "월"
+                next_month[i] += "월"
+            next_month.sort(reverse=True)
+            month.sort(reverse=True)
+            for i in range(2):
+                prev = re.sub(month[i], next_month[i], prev)
+
+        return prev
 
 if __name__ == '__main__':
     sys.stdin = open("errorCase.txt")
@@ -753,4 +770,3 @@ if __name__ == '__main__':
         print(put)
         a, b = monthly_check(put)
         print(monthly_next(put, a, b))
-        break
