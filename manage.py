@@ -717,7 +717,10 @@ def month_inc(month, val):
     ret = []
     for m in month:
         # TODO 12월 1월 처리
-        ret.append(str(int(m)+val))
+        nm = int(m)+val
+        if nm > 12:
+            nm %= 12
+        ret.append(str(nm))
     return ret
 
 def monthly_next(prev, month, val):
@@ -740,7 +743,11 @@ def monthly_next(prev, month, val):
         # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지
         if val == 1:
             # %d,%d월 확인 + %d월,%d월?
-            value = int(month[-1]) - int(month[0]) + 1
+            last = int(month[-1])
+            first = int(month[0])
+            value = last - first + 1
+            if last < first:
+                value += 12
             next_month = ",".join(month_inc(month, value))+"월"
             month = ",".join(month)+"월"
             prev = re.sub(month,next_month,prev)
@@ -748,14 +755,24 @@ def monthly_next(prev, month, val):
         # 분기 || 연단위
         if val == 2:
             # %d월~%d월 확인 + %d~%d월 ?
-            value = int(month[1]) - int(month[0])
-            next_month = month_inc(month,value)
+            last = int(month[1])
+            first = int(month[0])
+            value = last - first%12
+            next_month = month_inc(month,value+1)
+            # nlast = int(next_month[1])
+            # nfirst = int(next_month[0])
             for i in range(2):
                 month[i] += "월"
                 next_month[i] += "월"
-            next_month.sort(reverse=True)
-            month.sort(reverse=True)
-            for i in range(2):
+            # print(month,'\n',next_month)
+
+            # if nlast < nfirst:
+            #     if last > first:
+            #         month.sort(reverse=True)
+            #         print(month, '\n', next_month)
+                # next_month.sort(reverse=True)
+                # month.sort(reverse=True)
+            for i in range(1,-1,-1):
                 prev = re.sub(month[i], next_month[i], prev)
 
         return prev
@@ -767,6 +784,7 @@ if __name__ == '__main__':
         put = input()
         if put[0] == "<":
             break
-        print(put)
+        print("------------------")
+        print(put,"->")
         a, b = monthly_check(put)
-        print(monthly_next(put, a, b))
+        print(monthly_next(put, a, b),"<-")
