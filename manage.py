@@ -16,7 +16,6 @@ from hotKeyManager import *
 import xlsxFileController
 import ignoreAutoLogout
 import threading
-from sys import stdout
 import asyncio
 
 sema = 0
@@ -31,7 +30,7 @@ def refresh():
 
 def printProgress(i, max):
     c = int(i*max)
-    stdout.write('\r[' + '#'*c + ' '*(max-c-1) + ']\t\t[' + str(int(i*100)) + '%]')
+    sys.stdout.write('\r[' + '#'*c + ' '*(max-c-1) + ']\t\t[' + str(int(i*100)) + '%]')
 
 def monthly_textReplace(prev,month):
     r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
@@ -228,7 +227,7 @@ def write(driver):
                         target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
 
 
-                # stdout.flush()
+                # sys.stdout.flush()
                 # printProgress(progress/progrexx_max, progress_size)
                 # progress += progress/progrexx_max
                 time.sleep(0.5)
@@ -707,20 +706,38 @@ def find_tax():
         print()
     print()
 
+def month_inc(month, val):
+    ret = []
+    for m in month:
+        # TODO 12월 1월 처리
+        ret.append(str(int(m)+val))
+    return ret
+
 def monthly_next(prev, month, val):
     n = len(prev)
     s = ""
     # 일반적 케이스
-    if val == 0:
-        pass
+    month.sort(reverse=True)
+    for m in month:
+        if val == 0:
+            # %d월 확인
+            next_month = month_inc(month, 1)
+            for i in range(len(month)):
+                month[i] += "월"
+                next_month[i] += "월"
+            for i in range(len(month)):
+                prev = re.sub(month[i], next_month[i], prev)
+            return prev
 
-    # 연속 달
-    if val == 1:
-        pass
+        # 연속 달
+        if val == 1:
+            # %d,%d월 확인 + %d월,%d월?
+            pass
 
-    # 분기 || 연단위
-    if val == 2:
-        pass
+        # 분기 || 연단위
+        if val == 2:
+            # %d월~%d월 확인 + %d~%d월 ?
+            pass
 
 if __name__ == '__main__':
     sys.stdin = open("errorCase.txt")
@@ -730,3 +747,6 @@ if __name__ == '__main__':
         if put[0] == "<":
             break
         print(put)
+        a, b = monthly_check(put)
+        print(monthly_next(put, a, b))
+        break
