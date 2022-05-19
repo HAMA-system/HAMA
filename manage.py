@@ -717,10 +717,10 @@ def monthly_next(prev, month, val):
     n = len(prev)
     s = ""
     # 일반적 케이스
-    month.sort(reverse=True)
     for m in month:
         if val == 0:
             # %d월 확인
+            month.sort(reverse=True)
             next_month = month_inc(month, 1)
             for i in range(len(month)):
                 month[i] += "월"
@@ -730,9 +730,13 @@ def monthly_next(prev, month, val):
             return prev
 
         # 연속 달
+        # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지
         if val == 1:
             # %d,%d월 확인 + %d월,%d월?
-            pass
+            next_month = ",".join(month_inc(month, 1))+"월"
+            month = ",".join(month)+"월"
+            prev = re.sub(month,next_month,prev)
+            return prev
 
         # 분기 || 연단위
         if val == 2:
