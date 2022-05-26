@@ -13,6 +13,7 @@ from autoLogin import *
 from linkData import *
 from alertController import *
 from hotKeyManager import *
+from copy import deepcopy
 import xlsxFileController
 import ignoreAutoLogout
 import threading
@@ -732,46 +733,48 @@ def month_inc(month, val):
     return ret
 
 def monthly_next(prev, month, val):
+    cmonth = deepcopy(month)
     n = len(prev)
     s = ""
     # 일반적 케이스
-    for m in month:
+    for m in cmonth:
         if val == 0:
             # %d월 확인
-            next_month = month_inc(month, 1)
-            for i in range(len(month)):
-                month[i] += "월"
+            next_month = month_inc(cmonth, 1)
+            for i in range(len(cmonth)):
+                cmonth[i] += "월"
                 next_month[i] += "월"
-            month.sort(reverse=True)
+            cmonth.sort(reverse=True)
             next_month.sort(reverse=True)
-            for i in range(len(month)):
-                if re.search(month[i], prev):
-                    prev = re.sub(month[i], next_month[i], prev)
+            for i in range(len(cmonth)):
+                if re.search(cmonth[i], prev):
+                    prev = re.sub(cmonth[i], next_month[i], prev)
 
         # 연속 달
-        # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지
+        # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지 / 있으면 안됨
+        #   12,1 제목 + 12 / 1 적요 => dict 처리
         if val == 1:
             # %d,%d월 확인 + %d월,%d월?
-            last = int(month[-1])
-            first = int(month[0])
+            last = int(cmonth[-1])
+            first = int(cmonth[0])
             value = last - first + 1
             if last < first:
                 value += 12
-            next_month = ",".join(month_inc(month, value))+"월"
-            month = ",".join(month)+"월"
-            prev = re.sub(month,next_month,prev)
+            next_month = ",".join(month_inc(cmonth, value))+"월"
+            cmonth = ",".join(cmonth)+"월"
+            prev = re.sub(cmonth,next_month,prev)
 
         # 분기 || 연단위
         if val == 2:
             # %d월~%d월 확인 + %d~%d월 ?
-            last = int(month[1])
-            first = int(month[0])
+            last = int(cmonth[1])
+            first = int(cmonth[0])
             value = last - first%12
-            next_month = month_inc(month,value+1)
+            next_month = month_inc(cmonth,value+1)
             # nlast = int(next_month[1])
             # nfirst = int(next_month[0])
             for i in range(2):
-                month[i] += "월"
+                cmonth[i] += "월"
                 next_month[i] += "월"
             # print(month,'\n',next_month)
 
@@ -782,8 +785,8 @@ def monthly_next(prev, month, val):
                 # next_month.sort(reverse=True)
                 # month.sort(reverse=True)
             for i in range(1,-1,-1):
-                if re.search(month[i], prev):
-                    prev = re.sub(month[i], next_month[i], prev)
+                if re.search(cmonth[i], prev):
+                    prev = re.sub(cmonth[i], next_month[i], prev)
 
         return prev
 
@@ -797,6 +800,11 @@ if __name__ == '__main__':
         print("------------------")
         print(put,"->")
         a, b = monthly_check(put)
+        print(a,b)
         print(monthly_next(put, a, b),"<-")
-        print(a)
+        test = input()
+        print(test)
+        print(a,b)
+        print(monthly_next(test, a, b))
+        # print(a)
         break
