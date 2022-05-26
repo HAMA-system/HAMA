@@ -462,12 +462,15 @@ def modify(driver):
     #       03월, 3월, 10월 다르니 월 앞 두번째 받아 숫자면 이용
     #       1년 지나갈 수 있음
     #   처리해야 할 순서 :
-    #       1) +1로 변경
-    #       2) 다양한 월 케이스 인식
-    #       3) 분기 넘어 갈 때 % 처리
+    #       1) +1로 변경 ㅇㄹ
+    #       2) 다양한 월 케이스 인식 ㅇㄹ
+    #       3) 분기 넘어 갈 때 % 처리 ㅇㄹ
+    #       4) 분기데이터는 결의일자 +n
+    #   ValueError: invalid literal for int() with base 10: '4월'
 
     while True:
-        month = modify_input()
+        modify_input()
+        # month = modify_input()
         # print("\n결의서 클릭이 완료되면 엔터를 눌러주세요")
         # input()
 
@@ -527,9 +530,12 @@ def modify(driver):
 
 
         # 불필요한 띄어쓰기 제거
-        title[1] = monthly_textReplace(title[1], month).rstrip()
+        # title[1] = monthly_textReplace(title[1], month).rstrip()
+        next_month, next_value = monthly_check(title[1])
+        title[1] = monthly_next(title[1],next_month,next_value)
         for i in range(len(res)):
-            res[i] = monthly_textReplace(res[i], month).rstrip()
+            res[i] = monthly_next(res[i], next_month, next_value)
+            # res[i] = monthly_textReplace(res[i], month).rstrip()
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
 
         # 날짜 및 제목 입력
@@ -657,16 +663,19 @@ def monthly_textReplace(prev, month):
     return result_string
 
 def modify_input():
+    print("변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
+    input()
+
     # global mod_month
-    while True:
-        print("변경하실 페이지를 띄우신 후 변경하실 월을 입력해주세요")
+    # while True:
+        # print("변경하실 페이지를 띄우신 후 변경하실 월을 입력해주세요")
         # print("변경하실 월을 입력해주세요")
-        month = input()
-        if re.fullmatch(r'(\D*)([\d,]*\d+)', month):
-            break
-        print("잘못된 입력입니다.")
+        # month = input()
+        # if re.fullmatch(r'(\D*)([\d,]*\d+)', month):
+        #     break
+        # print("잘못된 입력입니다.")
     # mod_month = month
-    return month
+    # return month
 
 def find_res():
     global d
@@ -716,7 +725,6 @@ def find_tax():
 def month_inc(month, val):
     ret = []
     for m in month:
-        # TODO 12월 1월 처리
         nm = int(m)+val
         if nm > 12:
             nm %= 12
@@ -737,7 +745,8 @@ def monthly_next(prev, month, val):
             month.sort(reverse=True)
             next_month.sort(reverse=True)
             for i in range(len(month)):
-                prev = re.sub(month[i], next_month[i], prev)
+                if re.search(month[i], prev):
+                    prev = re.sub(month[i], next_month[i], prev)
 
         # 연속 달
         # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지
@@ -773,7 +782,8 @@ def monthly_next(prev, month, val):
                 # next_month.sort(reverse=True)
                 # month.sort(reverse=True)
             for i in range(1,-1,-1):
-                prev = re.sub(month[i], next_month[i], prev)
+                if re.search(month[i], prev):
+                    prev = re.sub(month[i], next_month[i], prev)
 
         return prev
 
@@ -788,3 +798,5 @@ if __name__ == '__main__':
         print(put,"->")
         a, b = monthly_check(put)
         print(monthly_next(put, a, b),"<-")
+        print(a)
+        break
