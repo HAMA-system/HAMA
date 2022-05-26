@@ -742,10 +742,16 @@ def monthly_next(prev, month, val):
             # %d월 확인
             next_month = month_inc(cmonth, 1)
             for i in range(len(cmonth)):
-                cmonth[i] += "월"
-                next_month[i] += "월"
+                cmonth[i] = int(cmonth[i])
+                next_month[i] = int(next_month[i])
             cmonth.sort(reverse=True)
             next_month.sort(reverse=True)
+            for i in range(len(cmonth)):
+                cmonth[i] = str(cmonth[i])
+                next_month[i] = str(next_month[i])
+            for i in range(len(cmonth)):
+                cmonth[i] += "월"
+                next_month[i] += "월"
             for i in range(len(cmonth)):
                 if re.search(cmonth[i], prev):
                     prev = re.sub(cmonth[i], next_month[i], prev)
@@ -802,9 +808,9 @@ if __name__ == '__main__':
         a, b = monthly_check(put)
         print(a,b)
         print(monthly_next(put, a, b),"<-")
-        test = input()
-        print(test)
-        print(a,b)
-        print(monthly_next(test, a, b))
+        # test = input()
+        # print(test)
+        # print(a,b)
+        # print(monthly_next(test, a, b))
         # print(a)
         break
