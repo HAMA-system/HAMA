@@ -63,7 +63,12 @@ def cpath(driver,path):
 
 def epath(driver,path):
     time.sleep(0.2)
-    driver.find_element_by_xpath(path).send_keys(Keys.ENTER)
+    while True:
+        try:
+            driver.find_element_by_xpath(path).send_keys(Keys.ENTER)
+            break
+        except:
+            pass
     # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
     # element.send_keys(Keys.ENTER)
 
