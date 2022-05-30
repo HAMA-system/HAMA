@@ -78,8 +78,8 @@ def login(driver):
         driver.switch_to.alert.accept()
     except:
         pass
-
-    return afterLogin(driver)
+    return driver
+    # return afterLogin(driver)
     # return checkWork(driver)
 
 def afterLogin(driver):

@@ -5,6 +5,7 @@ from selenium import webdriver
 from linkData import *
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import RUN_DRAFT
 def set_chromedriver():
     while True:
         try:
@@ -48,6 +49,9 @@ if __name__ == '__main__':
     # print(time.time()-start)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
+    dr = True
+    if dr:
+        RUN_DRAFT.draft(driver)
     while True:
         # select = '조회'
         # select = '작성'
