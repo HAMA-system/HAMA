@@ -220,12 +220,13 @@ def write(driver):
                 # 정기 체크
                 if target_data[i][1] is not None and target_data[i][1] != '' and target_data[i][1] != '_':
                     isMonthly = True
-                    target_data[i][18] = str(target_data[i][18])
-                    target_data[i][2] = str(target_data[i][2])
-                    target_data[i][18] = monthly_textReplace(target_data[i][18], target_data[i][2])
+                    if target_data[i][2] != '' and target_data[i][2] != '_':
+                        target_data[i][18] = str(target_data[i][18])
+                        target_data[i][2] = str(target_data[i][2])
+                        target_data[i][18] = monthly_textReplace(target_data[i][18], target_data[i][2])
 
-                    if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
-                        target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
+                        if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
+                            target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
 
 
                 # sys.stdout.flush()
@@ -756,13 +757,17 @@ def month_inc(month, val):
 
 def ymonth_inc(ymonth, val):
     ret = []
-    for m in ymonth[1]:
+    print(" : ",ymonth)
+    t = ymonth[0]
+    for m in ymonth[0][1]:
         nm = m+val
         if nm > 12:
             nm %= 12
-            ymonth += 1
+            t = ymonth[0][0] + 1
         ret.append(nm)
-    return ret
+    r = [t]
+    r.append(ret)
+    return r
 
 def monthly_next(prev, month, val, ymonth):
     cmonth = deepcopy(month)
@@ -833,6 +838,7 @@ def monthly_next(prev, month, val, ymonth):
         if val == 0:
             # %d월 확인
             next_month = ymonth_inc(cymonth, 1)
+            print(cymonth)
             for i in range(len(cymonth[1])):
                 cymonth[1][i] += "월"
                 next_month[1][i] += "월"

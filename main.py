@@ -52,6 +52,8 @@ if __name__ == '__main__':
     dr = True
     if dr:
         RUN_DRAFT.draft(driver)
+    else:
+        driver = autoLogin.afterLogin(driver)
     while True:
         # select = '조회'
         # select = '작성'
