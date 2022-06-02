@@ -28,7 +28,15 @@ def draft(driver):
             print()
             i += 1
         print("\n인쇄를 할 문서들의 시작번호와 끝번호를 입력해주세요. ex) 1 20")
-        start, end = map(int,input().split())
+        print("혹은 이동할 페이지 번호를 입력해주세요. ex) 2")
+        inp = list(map(int,input().split()))
+        if len(inp) == 2:
+            start, end = inp[0], inp[1]
+        elif len(inp) == 1:
+            page = 페이지_변경[:29] + str(inp[0]+2) + 페이지_변경[30:]
+            cpath(driver, page)
+            time.sleep(1)
+            continue
         for i in range(start, end+1):
 
             # 시작할 때, 반복할 때 주소가 달라야 클릭이 됨
