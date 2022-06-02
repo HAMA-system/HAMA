@@ -889,6 +889,12 @@ def monthly_next(prev, month, val, ymonth):
 
         return prev
 
+
+# TODO
+#   exe 파일 아이콘 넣기
+#   연도 바뀔 때 처리
+#   기안 페이지 변경
+
 if __name__ == '__main__':
     sys.stdin = open("errorCase.txt")
     input()
