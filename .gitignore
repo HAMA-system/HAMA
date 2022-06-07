@@ -11,3 +11,5 @@ data*.xlsx
 chromedriver.exe
 test.py
 errorCase.txt
+*.pyc
+__pycache__
