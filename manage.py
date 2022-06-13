@@ -645,8 +645,7 @@ def monthly_check(prev):
                     x.append(int(s))
                 m += 1
             for tmp in temp:
-                if tmp not in ret:
-                    x.append(int(s))
+                x.append(int(s))
             ret_y.append([int(pprev[:-1]),x])
         elif r.match(p):
             # TODO 임시 처리
@@ -662,8 +661,7 @@ def monthly_check(prev):
                     temp.append(s)
                 m += 1
             for tmp in temp:
-                if tmp not in ret:
-                    ret.append(tmp)
+                ret.append(tmp)
 
         l += len(p)+1
         pprev = p
@@ -750,7 +748,9 @@ def month_inc(month, val):
     for m in month:
         nm = int(m)+val
         if nm > 12:
+            y = int(nm / 12)
             nm %= 12
+            nm = y*100 + nm
         ret.append(str(nm))
     return ret
 
@@ -774,9 +774,12 @@ def monthly_next(prev, month, val, ymonth):
     n = len(prev)
     s = ""
     # 일반적 케이스
+    print("cm",cmonth)
     for m in cmonth:
+        print("m",m)
         if val == 0:
             # %d월 확인
+            print("cmonth",cmonth)
             next_month = month_inc(cmonth, 1)
             for i in range(len(cmonth)):
                 cmonth[i] = int(cmonth[i])
@@ -833,6 +836,7 @@ def monthly_next(prev, month, val, ymonth):
                     prev = re.sub(cmonth[i], next_month[i], prev)
 
     # 연도 포함 대체
+    print(cymonth)
     for m in cymonth:
         if val == 0:
             # %d월 확인
@@ -865,6 +869,7 @@ def monthly_next(prev, month, val, ymonth):
         # 분기 || 연단위
         if val == 2:
             # %d월~%d월 확인 + %d~%d월 ?
+            print(cmonth)
             last = int(cmonth[1])
             first = int(cmonth[0])
             value = last - first % 12
@@ -894,6 +899,82 @@ def monthly_next(prev, month, val, ymonth):
 #   연도 바뀔 때 처리
 #   기안 페이지 변경
 
+def new_monthly_next(prev, month, val, ymonth):
+    # print(prev, month, val, ymonth)
+    # print("dd")
+    cmonth = deepcopy(month)
+    cymonth = deepcopy(ymonth)
+    # 1. 그냥 개별 월 ex) 3월, 4월 -> 5월, 6월
+    #                   3,4월 -> 5,6월
+    #                   3월 -> 4월
+    # 2. 분기 ex) 4~6월 -> 7~9월
+    #           4월~6월 -> 7월~9월
+    #           4월 ~ 6월 (제대로 인식 안됨)
+    #
+    # 1번 연도가 개입하는 경우 -> ex) 2021년 11월, 12월 -> 2022년 1월, 2월
+    # 2번 연도가 개입하는 경우 -> ex) 2021년 10월 ~ 12월 -> 2022년 1월 ~ 3월
+
+    #연도가 없음
+    if len(cymonth)==0:
+        if val==2:
+            next_months = month_inc(cmonth,int(cmonth[-1])-int(cmonth[0])+1)
+        else:
+            next_months = month_inc(cmonth,1)
+
+        print(next_months)월
+
+        for i in range(len(cmonth)):
+            if re.search(str(cmonth[i]), prev):
+                if int(next_months[i])<100:
+                    prev = re.sub(str(cmonth[i]), next_months[i], prev)
+                else:
+                    prev = re.sub(str(cmonth[i]), " "+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100), prev)
+
+        print(prev)
+
+
+    #연도가 있음
+    else:
+        next_months = []
+        for x in cymonth:
+            year = x[0]
+            months = x[1]
+            # print(x)
+            next_months.append(month_inc(months, months[-1]-months[0]+1))
+            # print(next_months)
+        #
+        # print(cymonth[0][1],next_months[0])
+
+        for j in range(len(next_months)-1,-1,-1):
+            for i in range(len(cymonth[j][1])):
+                print(cymonth[j][1], next_months[j])
+
+                if int(next_months[j][0]) >= 100:
+                    prev = re.sub(str(cymonth[j][0])+"년 ", "",prev)
+
+                if re.search(str(cymonth[j][1][i]), prev):
+                    # prev = re.sub(str(cymonth[j][1][i]),next_months[j][i],prev)
+                    if int(next_months[j][i]) < 100:
+                        prev = re.sub(str(cymonth[j][1][i]),next_months[j][i],prev)
+                    else:
+                        # prev = re.sub(str(cymonth[j][0])+"년 ", "",prev)
+                        prev = re.sub(str(cymonth[j][1][i]), " " + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100), prev)
+                        # prev = re.sub(str(cmonth[i])," " + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100),prev)
+            # prev = re.sub(cymonth, next_months, prev)
+        print(prev)
+
+        # print(month_inc(ymonth[0][1],3))
+
+    # #val 0 -> 3월 / 3월분 등등
+    # if val==0:
+    #
+    # #val 1 -> 3월,4월 / 3,4월 등등
+    # elif val==1:
+    # #val 2 -> 4월~6월 / 4~6월 등등
+    # else:
+
+    return prev
+
 if __name__ == '__main__':
     sys.stdin = open("errorCase.txt")
     input()
@@ -905,7 +986,8 @@ if __name__ == '__main__':
         print(put,"->")
         a, b, y = monthly_check(put)
         print(a,b,y)
-        print(monthly_next(put, a, b, y),"<-")
+        # print(monthly_next(put, a, b, y),"<-")
+        print(new_monthly_next(put, a, b, y),"<-")
         # test = input()
         # print(test)
         # print(a,b)
