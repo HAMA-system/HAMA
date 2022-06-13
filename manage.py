@@ -921,7 +921,7 @@ def new_monthly_next(prev, month, val, ymonth):
         else:
             next_months = month_inc(cmonth,1)
 
-        print(next_months)월
+        print(next_months)
 
         for i in range(len(cmonth)):
             if re.search(str(cmonth[i]), prev):
