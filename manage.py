@@ -468,7 +468,6 @@ def modify(driver):
     #       2) 다양한 월 케이스 인식 ㅇㄹ
     #       3) 분기 넘어 갈 때 % 처리 ㅇㄹ
     #       4) 분기데이터는 결의일자 +n
-    #   ValueError: invalid literal for int() with base 10: '4월'
 
     while True:
         modify_input()

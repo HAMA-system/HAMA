@@ -18,27 +18,46 @@ def draft(driver):
     cpath(driver, 완료문서)
     time.sleep(1)
     while True:
-        table = driver.find_element_by_id('DocList')
-        print()
-        i = 1
-        for tr in table.find_elements(by=By.TAG_NAME, value="tr")[1:]:
-            print("번호 ",i," : ",sep='',end='\t')
-            for td in tr.find_elements(by=By.TAG_NAME, value="td")[1:]:
-                print(td.get_attribute("innerText"),end='\t')
+        while True:
+            table = driver.find_element_by_id('DocList')
             print()
-            i += 1
-        print("\n인쇄를 할 문서들의 시작번호와 끝번호를 입력해주세요. ex) 1 20")
-        print("혹은 이동할 페이지 번호를 입력해주세요. ex) 2")
-        inp = list(map(int,input().split()))
-        if len(inp) == 2:
-            start, end = inp[0], inp[1]
-        elif len(inp) == 1:
-            page = 페이지_변경[:29] + str(inp[0]+2) + 페이지_변경[30:]
-            cpath(driver, page)
-            time.sleep(1)
-            continue
-        for i in range(start, end+1):
+            i = 1
+            for tr in table.find_elements(by=By.TAG_NAME, value="tr")[1:]:
+                print("번호 ", i, " : ", sep='', end='\t')
+                for td in tr.find_elements(by=By.TAG_NAME, value="td")[1:]:
+                    print(td.get_attribute("innerText"), end='\t')
+                print()
+                i += 1
+            print("\n인쇄를 할 문서들의 시작번호와 끝번호를 입력해주세요. ex) 1 20")
+            print("혹은 이동할 페이지 번호를 입력해주세요. ex) 2")
+            print("검색 키워드가 있는 경우 입력해주세요.")
+            inp = input()
+            try:
+                inp = list(map(int,inp.split()))
+                start, end = inp[0], inp[1]
+                break
+            except:
+                try:
+                    inp = int(inp[0])
+                    page = 페이지_변경[:29] + str(inp + 2) + 페이지_변경[30:]
+                    cpath(driver, page)
+                    time.sleep(1)
+                except:
+                    driver.find_element_by_id("txt_keyword").clear()
+                    driver.find_element_by_id("txt_keyword").send_keys(inp)
+                    driver.find_element_by_id("txt_keyword").send_keys(Keys.ENTER)
+                    # fpath(driver, 기안_검색, inp[0])
+                    # epath(driver, 기안_검색)
+                    time.sleep(2)
+        # if len(inp) == 2:
+        #     start, end = inp[0], inp[1]
+        # elif len(inp) == 1:
+        #     page = 페이지_변경[:29] + str(inp[0]+2) + 페이지_변경[30:]
+        #     cpath(driver, page)
+        #     time.sleep(1)
+        #     continue
 
+        for i in range(start, end+1):
             # 시작할 때, 반복할 때 주소가 달라야 클릭이 됨
             if i == start:
                 num = 문서번호1[:64] + str(i) + 문서번호1[65:]
@@ -52,10 +71,17 @@ def draft(driver):
             time.sleep(1)
             driver.switch_to.frame(인쇄_프레임)
             cpath(driver, 문서인쇄)
-            time.sleep(10)
+            while True:
+                try:
+                    driver.switch_to.window(driver.window_handles[1])
+                    break
+                except:
+                    time.sleep(2)
+
+            # time.sleep(10)
 
             # ** shadow-root 같은 element는 find_element(by=) 이용해야함 **
-            driver.switch_to.window(driver.window_handles[1])
+            # driver.switch_to.window(driver.window_handles[1])
             r0 = driver.find_element(by=By.CSS_SELECTOR, value=섀도0)
             sr0 = expand_shadow_element(driver, r0)
             r1 = sr0.find_element(by=By.CSS_SELECTOR,value=섀도1)
