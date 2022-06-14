@@ -660,8 +660,9 @@ def monthly_check(prev):
                     # ret.append(s)
                     temp.append(s)
                 m += 1
-            for tmp in temp:
-                ret.append(tmp)
+            # for tmp in temp:
+            #     ret.append(tmp)
+            ret.append(temp)
 
         l += len(p)+1
         pprev = p
@@ -916,29 +917,33 @@ def new_monthly_next(prev, month, val, ymonth):
 
     #연도가 없음
     if len(cymonth)==0:
-        if val==2:
-            interval = int(cmonth[-1])-int(cmonth[0])+1
-            if interval<0:
-                interval += 12
-            next_months = month_inc(cmonth,interval)
-        else:
-            next_months = month_inc(cmonth,1)
+        for xi in range(len(cmonth)-1,-1,-1):
+            x = cmonth[xi]
+            if val==2:
+                interval = int(x[-1])-int(x[0])+1
+                if interval<0:
+                    interval += 12
+                next_months = month_inc(x,interval)
+            else:
+                next_months = month_inc(x,int(x[-1])-int(x[0])+1)
 
-        print(next_months)
+            print(next_months)
 
-        for i in range(len(cmonth)-1,-1,-1):
-            if re.search(str(cmonth[i]), prev):
-                # print(prev)
-                if int(next_months[i])<100:
-                    prev = re.sub(" "+str(cmonth[i])+"월", " "+next_months[i]+"월", prev)
-                    prev = re.sub("\("+str(cmonth[i])+"월", "("+next_months[i]+"월", prev)
-                    prev = re.sub(","+str(cmonth[i])+"월", ","+next_months[i]+"월", prev)
-                else:
-                    prev = re.sub(" "+str(cmonth[i])+"월", " "+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
-                    prev = re.sub("\("+str(cmonth[i])+"월", "("+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
-                    prev = re.sub(","+str(cmonth[i])+"월", ","+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
+            for i in range(len(x)-1,-1,-1):
+                if re.search(str(x[i]), prev):
+                    # print(prev)
+                    if int(next_months[i])<100:
+                        prev = re.sub(" "+str(x[i])+"월", " "+next_months[i]+"월", prev)
+                        prev = re.sub("\("+str(x[i])+"월", "("+next_months[i]+"월", prev)
+                        prev = re.sub(","+str(x[i])+"월", ","+next_months[i]+"월", prev)
+                        prev = re.sub(str(x[i])+",", next_months[i]+",", prev)
+                    else:
+                        prev = re.sub(" "+str(x[i])+"월", " "+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
+                        prev = re.sub("\("+str(x[i])+"월", "("+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
+                        prev = re.sub(","+str(x[i])+"월", ","+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
+                        prev = re.sub(str(x[i])+",", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
 
-        # print(prev)
+            # print(prev)
 
 
     #연도가 있음
