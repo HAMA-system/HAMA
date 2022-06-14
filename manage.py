@@ -971,7 +971,6 @@ def new_monthly_next(prev, month, val, ymonth):
             for i in range(len(cymonth[j][1])):
                 # print(cymonth[j][1], next_months[j])
 
-
                 if re.search(str(cymonth[j][1][i]), prev):
                     # prev = re.sub(str(cymonth[j][1][i]),next_months[j][i],prev)
                     if int(next_months[j][i]) < 100:
