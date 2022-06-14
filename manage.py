@@ -922,13 +922,10 @@ def new_monthly_next(prev, month, val, ymonth):
     if len(cymonth)==0:
         for xi in range(len(cmonth)-1,-1,-1):
             x = cmonth[xi]
-            if val==2:
-                interval = int(x[-1])-int(x[0])+1
-                if interval<0:
-                    interval += 12
-                next_months = month_inc(x,interval)
-            else:
-                next_months = month_inc(x,int(x[-1])-int(x[0])+1)
+            interval = int(x[-1])-int(x[0])+1
+            if interval<0:
+                interval += 12
+            next_months = month_inc(x,interval)
 
             # print(next_months)
 
@@ -939,16 +936,20 @@ def new_monthly_next(prev, month, val, ymonth):
                         prev = re.sub(" "+str(x[i])+"월", " "+next_months[i]+"월", prev)
                         prev = re.sub("~"+str(x[i])+"월", "~"+next_months[i]+"월", prev)
                         prev = re.sub("\("+str(x[i])+"월", "("+next_months[i]+"월", prev)
+                        prev = re.sub("\("+str(x[i])+",", "("+next_months[i]+",", prev)
                         prev = re.sub(","+str(x[i])+"월", ","+next_months[i]+"월", prev)
-                        prev = re.sub(str(x[i])+",", next_months[i]+",", prev)
-                        prev = re.sub(str(x[i])+"~", next_months[i]+"~", prev)
+                        prev = re.sub(","+str(x[i])+",", ","+next_months[i]+",", prev)
+                        # prev = re.sub(str(x[i])+",", next_months[i]+",", prev)
+                        # prev = re.sub(str(x[i])+"~", next_months[i]+"~", prev)
                     else:
                         prev = re.sub(" "+str(x[i])+"월", " "+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
                         prev = re.sub("~"+str(x[i])+"월", "~"+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
                         prev = re.sub("\("+str(x[i])+"월", "("+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
+                        prev = re.sub("\("+str(x[i])+",", "("+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
                         prev = re.sub(","+str(x[i])+"월", ","+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
-                        prev = re.sub(str(x[i])+",", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
-                        prev = re.sub(str(x[i])+"~", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"~", prev)
+                        prev = re.sub(","+str(x[i])+",", ","+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
+                        # prev = re.sub(str(x[i])+",", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
+                        # prev = re.sub(str(x[i])+"~", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"~", prev)
 
             # print(prev)
 
@@ -978,16 +979,20 @@ def new_monthly_next(prev, month, val, ymonth):
                         prev = re.sub("~"+str(cymonth[j][1][i])+"월","~"+next_months[j][i]+"월",prev)
                         prev = re.sub("\("+str(cymonth[j][1][i])+"월","("+next_months[j][i]+"월",prev)
                         prev = re.sub(","+str(cymonth[j][1][i])+"월",","+next_months[j][i]+"월",prev)
-                        prev = re.sub(str(cymonth[j][1][i])+",",next_months[j][i]+",",prev)
-                        prev = re.sub(str(cymonth[j][1][i])+"~",next_months[j][i]+"~",prev)
+                        prev = re.sub("\("+str(cymonth[j][1][i])+",","("+next_months[j][i]+",",prev)
+                        prev = re.sub(","+str(cymonth[j][1][i])+",",","+next_months[j][i]+",",prev)
+                        # prev = re.sub(str(cymonth[j][1][i])+",",next_months[j][i]+",",prev)
+                        # prev = re.sub(str(cymonth[j][1][i])+"~",next_months[j][i]+"~",prev)
                     else:
                         # prev = re.sub(str(cymonth[j][0])+"년 ", "",prev)
                         prev = re.sub(" "+str(cymonth[j][1][i])+"월", " " + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
                         prev = re.sub("~"+str(cymonth[j][1][i])+"월", "~" + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
                         prev = re.sub("\("+str(cymonth[j][1][i])+"월", "(" + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
                         prev = re.sub(","+str(cymonth[j][1][i])+"월", "," + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
-                        prev = re.sub(str(cymonth[j][1][i])+",", str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+",", prev)
-                        prev = re.sub(str(cymonth[j][1][i])+"~", str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"~", prev)
+                        prev = re.sub("\("+str(cymonth[j][1][i])+",", "(" + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+",", prev)
+                        prev = re.sub(","+str(cymonth[j][1][i])+",", "," + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+",", prev)
+                        # prev = re.sub(str(cymonth[j][1][i])+",", str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+",", prev)
+                        # prev = re.sub(str(cymonth[j][1][i])+"~", str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"~", prev)
                         # prev = re.sub(str(cmonth[i])," " + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100),prev)
             # prev = re.sub(cymonth, next_months, prev)
 
