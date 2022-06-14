@@ -18,11 +18,13 @@ def timeError():
         t = tt
         time.sleep(1)
     try:
-        d[1].close()
+        d.window_handles[1].close()
+        driver.switch_to.window(driver.window_handles[0])
     except:
         pass
     d.get("https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx")
     print("시간 초과로 재실행합니다.")
+    print("오류 메시지가 뜨더라도 잠시 기다려주세요.")
     t = 0
     draft(d)
 
@@ -31,6 +33,7 @@ def expand_shadow_element(driver, element):
     return shadow_root
 d = None
 def draft(driver):
+
     global d
     global t
     d = driver
@@ -108,7 +111,7 @@ def draft(driver):
                     time.sleep(2)
             t = 5
             d = driver
-            # time.sleep(10)
+            # time.sleep(20)
 
             # ** shadow-root 같은 element는 find_element(by=) 이용해야함 **
             # driver.switch_to.window(driver.window_handles[1])
