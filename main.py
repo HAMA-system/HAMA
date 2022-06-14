@@ -49,8 +49,8 @@ if __name__ == '__main__':
     # print(time.time()-start)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
-    dr = True
-    # dr = False
+    # dr = True
+    dr = False
     if dr:
         RUN_DRAFT.draft(driver)
     else:
@@ -58,13 +58,16 @@ if __name__ == '__main__':
     while True:
         # select = '조회'
         # select = '작성'
-        select = '수정'
+        # select = '수정'
+        select = '기안'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':
             manage.write(driver)
         elif select == '수정':
             manage.modify(driver)
+        elif select == '기안':
+            RUN_DRAFT.draft_write(driver)
         elif select == '종료':
             break
         # else:

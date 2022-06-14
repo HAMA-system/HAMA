@@ -72,6 +72,37 @@ def epath(driver,path):
     # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
     # element.send_keys(Keys.ENTER)
 
+def fid(driver,id,value):
+    time.sleep(0.1)
+    while True:
+        try:
+            driver.find_element_by_id(id).clear()
+            break
+        except:
+            pass
+    # time.sleep(0.25) # 0.4
+    time.sleep(0.2)
+    while True:
+        try:
+            driver.find_element_by_id(id).send_keys(value)
+            break
+        except:
+            pass
+
+def cid(driver,id):
+    time.sleep(0.1)
+    while True:
+        try:
+            element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, id)))
+            break
+        except:
+            pass
+    while True:
+        try:
+            element.click()
+            break
+        except:
+            pass
 def login(driver):
     login_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls(링크[1]), '로그인', 'B60', 'C60')
 
