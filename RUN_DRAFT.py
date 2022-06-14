@@ -1,3 +1,4 @@
+import re
 import threading
 import time
 
@@ -100,7 +101,7 @@ def draft(driver):
             time.sleep(3)
             cpath(driver, 인쇄)
             time.sleep(1)
-            driver.switch_to.frame(인쇄_프레임)
+            driver.switch_to.frame(메인_프레임)
             cpath(driver, 문서인쇄)
             t = 0
             while True:
@@ -128,9 +129,64 @@ def draft(driver):
             driver.switch_to.window(driver.window_handles[0])
             driver.switch_to.default_content()
             driver.switch_to.frame(기안_프레임2)
-            driver.switch_to.frame(인쇄_프레임)
+            driver.switch_to.frame(메인_프레임)
             cpath(driver, 인쇄_창닫기)
             driver.switch_to.parent_frame()
             cpath(driver, 기안_창닫기)
 
         print("모든 문서 출력이 완료되었습니다.")
+def draft_write(driver):
+
+    cpath(driver,결의서_조회)
+
+    print("test")
+    input()
+    driver.switch_to.default_content()
+    driver.switch_to.frame(조회_프레임)
+    driver.switch_to.frame('frmPopup')
+    cid(driver, 기안)
+
+    while True:
+        try:
+            driver.switch_to.window(driver.window_handles[1])
+            break
+        except:
+            pass
+    driver.switch_to.frame('message')
+    table = driver.find_element(by=By.ID, value='ctlTable')
+    i = 1
+    title = driver.find_element(by=By.XPATH, value=기안_제목).get_attribute("innerText")
+    for tr in table.find_elements(by=By.TAG_NAME, value="tr")[6:]:
+        for td in tr.find_elements(by=By.TAG_NAME, value="td")[2:]:
+            money = td.get_attribute("innerText")
+        i += 1
+    money = int("".join(money.split(",")))
+    결재 = 부총결
+    기록물 = 위탁
+    if re.match('.지출결의서.',title):
+        기록물 = 용역
+        if money >= 300000:
+            결재 = 총결
+    driver.switch_to.default_content()
+    cid(driver, 결재정보)
+    driver.switch_to.frame(메인_프레임)
+    cid(driver, 즐겨찾기)
+    cid(driver, 결재)
+    cpath(driver, 적용)
+    time.sleep(0.5)
+    cid(driver, 기록물철)
+    cid(driver, 기록물)
+    time.sleep(0.5)
+    cpath(driver, 기안_확인)
+    while True:
+        try:
+            driver.switch_to.window(driver.window_handles[0])
+            break
+        except:
+            pass
+    time.sleep(0.5)
+    cid(driver, 기안_종료)
+# TODO
+#   결재정보 -> 즐겨찾기 -> 결제 -> 적용 -> 기록물철 -> 지급/징수 -> 확인 -> 닫기
+#   수입 - 부총장님 + 위탁
+#   지출 - 30만원 이상) 총장님 + 용역 / 30만원 미만) 부총장님 + 용역
