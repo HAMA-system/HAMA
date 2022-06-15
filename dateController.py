@@ -20,13 +20,13 @@ def date2dateByYears(d1,d2):
     return d2.year - d1.year
 
 def jumpDateByDay(d,day):
-    return (d + relativedelta(days=day)).strftime("%Y.%m.%d")
+    return (d + relativedelta(days=day)).strftime("20%y.%-m.%-d")
 
 def jumpDateByMonth(d,m):
-    return (d + relativedelta(months=m)).strftime("%Y.%m.%d")
+    return (d + relativedelta(months=m)).strftime("20%y.%-m.%-d")
 
 def jumpDateByYear(d,y):
-    return (d + relativedelta(years=y)).strftime("%Y.%m.%d")
+    return (d + relativedelta(years=y)).strftime("20%y.%-m.%-d")
 
 def yearToday():
     return int(date_today.strftime("%Y"))
