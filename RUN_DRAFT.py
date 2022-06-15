@@ -137,18 +137,27 @@ def draft(driver):
         print("모든 문서 출력이 완료되었습니다.")
 def draft_write(driver):
 
+    # TODO
+    #   굳이 엔터 누르지 않아도 가능하나
+    #   엔터 받지 않으면 자동으로 window[0]으로 가야함
+
     cpath(driver,결의서_조회)
+
     while True:
         print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
         input()
+        try:
+            driver.switch_to.window(driver.window_handles[0])
+        except:
+            pass
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
         driver.switch_to.frame('frmPopup')
         cid(driver, 기안)
-
+        last = len(driver.window_handles)
         while True:
             try:
-                driver.switch_to.window(driver.window_handles[1])
+                driver.switch_to.window(driver.window_handles[last])
                 break
             except:
                 pass
@@ -176,7 +185,8 @@ def draft_write(driver):
         cid(driver, 기록물철)
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
-        time.sleep(1)
+        print("결재정보 입력이 완료되었습니다.")
+        # time.sleep(1)
         # while True:
         #     try:
         #         driver.switch_to.window(driver.window_handles[0])
