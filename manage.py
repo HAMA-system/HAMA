@@ -1,3 +1,4 @@
+import datetime
 import os
 import re
 import sys
@@ -720,7 +721,8 @@ def monthly_check(prev):
     n = re.compile(('\d[ , ]+\d'))
     q = re.compile(('~'))
     y = re.compile('(\d*)(년)')
-    c = re.compile('(\d*)\.(\d*)\.(\d*)')
+    c = re.compile("[']*(\d*)\.(\d*)\.(\d*)(\.)*")
+    only_y = re.compile('(\d+)(년)(분*)')
 
     # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
     l, key = 0, 0
@@ -738,52 +740,88 @@ def monthly_check(prev):
 
     for p in text_list:
         if c.search(p):
-            print("MATCH :",p)
+            # print("MATCH :",p)
             f = c.findall(p)
-            for x in f:
-                print(x[0]+x[1]+x[2])
-
-        if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
-            # print(int(p[:-1]))
-            temp = []
-            m = l
-            x = []
-            while m < l + len(p):
-                if '0' <= prev[m] <= '9':
-                    s = prev[m]
-                    if '0' <= prev[m + 1] <= '9':
-                        s += prev[m + 1]
-                        m += 1
-                    # ret.append(s)
+            # for x in f:
+            #     print(dateController.strtodate(int(x[0]),int(x[1]),int(x[2])).strftime("%y.%-m.%d"))
+            if len(f)==2:
+                date1 = datetime.datetime(int(f[0][0]),int(f[0][1]),int(f[0][2]))
+                date2 = datetime.datetime(int(f[1][0]),int(f[1][1]),int(f[1][2]))
+                # print(dateController.date2dateByDays(date1,date2))
+                if dateController.date2dateByDays(date1,date2)>300:
+                    #1년 단위 차이라고 가정
+                    # year_gap = dateController.date2dateByYears(date1,date2)
+                    year_gap = round(dateController.date2dateByDays(date1,date2) / 365)
+                    # print("year_gap",year_gap)
+                    # print(dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap))
+                    t = re.sub("[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap),p)
+                    result += t + " "
+                    # result += dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap)
+                elif dateController.date2dateByDays(date1,date2)>31:
+                    month_gap = round(dateController.date2dateByDays(date1,date2) / 31)
+                    # print("month_gap",month_gap)
+                    # print(dateController.jumpDateByMonth(date1,month_gap)+"~"+dateController.jumpDateByMonth(date2,month_gap))
+                    t = re.sub("[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",dateController.jumpDateByMonth(date1,month_gap)+"~"+dateController.jumpDateByMonth(date2,month_gap), p)
+                    result += t + " "
+            elif len(f)==1:
+                result += p + " "
+        else:
+            check = False
+            if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
+                # print(int(p[:-1]))
+                temp = []
+                m = l
+                x = []
+                while m < l + len(p):
+                    if '0' <= prev[m] <= '9':
+                        s = prev[m]
+                        if '0' <= prev[m + 1] <= '9':
+                            s += prev[m + 1]
+                            m += 1
+                        # ret.append(s)
+                        x.append(int(s))
+                    m += 1
+                for tmp in temp:
                     x.append(int(s))
-                m += 1
-            for tmp in temp:
-                x.append(int(s))
-            ret_y.append([int(pprev[:-1]),x])
-        elif r.match(p) or q2.match(p):
-            # TODO 임시 처리
-            temp = []
-            m = l
-            while m < l + len(p):
-                if '0' <= prev[m] <= '9':
-                    s = prev[m]
-                    if '0' <= prev[m+1] <= '9':
-                        s += prev[m+1]
-                        m += 1
-                    # ret.append(s)
-                    temp.append(s)
-                m += 1
-            # for tmp in temp:
-            #     ret.append(tmp)
-            ret.append(temp)
+                ret_y.append([int(pprev[:-1]),x])
+            elif r.match(p) or q2.match(p):
+                # TODO 임시 처리
+                temp = []
+                m = l
+                while m < l + len(p):
+                    if '0' <= prev[m] <= '9':
+                        s = prev[m]
+                        if '0' <= prev[m+1] <= '9':
+                            s += prev[m+1]
+                            m += 1
+                        # ret.append(s)
+                        temp.append(s)
+                    m += 1
+                # for tmp in temp:
+                #     ret.append(tmp)
+                ret.append(temp)
+            elif only_y.search(p):
+                check = True
+                f = only_y.findall(p)
+                # print(f,result)
+                if len(f)==2:
+                    year_gap = int(f[1][0])-int(f[0][0])+1
+                    # print(year_gap)
+                    t = re.sub('(\d+)(년)(분*)[~\-](\d+)(년)(분*)',str(int(f[0][0])+year_gap)+f[0][1]+f[0][2]+"~"+str(int(f[1][0])+year_gap)+f[1][1]+f[1][2],p)
+                    result += t + " "
+                else:
+                    year_gap = 1
+                    t = re.sub('(\d+)(년)(분*)',str(int(f[0][0]) + year_gap) + f[0][1] + f[0][2], p)
+                    result += t + " "
 
-        l += len(p)+1
-        pprev = p
+            if check==False:
+                l += len(p)+1
+                pprev = p
 
-        result += new_monthly_next(p, ret, key, ret_y) + " "
-        # print("r",result)
+                result += new_monthly_next(p, ret, key, ret_y) + " "
+                # print("r",result)
 
-    print("result =>",result)
+    print(result+"<=result")
     # ret,key,ret_y -> a,b,y
     # new_monthly_next(put,a,b,y)
     return ret, key, ret_y
