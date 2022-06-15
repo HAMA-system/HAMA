@@ -612,72 +612,6 @@ def modify(driver):
         print("\n=====================================================")
 
 
-def monthly_check(prev):
-    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
-    q2 = re.compile('(\D*)([\d~]*\d+)(월)(\D*)')
-    n = re.compile(('\d[ , ]+\d'))
-    q = re.compile(('~'))
-    y = re.compile('(\d*)(년)')
-
-    # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
-    l, key = 0, 0
-    ret = []
-    ret_y = []
-    if n.search(prev):
-        key = 1
-    if q.search(prev):
-        key = 2
-
-    text_list = prev.split()
-    pprev = ""
-
-    result = ""
-
-    for p in text_list:
-        if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
-            # print(int(p[:-1]))
-            temp = []
-            m = l
-            x = []
-            while m < l + len(p):
-                if '0' <= prev[m] <= '9':
-                    s = prev[m]
-                    if '0' <= prev[m + 1] <= '9':
-                        s += prev[m + 1]
-                        m += 1
-                    # ret.append(s)
-                    x.append(int(s))
-                m += 1
-            for tmp in temp:
-                x.append(int(s))
-            ret_y.append([int(pprev[:-1]),x])
-        elif r.match(p) or q2.match(p):
-            # TODO 임시 처리
-            temp = []
-            m = l
-            while m < l + len(p):
-                if '0' <= prev[m] <= '9':
-                    s = prev[m]
-                    if '0' <= prev[m+1] <= '9':
-                        s += prev[m+1]
-                        m += 1
-                    # ret.append(s)
-                    temp.append(s)
-                m += 1
-            # for tmp in temp:
-            #     ret.append(tmp)
-            ret.append(temp)
-
-        l += len(p)+1
-        pprev = p
-
-        result += new_monthly_next(p, ret, key, ret_y) + " "
-        # print("r",result)
-
-    print("result =>",result)
-    # ret,key,ret_y -> a,b,y
-    # new_monthly_next(put,a,b,y)
-    return ret, key, ret_y
 
 # TODO
 #   /d/d? 꼴로 바꾸기
@@ -779,6 +713,80 @@ def ymonth_inc(ymonth, val):
     r = [t]
     r.append(ret)
     return r
+
+def monthly_check(prev):
+    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
+    q2 = re.compile('(\D*)([\d~]*\d+)(월)(\D*)')
+    n = re.compile(('\d[ , ]+\d'))
+    q = re.compile(('~'))
+    y = re.compile('(\d*)(년)')
+    c = re.compile('(\d*)\.(\d*)\.(\d*)')
+
+    # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
+    l, key = 0, 0
+    ret = []
+    ret_y = []
+    if n.search(prev):
+        key = 1
+    if q.search(prev):
+        key = 2
+
+    text_list = prev.split()
+    pprev = ""
+
+    result = ""
+
+    for p in text_list:
+        if c.search(p):
+            print("MATCH :",p)
+            f = c.findall(p)
+            for x in f:
+                print(x[0]+x[1]+x[2])
+
+        if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
+            # print(int(p[:-1]))
+            temp = []
+            m = l
+            x = []
+            while m < l + len(p):
+                if '0' <= prev[m] <= '9':
+                    s = prev[m]
+                    if '0' <= prev[m + 1] <= '9':
+                        s += prev[m + 1]
+                        m += 1
+                    # ret.append(s)
+                    x.append(int(s))
+                m += 1
+            for tmp in temp:
+                x.append(int(s))
+            ret_y.append([int(pprev[:-1]),x])
+        elif r.match(p) or q2.match(p):
+            # TODO 임시 처리
+            temp = []
+            m = l
+            while m < l + len(p):
+                if '0' <= prev[m] <= '9':
+                    s = prev[m]
+                    if '0' <= prev[m+1] <= '9':
+                        s += prev[m+1]
+                        m += 1
+                    # ret.append(s)
+                    temp.append(s)
+                m += 1
+            # for tmp in temp:
+            #     ret.append(tmp)
+            ret.append(temp)
+
+        l += len(p)+1
+        pprev = p
+
+        result += new_monthly_next(p, ret, key, ret_y) + " "
+        # print("r",result)
+
+    print("result =>",result)
+    # ret,key,ret_y -> a,b,y
+    # new_monthly_next(put,a,b,y)
+    return ret, key, ret_y
 
 def monthly_next(prev, month, val, ymonth):
     cmonth = deepcopy(month)
@@ -1036,9 +1044,9 @@ if __name__ == '__main__':
         print("------------------")
         print(put,"->")
         a, b, y = monthly_check(put)
-        print(a,b,y)
+        # print(a,b,y)
         # print(monthly_next(put, a, b, y),"<-")
-        print(new_monthly_next(put, a, b, y),"<-")
+        # print(new_monthly_next(put, a, b, y),"<-")
         # test = input()
         # print(test)
         # print(a,b)
