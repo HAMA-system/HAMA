@@ -686,7 +686,7 @@ def monthly_textReplace(prev, month):
     return result_string
 
 def modify_input():
-    print("변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
+    print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
     input()
 
     # global mod_month
