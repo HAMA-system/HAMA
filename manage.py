@@ -630,6 +630,9 @@ def monthly_check(prev):
 
     text_list = prev.split()
     pprev = ""
+
+    result = ""
+
     for p in text_list:
         if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
             # print(int(p[:-1]))
@@ -667,6 +670,13 @@ def monthly_check(prev):
 
         l += len(p)+1
         pprev = p
+
+        result += new_monthly_next(p, ret, key, ret_y) + " "
+        # print("r",result)
+
+    print("result =>",result)
+    # ret,key,ret_y -> a,b,y
+    # new_monthly_next(put,a,b,y)
     return ret, key, ret_y
 
 # TODO
@@ -933,19 +943,23 @@ def new_monthly_next(prev, month, val, ymonth):
                 if re.search(str(x[i]), prev):
                     # print(prev)
                     if int(next_months[i])<100:
-                        prev = re.sub(" "+str(x[i])+"월", " "+next_months[i]+"월", prev)
+                        prev = re.sub("\A"+str(x[i])+"월", ""+next_months[i]+"월", prev)
                         prev = re.sub("~"+str(x[i])+"월", "~"+next_months[i]+"월", prev)
                         prev = re.sub("\("+str(x[i])+"월", "("+next_months[i]+"월", prev)
                         prev = re.sub("\("+str(x[i])+",", "("+next_months[i]+",", prev)
+                        prev = re.sub("\A"+str(x[i])+"월", ""+next_months[i]+"월", prev)
+                        prev = re.sub("\A"+str(x[i])+",", ""+next_months[i]+",", prev)
                         prev = re.sub(","+str(x[i])+"월", ","+next_months[i]+"월", prev)
                         prev = re.sub(","+str(x[i])+",", ","+next_months[i]+",", prev)
                         # prev = re.sub(str(x[i])+",", next_months[i]+",", prev)
                         # prev = re.sub(str(x[i])+"~", next_months[i]+"~", prev)
                     else:
-                        prev = re.sub(" "+str(x[i])+"월", " "+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
+                        prev = re.sub("\A"+str(x[i])+"월", ""+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
                         prev = re.sub("~"+str(x[i])+"월", "~"+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
                         prev = re.sub("\("+str(x[i])+"월", "("+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
                         prev = re.sub("\("+str(x[i])+",", "("+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
+                        prev = re.sub("\A"+str(x[i])+"월", ""+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
+                        prev = re.sub("\A"+str(x[i])+",", ""+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
                         prev = re.sub(","+str(x[i])+"월", ","+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"월", prev)
                         prev = re.sub(","+str(x[i])+",", ","+str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
                         # prev = re.sub(str(x[i])+",", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
@@ -1022,7 +1036,7 @@ if __name__ == '__main__':
         print("------------------")
         print(put,"->")
         a, b, y = monthly_check(put)
-        # print(a,b,y)
+        print(a,b,y)
         # print(monthly_next(put, a, b, y),"<-")
         print(new_monthly_next(put, a, b, y),"<-")
         # test = input()
