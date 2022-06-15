@@ -786,20 +786,25 @@ def monthly_check(prev):
                 ret_y.append([int(pprev[:-1]),x])
             elif r.match(p) or q2.match(p):
                 # TODO 임시 처리
+                print("year no")
                 temp = []
                 m = l
                 while m < l + len(p):
+                    print("w",prev[m])
                     if '0' <= prev[m] <= '9':
+                        print("1")
                         s = prev[m]
                         if '0' <= prev[m+1] <= '9':
                             s += prev[m+1]
                             m += 1
                         # ret.append(s)
                         temp.append(s)
+                        print(temp,"t")
                     m += 1
                 # for tmp in temp:
                 #     ret.append(tmp)
                 ret.append(temp)
+                # print(ret,"ret")
             elif only_y.search(p):
                 check = True
                 f = only_y.findall(p)
@@ -818,6 +823,7 @@ def monthly_check(prev):
                 l += len(p)+1
                 pprev = p
 
+                print(p, ret, key, ret_y)
                 result += new_monthly_next(p, ret, key, ret_y) + " "
                 # print("r",result)
 
@@ -963,6 +969,7 @@ def new_monthly_next(prev, month, val, ymonth):
     cmonth = deepcopy(month)
     cmonth.sort(key=lambda x:int(x[0]))
     cymonth = deepcopy(ymonth)
+    # print(cymonth)
     cymonth.sort(key=lambda x:int(x[0]))
     # 1. 그냥 개별 월 ex) 3월, 4월 -> 5월, 6월
     #                   3,4월 -> 5,6월
