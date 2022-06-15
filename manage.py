@@ -767,6 +767,7 @@ def monthly_check(prev):
                 result += p + " "
         else:
             check = False
+            # print("p:",p)
             if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
                 # print(int(p[:-1]))
                 temp = []
@@ -786,44 +787,46 @@ def monthly_check(prev):
                 ret_y.append([int(pprev[:-1]),x])
             elif r.match(p) or q2.match(p):
                 # TODO 임시 처리
-                print("year no")
+                # if r.match(p):
+                #     print("r",p)
+                # print("year no")
                 temp = []
                 m = l
                 while m < l + len(p):
-                    print("w",prev[m])
+                    # print("w",prev[m])
                     if '0' <= prev[m] <= '9':
-                        print("1")
+                        # print("1")
                         s = prev[m]
                         if '0' <= prev[m+1] <= '9':
                             s += prev[m+1]
                             m += 1
                         # ret.append(s)
                         temp.append(s)
-                        print(temp,"t")
+                        # print(temp,"t")
                     m += 1
                 # for tmp in temp:
                 #     ret.append(tmp)
                 ret.append(temp)
                 # print(ret,"ret")
-            elif only_y.search(p):
-                check = True
-                f = only_y.findall(p)
-                # print(f,result)
-                if len(f)==2:
-                    year_gap = int(f[1][0])-int(f[0][0])+1
-                    # print(year_gap)
-                    t = re.sub('(\d+)(년)(분*)[~\-](\d+)(년)(분*)',str(int(f[0][0])+year_gap)+f[0][1]+f[0][2]+"~"+str(int(f[1][0])+year_gap)+f[1][1]+f[1][2],p)
-                    result += t + " "
-                else:
-                    year_gap = 1
-                    t = re.sub('(\d+)(년)(분*)',str(int(f[0][0]) + year_gap) + f[0][1] + f[0][2], p)
-                    result += t + " "
+            # elif only_y.search(p):
+            #     check = True
+            #     f = only_y.findall(p)
+            #     # print(f,result)
+            #     if len(f)==2:
+            #         year_gap = int(f[1][0])-int(f[0][0])+1
+            #         # print(year_gap)
+            #         t = re.sub('(\d+)(년)(분*)[~\-](\d+)(년)(분*)',str(int(f[0][0])+year_gap)+f[0][1]+f[0][2]+"~"+str(int(f[1][0])+year_gap)+f[1][1]+f[1][2],p)
+            #         result += t + " "
+            #     else:
+            #         year_gap = 1
+            #         t = re.sub('(\d+)(년)(분*)',str(int(f[0][0]) + year_gap) + f[0][1] + f[0][2], p)
+            #         result += t + " "
+
+            l += len(p)+1
+            pprev = p
 
             if check==False:
-                l += len(p)+1
-                pprev = p
-
-                print(p, ret, key, ret_y)
+                # print(p, ret, key, ret_y)
                 result += new_monthly_next(p, ret, key, ret_y) + " "
                 # print("r",result)
 
@@ -1029,7 +1032,7 @@ def new_monthly_next(prev, month, val, ymonth):
             months = x[1]
             # print(x)
             next_months.append(month_inc(months, months[-1]-months[0]+1))
-            # print(next_months)
+            print(next_months)
         #
         # print(cymonth[0][1],next_months[0])
         # months.sort(reverse=True)
@@ -1042,12 +1045,14 @@ def new_monthly_next(prev, month, val, ymonth):
                 if re.search(str(cymonth[j][1][i]), prev):
                     # prev = re.sub(str(cymonth[j][1][i]),next_months[j][i],prev)
                     if int(next_months[j][i]) < 100:
-                        prev = re.sub(" "+str(cymonth[j][1][i])+"월"," "+next_months[j][i]+"월",prev)
+                        prev = re.sub("\A"+str(cymonth[j][1][i])+"월",""+next_months[j][i]+"월",prev)
                         prev = re.sub("~"+str(cymonth[j][1][i])+"월","~"+next_months[j][i]+"월",prev)
                         prev = re.sub("\("+str(cymonth[j][1][i])+"월","("+next_months[j][i]+"월",prev)
                         prev = re.sub(","+str(cymonth[j][1][i])+"월",","+next_months[j][i]+"월",prev)
                         prev = re.sub("\("+str(cymonth[j][1][i])+",","("+next_months[j][i]+",",prev)
                         prev = re.sub(","+str(cymonth[j][1][i])+",",","+next_months[j][i]+",",prev)
+                        prev = re.sub("\A"+str(cymonth[j][1][i])+"월",""+next_months[j][i]+"월",prev)
+                        prev = re.sub("\A"+str(cymonth[j][1][i])+",",""+next_months[j][i]+",",prev)
                         # prev = re.sub(str(cymonth[j][1][i])+",",next_months[j][i]+",",prev)
                         # prev = re.sub(str(cymonth[j][1][i])+"~",next_months[j][i]+"~",prev)
                     else:
