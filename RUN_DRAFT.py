@@ -147,6 +147,10 @@ def draft_write(driver):
         print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
         input()
         try:
+            driver.switch_to.alert.dismiss()
+        except:
+            pass
+        try:
             driver.switch_to.window(driver.window_handles[0])
         except:
             pass
@@ -185,6 +189,8 @@ def draft_write(driver):
         cid(driver, 기록물철)
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
+
+        # draft_uproad(driver)
         print("결재정보 입력이 완료되었습니다.")
         # time.sleep(1)
         # while True:
@@ -195,6 +201,34 @@ def draft_write(driver):
         #         pass
         # cid(driver, 기안_종료)
         # print("기안이 완료되었습니다.")
+
+def draft_uproad(driver):
+    # path = 링크[3] + str(num) + '/'
+    # exist = 0
+    # for x in os.listdir(링크[3]):
+    #     if x == str(num):
+    #         exist = 1
+    #         break
+    # if exist:
+    #     cpath(driver, 첨부파일)
+    #     driver.switch_to.window(driver.window_handles[1])
+    #     for f in os.listdir(path):
+    #         driver.find_element_by_xpath(파일선택).send_keys(path + f)
+    #         time.sleep(0.3)
+    #         cpath(driver, 파일업로드)
+    #         print(f, "파일 업로드 완료")
+    driver.switch_to.frame(driver.window_handles[0])
+    print(1)
+    cid(driver, 'btnFileAttach')
+    print(2)
+    path = 링크[3] + 'test' + '/'
+    for f in os.listdir(path):
+        driver.find_element(by=By.ID, value='imgbtn').send_keys(path + f)
+        time.sleep(0.3)
+    time.sleep(1)
+    cpath(driver, '/html/body/div/div[2]/ul/li/a/span')
+    print("파일 첨부 완료")
+    time.sleep(100)
 
 # TODO
 #   결재정보 -> 즐겨찾기 -> 결제 -> 적용 -> 기록물철 -> 지급/징수 -> 확인 -> 닫기
