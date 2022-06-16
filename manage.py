@@ -830,10 +830,11 @@ def monthly_check(prev):
                 result += new_monthly_next(p, ret, key, ret_y) + " "
                 # print("r",result)
 
-    print(result+"<=result")
+    # print(result+"<=result")
     # ret,key,ret_y -> a,b,y
     # new_monthly_next(put,a,b,y)
-    return ret, key, ret_y
+    # return ret, key, ret_y, result
+    return result
 
 def monthly_next(prev, month, val, ymonth):
     cmonth = deepcopy(month)
@@ -1093,8 +1094,9 @@ if __name__ == '__main__':
             break
         print("------------------")
         print(put,"->")
-        a, b, y = monthly_check(put)
-        # print(a,b,y)
+        # a, b, y, result = monthly_check(put)
+        result = monthly_check(put)
+        print(result)
         # print(monthly_next(put, a, b, y),"<-")
         # print(new_monthly_next(put, a, b, y),"<-")
         # test = input()
