@@ -58,8 +58,8 @@ if __name__ == '__main__':
     while True:
         # select = '조회'
         # select = '작성'
-        # select = '수정'
-        select = '기안'
+        select = '수정'
+        # select = '기안'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':

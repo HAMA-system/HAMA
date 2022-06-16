@@ -531,12 +531,21 @@ def modify(driver):
                     tax_date.append(td.get_attribute("innerText"))
 
 
+        # # 불필요한 띄어쓰기 제거
+        # # title[1] = monthly_textReplace(title[1], month).rstrip()
+        # next_month, next_value = monthly_check(title[1])
+        # title[1] = monthly_next(title[1],next_month,next_value)
+        # for i in range(len(res)):
+        #     res[i] = monthly_next(res[i], next_month, next_value)
+        #     # res[i] = monthly_textReplace(res[i], month).rstrip()
+        # print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
+
         # 불필요한 띄어쓰기 제거
         # title[1] = monthly_textReplace(title[1], month).rstrip()
-        next_month, next_value = monthly_check(title[1])
-        title[1] = monthly_next(title[1],next_month,next_value)
+        # next_month, next_value = monthly_check(title[1])
+        title[1] = monthly_check(title[1])
         for i in range(len(res)):
-            res[i] = monthly_next(res[i], next_month, next_value)
+            res[i] = monthly_check(res[i])
             # res[i] = monthly_textReplace(res[i], month).rstrip()
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
 
