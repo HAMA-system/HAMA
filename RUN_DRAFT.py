@@ -147,6 +147,10 @@ def draft_write(driver):
         print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
         input()
         try:
+            acceptAlert(driver)
+        except:
+            pass
+        try:
             driver.switch_to.window(driver.window_handles[0])
         except:
             pass
