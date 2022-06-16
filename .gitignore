@@ -13,3 +13,6 @@ test.py
 errorCase.txt
 *.pyc
 __pycache__
+in
+out
+test
