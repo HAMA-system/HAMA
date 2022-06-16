@@ -1,6 +1,7 @@
 import re
 import threading
 import time
+import os
 
 from linkData import *
 from autoLogin import *
@@ -147,11 +148,11 @@ def draft_write(driver):
         print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
         input()
         try:
-            driver.switch_to.alert.dismiss()
+            driver.switch_to.window(driver.window_handles[0])
         except:
             pass
         try:
-            driver.switch_to.window(driver.window_handles[0])
+            driver.switch_to.alert.dismiss()
         except:
             pass
         driver.switch_to.default_content()
@@ -217,7 +218,11 @@ def draft_uproad(driver):
     #         time.sleep(0.3)
     #         cpath(driver, 파일업로드)
     #         print(f, "파일 업로드 완료")
-    driver.switch_to.frame(driver.window_handles[0])
+    try:
+        driver.switch_to.frame(driver.window_handles[0])
+    except:
+        print(0)
+    driver.switch_to.default_content()
     print(1)
     cid(driver, 'btnFileAttach')
     print(2)
@@ -234,3 +239,17 @@ def draft_uproad(driver):
 #   결재정보 -> 즐겨찾기 -> 결제 -> 적용 -> 기록물철 -> 지급/징수 -> 확인 -> 닫기
 #   수입 - 부총장님 + 위탁
 #   지출 - 30만원 이상) 총장님 + 용역 / 30만원 미만) 부총장님 + 용역
+
+
+'''
+
+1. 엑셀 파일 토대로 폴더 생성 (중복 확인) 
+2. 폴더 이름과 파일 이름 매칭하여 옮기기
+3. 파일 업로드할 때 앞에 번호만 확인
+
+
+정기 아닌경우 -> 키워드에 파일 이름에 들어가는 고유한 키워드 적어달라 하기
+
+파일 남아있을 때 메세지
+
+'''
