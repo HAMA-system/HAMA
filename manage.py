@@ -207,7 +207,7 @@ def write(driver):
                         prev = target_data[i][0]
                         continue
 
-                    upload(driver, prev)
+                    upload(driver, target_data[i][1])
                     cpath(driver,신규)
                     # for p in range(len(target_data)):
                     #     if target_data[p][0] == prev:
@@ -322,11 +322,11 @@ def write(driver):
 
             if i == len(target_data)-1 and w == 1:
                 if tax == 1:
-                    file = taxWrite(driver, target_data[i][0], file, isMonthly, row)
+                    file = taxWrite(driver, prev, file, isMonthly, row)
                     tax = 0
 
                 save(driver)
-                upload(driver, prev)
+                upload(driver, target_data[i][1])
 
                 # for p in range(len(target_data)):
                 #     if target_data[p][0] == prev:
@@ -387,14 +387,15 @@ def taxWrite(driver, num, file, isMonthly, row):
     print("세금처리가 완료되었습니다.")
     return file
 
-def upload(driver, num):
-    path = 링크[3] + str(num) + '/'
-    exist = 0
-    for x in os.listdir(링크[3]):
-        if x == str(num):
-            exist = 1
+def upload(driver, keyword):
+    path = ''
+    for x in os.listdir(링크[3] + 'out/'):
+        x_str = x.split()[0]
+        if re.search(keyword, x):
+            path = 링크[3] + 'out/' + x + '/'
             break
-    if exist:
+
+    if path:
         cpath(driver, 첨부파일)
         driver.switch_to.window(driver.window_handles[1])
         for f in os.listdir(path):
