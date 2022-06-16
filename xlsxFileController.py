@@ -99,75 +99,84 @@ def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
     # save_xls(file)
     # print("all -1 row is deleted")
 
-if __name__ == '__main__':
+def get_all_directory_info():
     file = load_xls(linkData.링크[2])
-    target_data = all_data_fetch(file, '결의내역', 'E15', 'X15')
-    for i in range(6):
-        if target_data[i][1] is not None and target_data[i][1] != '':
-            isMonthly = True
-            target_data[i][18] = str(target_data[i][18])
-            target_data[i][2] = str(target_data[i][2])
-            # 단일 월
-            if len(target_data[i][2]) <= 2:
-                for j in range(len(target_data[i][18])):
-                    if target_data[i][18][j] == '월':
-                        l = j - 1
-                        if j > 1 and 49 <= ord(target_data[i][18][j - 2]) < 58:
-                            l -= 1
-                        target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:j], target_data[i][2])
-                if target_data[i][3] is not None and target_data[i][3] != '':
-                    target_data[i][3] = str(target_data[i][3])
-                    for j in range(len(target_data[i][3])):
-                        if target_data[i][3][j] == '월':
-                            l = j - 1
-                            if j > 1 and 49 <= ord(target_data[i][3][j - 2]) < 58:
-                                l -= 1
-                            target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:j], target_data[i][2])
-            # 1,2 월
-            else:
-                row = -1
-                for j in range(len(target_data[i][18])):
-                    if target_data[i][18][j] == '월':
-                        l = -1
-                        r = -1
-                        for k in range(j-1, -1, -1):
-                            if 49 <= ord(target_data[i][18][k]) < 58:
-                                r = k
-                                break
-                        if r == -1:
-                            print(row, "행 적요사항에 월을 찾을 수 없습니다.", sep='')
-                            break
-                        for k in range(r-2, -1, -1):
-                            if 49 <= ord(target_data[i][18][k]) < 58:
-                                l = k
-                                if k > 0 and 49 <= ord(target_data[i][18][k - 1]) < 58:
-                                    l -= 1
-                                break
-                        if l == -1:
-                            print(row, "행 적요사항에 이전 월을 찾을 수 없습니다.", sep='')
-                            break
-                        target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:r + 1], target_data[i][2])
+    s1 = list(set(list(map(tuple,all_data_fetch(file, '결의내역', 'E15', 'G15')))))
+    s2 = list(set(list(map(tuple,all_data_fetch(file, '결의내역(정기)', 'E15', 'G15')))))
 
-                if target_data[i][3] is not None and target_data[i][3] != '':
-                    target_data[i][3] = str(target_data[i][3])
-                    for j in range(len(target_data[i][3])):
-                        if target_data[i][3][j] == '월':
-                            l = -1
-                            r = -1
-                            for k in range(j - 1, -1, -1):
-                                if 49 <= ord(target_data[i][3][k]) < 58:
-                                    r = k
-                                    break
-                            if r == -1:
-                                print(row, "행 월을 찾을 수 없습니다.", sep='')
-                                break
-                            for k in range(r - 2, -1, -1):
-                                if 49 <= ord(target_data[i][3][k]) < 58:
-                                    l = k
-                                    if k > 0 and 49 <= ord(target_data[i][3][k - 1]) < 58:
-                                        l -= 1
-                                        break
-                            if l == -1:
-                                print(row, "행 이전 월을 찾을 수 없습니다.", sep='')
-                                break
-                            target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:r + 1], target_data[i][2])
+    return s1, s2
+
+if __name__ == '__main__':
+    print(get_all_directory_info())
+    # file = load_xls(linkData.링크[2])
+    # target_data = all_data_fetch(file, '결의내역', 'E15', 'G15')
+    # print(target_data)
+    # for i in range(6):
+    #     if target_data[i][1] is not None and target_data[i][1] != '':
+    #         isMonthly = True
+    #         target_data[i][18] = str(target_data[i][18])
+    #         target_data[i][2] = str(target_data[i][2])
+    #         # 단일 월
+    #         if len(target_data[i][2]) <= 2:
+    #             for j in range(len(target_data[i][18])):
+    #                 if target_data[i][18][j] == '월':
+    #                     l = j - 1
+    #                     if j > 1 and 49 <= ord(target_data[i][18][j - 2]) < 58:
+    #                         l -= 1
+    #                     target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:j], target_data[i][2])
+    #             if target_data[i][3] is not None and target_data[i][3] != '':
+    #                 target_data[i][3] = str(target_data[i][3])
+    #                 for j in range(len(target_data[i][3])):
+    #                     if target_data[i][3][j] == '월':
+    #                         l = j - 1
+    #                         if j > 1 and 49 <= ord(target_data[i][3][j - 2]) < 58:
+    #                             l -= 1
+    #                         target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:j], target_data[i][2])
+    #         # 1,2 월
+    #         else:
+    #             row = -1
+    #             for j in range(len(target_data[i][18])):
+    #                 if target_data[i][18][j] == '월':
+    #                     l = -1
+    #                     r = -1
+    #                     for k in range(j-1, -1, -1):
+    #                         if 49 <= ord(target_data[i][18][k]) < 58:
+    #                             r = k
+    #                             break
+    #                     if r == -1:
+    #                         print(row, "행 적요사항에 월을 찾을 수 없습니다.", sep='')
+    #                         break
+    #                     for k in range(r-2, -1, -1):
+    #                         if 49 <= ord(target_data[i][18][k]) < 58:
+    #                             l = k
+    #                             if k > 0 and 49 <= ord(target_data[i][18][k - 1]) < 58:
+    #                                 l -= 1
+    #                             break
+    #                     if l == -1:
+    #                         print(row, "행 적요사항에 이전 월을 찾을 수 없습니다.", sep='')
+    #                         break
+    #                     target_data[i][18] = target_data[i][18].replace(target_data[i][18][l:r + 1], target_data[i][2])
+    #
+    #             if target_data[i][3] is not None and target_data[i][3] != '':
+    #                 target_data[i][3] = str(target_data[i][3])
+    #                 for j in range(len(target_data[i][3])):
+    #                     if target_data[i][3][j] == '월':
+    #                         l = -1
+    #                         r = -1
+    #                         for k in range(j - 1, -1, -1):
+    #                             if 49 <= ord(target_data[i][3][k]) < 58:
+    #                                 r = k
+    #                                 break
+    #                         if r == -1:
+    #                             print(row, "행 월을 찾을 수 없습니다.", sep='')
+    #                             break
+    #                         for k in range(r - 2, -1, -1):
+    #                             if 49 <= ord(target_data[i][3][k]) < 58:
+    #                                 l = k
+    #                                 if k > 0 and 49 <= ord(target_data[i][3][k - 1]) < 58:
+    #                                     l -= 1
+    #                                     break
+    #                         if l == -1:
+    #                             print(row, "행 이전 월을 찾을 수 없습니다.", sep='')
+    #                             break
+    #                         target_data[i][3] = target_data[i][3].replace(target_data[i][3][l:r + 1], target_data[i][2])
