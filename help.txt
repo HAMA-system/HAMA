@@ -1,7 +1,6 @@
 <HELP>
-=================================
-- HAMA SYSTEM 도움말입니다
-- 기본 설명부분입니다
+-    [HAMA SYSTEM Help]
+-   원하시는 메뉴를 선택해주세요
 
 -       1. 조회시스템
 -       2. 작성시스템
@@ -10,7 +9,6 @@
 -       5. about HAMA
 
 - 도움말을 종료하시려면 'q'를 입력해주세요
-=================================
 </HELP>
 
 <LOOKUP>
@@ -31,6 +29,12 @@
 <작성시스템 사용방법>
 1) 자동으로 작성하기 위한 모든 내용을 'data.xlsx' 파일에 작성합니다.
 2)
+
+<엑셀파일>
+'data.xlsx' 파일 사용과 관련된 내용은 파일 내부 메모 기능을 통해 설명되어 있습니다.
+해당 파일의 대부분의 셀은 모두 수식으로 작성되어, 한번 작성한 후 지우게 되면 기능을 잃습니다.
+따라서 사용하신 셀 또는 행을 지우실 경우, 행 삭제를 통해 한 줄씩 모두 지우시는 것을 권장합니다.
+기존에 준비된 서식은 약 500개 가량의 행이 준비되어 있으므로, 모든 행을 다 사용하신 경우에는 백업파일을 복구하여 사용하시기 바랍니다.
 
 <첨부파일 등록 과정>
 첨부파일 양식 : '(엑셀 내 구분번호) (엑셀 내 키워드를 포함한 제목)'
@@ -72,11 +76,13 @@ ex) 2019년 12월 -> 2020년 1월
 ex) 2021.6.17~2022.6.16 -> 2022.6.17~2023.6.16 (1년으로 계산)
 ex) 2021.6.17~2021.9.16 -> 2021.9.17~2021.12.16 (3개월로 계산)
 
-이외에 자연스러운 날짜 계산은 구현되어 있으나 기본적으로 날짜와 날짜 사이에 공백이 존재하면 다른 날짜로 인식하게 되는 경우가 있습니다.
+이외에 기본적인 날짜 계산은 구현되어 있으나 날짜와 날짜 사이에 공백이 존재하면 다른 날짜로 인식하게 되는 경우가 있습니다.
 </MODIFY>
 
 <DRAFT>
 4. 기안시스템
+<기안시스템이란>
+결의서 기안을 자동으로 등록해주는 시스템입니다.
 </DRAFT>
 
 <HAMA>
@@ -89,12 +95,12 @@ ex) 2021.6.17~2021.9.16 -> 2021.9.17~2021.12.16 (3개월로 계산)
 -
 
 [HAMA system]
-Hongik Accounting Management Advanced System (HAMA system)
+-       Hongik Accounting Management Advanced System (HAMA system)
 
 [Made by]
 -       2022.3.17 ~
--       Minseok-Kim, Hongik-Univ. Computer Engineering Dept., https://github.com/pxxnxx
--       Taehee-Han, Hongik-Univ. Computer Engineering Dept., https://github.com/110w110
+-       Minseok-Kim, Hongik-Univ. Computer Engineering Dept. - https://github.com/pxxnxx
+-       Taehee-Han, Hongik-Univ. Computer Engineering Dept. - https://github.com/110w110
 
 [Maintained by]
 -
