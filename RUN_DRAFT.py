@@ -191,9 +191,9 @@ def draft_write(driver):
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
 
-        # draft_uproad(driver)
+        draft_uproad(driver)
         print("결재정보 입력이 완료되었습니다.")
-        # time.sleep(1)
+        # tme.sleep(1)
         # while True:
         #     try:
         #         driver.switch_to.window(driver.window_handles[0])
@@ -218,21 +218,27 @@ def draft_uproad(driver):
     #         time.sleep(0.3)
     #         cpath(driver, 파일업로드)
     #         print(f, "파일 업로드 완료")
-    try:
-        driver.switch_to.frame(driver.window_handles[0])
-    except:
-        print(0)
+    # try:
+    #     driver.switch_to.frame(driver.window_handles[0])
+    # except:
+    #     print(0)
     driver.switch_to.default_content()
     print(1)
     cid(driver, 'btnFileAttach')
+    time.sleep(0.5)
     print(2)
     path = 링크[3] + 'test' + '/'
+    driver.switch_to.frame('Main_iFrameLayer')
+    driver.switch_to.frame('dadiframe')
     for f in os.listdir(path):
-        driver.find_element(by=By.ID, value='imgbtn').send_keys(path + f)
+        print(f)
+        # driver.find_element(by=By.XPATH, value='/html/body/div/ul/li[1]/a[1]/span').send_keys(path + f)
+        driver.find_element_by_xpath('/html/body/input[1]').send_keys(path + f)
         time.sleep(0.3)
     time.sleep(1)
     cpath(driver, '/html/body/div/div[2]/ul/li/a/span')
     print("파일 첨부 완료")
+    driver.switch_to.default_content()
     time.sleep(100)
 
 # TODO
