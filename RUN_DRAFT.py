@@ -19,28 +19,39 @@ def timeError():
         tt += 1
         t = tt
         time.sleep(1)
-    try:
-        d.window_handles[1].close()
-        driver.switch_to.window(driver.window_handles[0])
-    except:
-        pass
-    d.get("https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx")
-    print("시간 초과로 재실행합니다.")
-    print("오류 메시지가 뜨더라도 잠시 기다려주세요.")
-    t = 0
-    draft(d)
+    # try:
+    #     d.window_handles[1].close()
+    #     d.switch_to.window(d.window_handles[0])
+    # except:
+    #     pass
+    # d.get("https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx")
+    # print("시간 초과로 재실행합니다.")
+    # print("오류 메시지가 뜨더라도 잠시 기다려주세요.")
+    # t = 0
+    # draft(d)
 
 def expand_shadow_element(driver, element):
     shadow_root = driver.execute_script('return arguments[0].shadowRoot', element)
     return shadow_root
 d = None
+
+# TODO
+#   - Print
+#       흑백 처리
+#       멈추면 오류나는거 다시 고쳐야함
+#   - Replace
+#       따로 파일 옮기는 프로그램 생성
+#
 def draft(driver):
 
     global d
     global t
+
     d = driver
     te = threading.Thread(target=timeError)
+    te.daemon = True
     te.start()
+    driver.switch_to.default_content()
     driver.switch_to.frame(기안_프레임1)
     cpath(driver, 결재문서)
     time.sleep(3)
@@ -48,6 +59,7 @@ def draft(driver):
     driver.switch_to.frame(기안_프레임2)
     cpath(driver, 완료문서)
     time.sleep(1)
+    first = True
     while True:
         while True:
             te.t = 0
@@ -80,21 +92,14 @@ def draft(driver):
                     driver.find_element_by_id("txt_keyword").clear()
                     driver.find_element_by_id("txt_keyword").send_keys(inp)
                     driver.find_element_by_id("txt_keyword").send_keys(Keys.ENTER)
-                    # fpath(driver, 기안_검색, inp[0])
-                    # epath(driver, 기안_검색)
                     time.sleep(2)
-        # if len(inp) == 2:
-        #     start, end = inp[0], inp[1]
-        # elif len(inp) == 1:
-        #     page = 페이지_변경[:29] + str(inp[0]+2) + 페이지_변경[30:]
-        #     cpath(driver, page)
-        #     time.sleep(1)
-        #     continue
         for i in range(start, end+1):
             # 시작할 때, 반복할 때 주소가 달라야 클릭이 됨
             t = 5
-            if i == start:
+            # if i == start:
+            if first:
                 num = 문서번호1[:64] + str(i) + 문서번호1[65:]
+                first = False
             else:
                 num = 문서번호2[:67] + str(i) + 문서번호2[68:]
             print(i,"번 문서 인쇄중...",sep='')
@@ -104,16 +109,22 @@ def draft(driver):
             time.sleep(1)
             driver.switch_to.frame(메인_프레임)
             cpath(driver, 문서인쇄)
-            t = 0
+            t = -5
+            time.sleep(5)
             while True:
+                if t >= 20:
+                    # print("TEST")
+                    t = 0
+                    driver.get("https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx")
+                    return
                 try:
                     driver.switch_to.window(driver.window_handles[1])
                     break
                 except:
-                    time.sleep(2)
+                    # print("no window")
+                    time.sleep(3)
             t = 5
-            d = driver
-            # time.sleep(20)
+            # d = driver
 
             # ** shadow-root 같은 element는 find_element(by=) 이용해야함 **
             # driver.switch_to.window(driver.window_handles[1])
@@ -138,13 +149,10 @@ def draft(driver):
         print("모든 문서 출력이 완료되었습니다.")
 def draft_write(driver):
 
-    # TODO
-    #   굳이 엔터 누르지 않아도 가능하나
-    #   엔터 받지 않으면 자동으로 window[0]으로 가야함
-
     cpath(driver,결의서_조회)
 
     while True:
+
         print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
         input()
         try:
@@ -204,35 +212,15 @@ def draft_write(driver):
         # print("기안이 완료되었습니다.")
 
 def draft_uproad(driver):
-    # path = 링크[3] + str(num) + '/'
-    # exist = 0
-    # for x in os.listdir(링크[3]):
-    #     if x == str(num):
-    #         exist = 1
-    #         break
-    # if exist:
-    #     cpath(driver, 첨부파일)
-    #     driver.switch_to.window(driver.window_handles[1])
-    #     for f in os.listdir(path):
-    #         driver.find_element_by_xpath(파일선택).send_keys(path + f)
-    #         time.sleep(0.3)
-    #         cpath(driver, 파일업로드)
-    #         print(f, "파일 업로드 완료")
-    # try:
-    #     driver.switch_to.frame(driver.window_handles[0])
-    # except:
-    #     print(0)
+
     driver.switch_to.default_content()
-    print(1)
     cid(driver, 'btnFileAttach')
     time.sleep(0.5)
-    print(2)
     path = 링크[3] + 'test' + '/'
     driver.switch_to.frame('Main_iFrameLayer')
     driver.switch_to.frame('dadiframe')
     for f in os.listdir(path):
         print(f)
-        # driver.find_element(by=By.XPATH, value='/html/body/div/ul/li[1]/a[1]/span').send_keys(path + f)
         driver.find_element_by_xpath('/html/body/input[1]').send_keys(path + f)
         time.sleep(0.3)
     time.sleep(1)
@@ -240,22 +228,3 @@ def draft_uproad(driver):
     print("파일 첨부 완료")
     driver.switch_to.default_content()
     time.sleep(100)
-
-# TODO
-#   결재정보 -> 즐겨찾기 -> 결제 -> 적용 -> 기록물철 -> 지급/징수 -> 확인 -> 닫기
-#   수입 - 부총장님 + 위탁
-#   지출 - 30만원 이상) 총장님 + 용역 / 30만원 미만) 부총장님 + 용역
-
-
-'''
-
-1. 엑셀 파일 토대로 폴더 생성 (중복 확인) 
-2. 폴더 이름과 파일 이름 매칭하여 옮기기
-3. 파일 업로드할 때 앞에 번호만 확인
-
-
-정기 아닌경우 -> 키워드에 파일 이름에 들어가는 고유한 키워드 적어달라 하기
-
-파일 남아있을 때 메세지
-
-'''
