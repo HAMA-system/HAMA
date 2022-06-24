@@ -190,6 +190,7 @@ def draft_write(driver):
         table = driver.find_element(by=By.ID, value='ctlTable')
         i = 1
         title = driver.find_element(by=By.XPATH, value=기안_제목).get_attribute("innerText")
+        print(title)
         for tr in table.find_elements(by=By.TAG_NAME, value="tr")[6:]:
             for td in tr.find_elements(by=By.TAG_NAME, value="td")[2:]:
                 money = td.get_attribute("innerText")
@@ -240,3 +241,15 @@ def draft_uproad(driver):
     print("파일 첨부 완료")
     driver.switch_to.default_content()
     time.sleep(100)
+
+if __name__ == '__main__':
+    test = "테스트 2월 관리비"
+    path = 링크[3] + "out/"
+    for x in os.listdir(path):
+        if re.search("".join(x.split()[1:]), test):
+            xpath = path + x + "/"
+            for y in os.listdir(xpath):
+                # upload
+                print(y)
+
+            break
