@@ -132,6 +132,17 @@ def draft(driver):
             sr0 = expand_shadow_element(driver, r0)
             r1 = sr0.find_element(by=By.CSS_SELECTOR,value=섀도1)
             sr1 = expand_shadow_element(driver, r1)
+
+            # Color Setting
+            sc0 = sr1.find_element(by=By.CSS_SELECTOR,value=섀도컬0)
+            scr0 = expand_shadow_element(driver, sc0)
+            sc1 = scr0.find_element(by=By.CSS_SELECTOR,value=섀도컬1)
+            src1 = expand_shadow_element(driver,sc1)
+
+            color = Select(driver.find_element(by=By.XPATH, value=컬러세팅))
+            color.select_by_index(0)
+
+            # Print
             r2 = sr1.find_element(by=By.CSS_SELECTOR,value=섀도2)
             sr2 = expand_shadow_element(driver, r2)
             save = sr2.find_element(by=By.CLASS_NAME,value=인쇄확인)
@@ -147,6 +158,7 @@ def draft(driver):
             cpath(driver, 기안_창닫기)
 
         print("모든 문서 출력이 완료되었습니다.")
+
 def draft_write(driver):
 
     cpath(driver,결의서_조회)
