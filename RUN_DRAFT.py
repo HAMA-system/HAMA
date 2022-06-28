@@ -257,7 +257,7 @@ def draft_write(driver):
 def draft_uproad(driver, title):
 
     driver.switch_to.default_content()
-    cid(driver, 'btnFileAttach')
+    cid(driver, 기안_파일버튼)
     time.sleep(0.5)
     path = 링크[3] + 'out/'
     driver.switch_to.frame(메인_프레임)
@@ -272,22 +272,28 @@ def draft_uproad(driver, title):
     time.sleep(1)
     print("파일 첨부 완료")
     driver.switch_to.parent_frame()
-    print("\n결재를 올리시겠습니까? 1(예)/2(아니오)")
+    print("\n결재를 올리시겠습니까? 1(예)")
+    print("만약 파일이 잘못된 경우 올바른 파일을 업로드 후 1을 입력해주세요")
     while True:
         put = input()
         if put == '1':
-            cpath(driver, 기안_업로드)
+            cpath(driver,기안_업로드)
             driver.switch_to.default_content()
-            # cid(driver,결재올림)
+            time.sleep(0.2)
+            cid(driver,결재올림)
+            driver.switch_to.frame(메인_프레임)
+            time.sleep(0.2)
+            cid(driver,결재확인)
+            driver.switch_to.default_content()
+            time.sleep(0.4)
             cid(driver,기안_종료)
-
             driver.switch_to.window(driver.window_handles[0])
             driver.switch_to.default_content()
             driver.switch_to.frame(조회_프레임)
             cpath(driver,닫기)
             break
-        elif put == '2':
-            break
+        else:
+            print("잘못된 입력입니다.")
     # cpath(driver, '/html/body/div/div[2]/ul/li/a/span')
     # driver.switch_to.default_content()
     # time.sleep(100)
