@@ -3,6 +3,7 @@ import threading
 import time
 import os
 
+import manage
 from linkData import *
 from autoLogin import *
 from alertController import *
@@ -162,21 +163,50 @@ def draft(driver):
 def draft_write(driver):
 
     cpath(driver,결의서_조회)
-
+    first = True
     while True:
-
-        print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
-        input()
-        try:
-            driver.switch_to.window(driver.window_handles[0])
-        except:
-            pass
+        # if not first:
+        #     print("\n기안이 완료되면 엔터를 눌러주세요")
+        #     input()
+        # first = False
+        # try:
+        #     driver.find_element(by=By.XPATH, value=기안_종료)
+        # except:
+        #     pass
+        # try:
+        #     driver.switch_to.window(driver.window_handles[0])
+        # except:
+        #     pass
+        # try:
+        #     driver.switch_to.default_content()
+        #     driver.switch_to.frame(조회_프레임)
+        #     driver.find_element(by=By.XPATH, value=닫기)
+        # except:
+        #     pass
         try:
             driver.switch_to.alert.dismiss()
         except:
             pass
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
+        manage.search(driver)
+
+        print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
+        print("다시 검색을 원하시면 1을 입력해주세요")
+        put = input()
+        if put == '1':
+            first = True
+            continue
+        # try:
+        #     driver.switch_to.window(driver.window_handles[0])
+        # except:
+        #     pass
+        # try:
+        #     driver.switch_to.alert.dismiss()
+        # except:
+        #     pass
+        # driver.switch_to.default_content()
+        # driver.switch_to.frame(조회_프레임)
         driver.switch_to.frame('frmPopup')
         cid(driver, 기안)
         last = len(driver.window_handles)
@@ -190,7 +220,7 @@ def draft_write(driver):
         table = driver.find_element(by=By.ID, value='ctlTable')
         i = 1
         title = driver.find_element(by=By.XPATH, value=기안_제목).get_attribute("innerText")
-        print(title)
+        # print(title)
         for tr in table.find_elements(by=By.TAG_NAME, value="tr")[6:]:
             for td in tr.find_elements(by=By.TAG_NAME, value="td")[2:]:
                 money = td.get_attribute("innerText")
@@ -212,7 +242,7 @@ def draft_write(driver):
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
 
-        draft_uproad(driver)
+        draft_uproad(driver, title)
         print("결재정보 입력이 완료되었습니다.")
         # tme.sleep(1)
         # while True:
@@ -224,33 +254,40 @@ def draft_write(driver):
         # cid(driver, 기안_종료)
         # print("기안이 완료되었습니다.")
 
-def draft_uproad(driver):
+def draft_uproad(driver, title):
 
     driver.switch_to.default_content()
     cid(driver, 'btnFileAttach')
     time.sleep(0.5)
-    path = 링크[3] + 'test' + '/'
-    driver.switch_to.frame('Main_iFrameLayer')
+    path = 링크[3] + 'out/'
+    driver.switch_to.frame(메인_프레임)
     driver.switch_to.frame('dadiframe')
-    for f in os.listdir(path):
-        print(f)
-        driver.find_element_by_xpath('/html/body/input[1]').send_keys(path + f)
-        time.sleep(0.3)
-    time.sleep(1)
-    cpath(driver, '/html/body/div/div[2]/ul/li/a/span')
-    print("파일 첨부 완료")
-    driver.switch_to.default_content()
-    time.sleep(100)
-
-if __name__ == '__main__':
-    title = "[수입결의서]테스트 2월 관리비"
-    path = 링크[3] + "out/"
     for x in os.listdir(path):
         if re.search("".join(x.split()[1:]), title):
             xpath = path + x + "/"
             for y in os.listdir(xpath):
-                # upload
-                # driver.find_element_by_xpath('/html/body/input[1]').send_keys(xpath + y)
-                print(y)
-
+                driver.find_element_by_xpath(기안_파일).send_keys(xpath + y)
+                print(y,"업로드 완료")
             break
+    time.sleep(1)
+    print("파일 첨부 완료")
+    driver.switch_to.parent_frame()
+    print("\n결재를 올리시겠습니까? 1(예)/2(아니오)")
+    while True:
+        put = input()
+        if put == '1':
+            cpath(driver, 기안_업로드)
+            driver.switch_to.default_content()
+            # cid(driver,결재올림)
+            cid(driver,기안_종료)
+
+            driver.switch_to.window(driver.window_handles[0])
+            driver.switch_to.default_content()
+            driver.switch_to.frame(조회_프레임)
+            cpath(driver,닫기)
+            break
+        elif put == '2':
+            break
+    # cpath(driver, '/html/body/div/div[2]/ul/li/a/span')
+    # driver.switch_to.default_content()
+    # time.sleep(100)

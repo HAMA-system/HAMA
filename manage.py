@@ -71,6 +71,80 @@ def dorm(driver, dep, pop):
         driver.switch_to.default_content()
         driver.switch_to.frame('ifr_d4_AHG020P')
 
+def search(driver):
+    global sema
+    while True:
+        print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/0(뒤로가기) ")
+        acc = input().strip()
+        if acc == '1' or acc == '2' or acc == '3':
+            break
+        print("잘못된 입력입니다.")
+    if acc == '0':
+        driver.switch_to.default_content()
+        return
+    while True:
+        sema = 1
+        print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
+        res = input().strip()
+        # TODO
+        #   modify처럼 형식 변경 필요
+        if res == '1' or res == '2' or res == '3' or res == '4':
+            break
+        print("잘못된 입력입니다.")
+
+    while True:
+        print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022")
+        month = input().strip()
+        if len(month) == 1 or len(month) == 2 or len(month) == 4:
+            break
+        print("잘못된 입력입니다.")
+    print("원하는 검색어를 입력해주세요. (없으면 공백)")
+    srch = input().strip()
+
+    if len(month) == 4:
+        fname(driver, 'txtSAcctYear', month)
+    else:
+        fname(driver, 'txtSAcctYear', '2021')
+    select = Select(driver.find_element_by_xpath(회계구분_조회))
+    if acc == '1':
+        select.select_by_index(0)
+    elif acc == '2':
+        select.select_by_index(1)
+
+    select = Select(driver.find_element_by_xpath(결의서구분))
+    if res == '1':
+        select.select_by_index(0)
+    elif res == '2':
+        select.select_by_index(1)
+    elif res == '3':
+        select.select_by_index(2)
+    elif res == '4':
+        select.select_by_index(3)
+
+    if month == '1':
+        fname(driver, 'DpFrDt', dateController.date1month())
+    elif month == '3':
+        fname(driver, 'DpFrDt', dateController.date3month())
+    elif month == '6':
+        fname(driver, 'DpFrDt', dateController.date6month())
+    elif month == '12':
+        fname(driver, 'DpFrDt', dateController.date1year())
+    elif len(month) == 4:
+        fname(driver, 'DpFrDt', month + '0301')
+        fname(driver, 'DpToDt', str(int(month) + 1) + '0228')
+
+    # elif month == '종료':
+    #     break
+    else:
+        print("잘못된 입력입니다.")
+    if len(month) != 4:
+        fname(driver, 'DpToDt', dateController.dateToday())
+    fpath(driver, 제목_검색, srch)
+    cname(driver, 'CSMenuButton1$List')
+
+
+
+
 def lookup(driver):
     global sema
     global d
@@ -86,74 +160,8 @@ def lookup(driver):
         while True:
             ignoreAutoLogout.timer = 0
             sema = 0
-            print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/0(뒤로가기) ")
-            acc = input().strip()
-            if acc == '1' or acc == '2' or acc == '3':
-                break
-            print("잘못된 입력입니다.")
-        if acc == '0':
-            driver.switch_to.default_content()
-            return
-        while True:
-            sema = 1
-            print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
-            res = input().strip()
-            # TODO
-            #   modify처럼 형식 변경 필요
-            if res == '1' or res == '2' or res == '3' or res == '4':
-                break
-            print("잘못된 입력입니다.")
-
-        while True:
-            print("원하시는 기간을 선택하세요. ex) 1/3/6/12/2022")
-            month = input().strip()
-            if len(month) == 1 or len(month) == 2 or len(month) == 4:
-                break
-            print("잘못된 입력입니다.")
-        print("원하는 검색어를 입력해주세요. (없으면 공백)")
-        search = input().strip()
-
-        if len(month) == 4:
-            fname(driver,'txtSAcctYear',month)
-        else:
-            fname(driver,'txtSAcctYear','2021')
-        select = Select(driver.find_element_by_xpath(회계구분_조회))
-        if acc == '1':
-            select.select_by_index(0)
-        elif acc == '2':
-            select.select_by_index(1)
-
-        select = Select(driver.find_element_by_xpath(결의서구분))
-        if res == '1':
-            select.select_by_index(0)
-        elif res == '2':
-            select.select_by_index(1)
-        elif res == '3':
-            select.select_by_index(2)
-        elif res == '4':
-            select.select_by_index(3)
-
-        if month == '1':
-            fname(driver,'DpFrDt',dateController.date1month())
-        elif month == '3':
-            fname(driver,'DpFrDt',dateController.date3month())
-        elif month == '6':
-            fname(driver,'DpFrDt',dateController.date6month())
-        elif month == '12':
-            fname(driver,'DpFrDt',dateController.date1year())
-        elif len(month) == 4:
-            fname(driver,'DpFrDt',month+'0301')
-            fname(driver,'DpToDt',str(int(month)+1)+'0228')
-
-        elif month == '종료':
-            break
-        else:
-            print("잘못된 입력입니다.")
-        if len(month) != 4:
-            fname(driver,'DpToDt',dateController.dateToday())
-        fpath(driver,제목_검색,search)
-        cname(driver,'CSMenuButton1$List')
-        print("\n=====================================================")
+            search(driver)
+            print("=====================================================")
 
 def write(driver):
 
