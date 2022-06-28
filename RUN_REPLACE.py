@@ -20,6 +20,8 @@ def replace():
     # 폴더 생성
     for new in info:
         for num, keyword in new:
+            if num == -1:
+                continue
             folder = str(num) + " " + keyword
             if folder not in os.listdir(dpath):
                 os.mkdir(dpath + folder)

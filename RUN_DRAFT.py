@@ -243,13 +243,14 @@ def draft_uproad(driver):
     time.sleep(100)
 
 if __name__ == '__main__':
-    test = "테스트 2월 관리비"
+    title = "[수입결의서]테스트 2월 관리비"
     path = 링크[3] + "out/"
     for x in os.listdir(path):
-        if re.search("".join(x.split()[1:]), test):
+        if re.search("".join(x.split()[1:]), title):
             xpath = path + x + "/"
             for y in os.listdir(xpath):
                 # upload
+                # driver.find_element_by_xpath('/html/body/input[1]').send_keys(xpath + y)
                 print(y)
 
             break
