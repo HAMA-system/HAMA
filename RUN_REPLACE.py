@@ -1,5 +1,6 @@
 import os
 import re
+
 from xlsxFileController import get_all_directory_info
 from linkData import 링크
 
@@ -34,13 +35,24 @@ def replace():
         fd_str = "".join(fd.split()[1:])
         for f in os.listdir(path):
             f_str = "".join(f.split())
-
             if re.search(fd_str, f_str):
-                print("-",f)
+                print("-", f)
                 os.replace(path+f, dpath+fd+'/'+f)
     print("\n남아있는 파일")
     for f in os.listdir(path):
         print("-",f)
 
 if __name__ == '__main__':
-    replace()
+    r = True
+    while r:
+        replace()
+        print("\n파일을 이동하시겠습니까? 1(예)/2(종료)")
+        while True:
+            put = input()
+            if put == '1':
+                break
+            elif put == '2':
+                r = False
+                break
+            else:
+                print("잘못된 입력입니다.")
