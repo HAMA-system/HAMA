@@ -5,6 +5,7 @@ from xlsxFileController import get_all_directory_info
 from linkData import 링크
 
 def replace():
+    print("파일 이동을 시작합니다.")
     info = get_all_directory_info()
     path = 링크[3] + "in/"
     dpath = 링크[3] + "out/"
@@ -27,16 +28,29 @@ def replace():
             if folder not in os.listdir(dpath):
                 os.mkdir(dpath + folder)
 
+
+    # TODO
+    #   CASE 1)
+    #       복사
+    #       복사점
+    #       복사.pdf
+    #       복사점.pdf
+    #   CASE 2)
+    #       신한은행 도급비
+    #       신한은행 임대료
+    #       신한은행
+
     # 파일 이동
     folder = []
     file = []
     print("\n파일 이동이 완료되었습니다.\n\n이동된 파일")
-    for fd in os.listdir(dpath):
+    outDir = sorted(os.listdir(dpath),key=lambda x:len("".join(x.split()[1:])),reverse=True)
+    for fd in outDir:
         fd_str = "".join(fd.split()[1:])
         for f in os.listdir(path):
             f_str = "".join(f.split())
             if re.search(fd_str, f_str):
-                print("-", f)
+                print("\n<", f, "> 파일을", "\n-> [", fd, "] 폴더로 이동하였습니다")
                 os.replace(path+f, dpath+fd+'/'+f)
     print("\n남아있는 파일")
     for f in os.listdir(path):
