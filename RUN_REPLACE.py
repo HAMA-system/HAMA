@@ -20,13 +20,13 @@ def replace():
         os.mkdir(링크[3] + 'out')
 
     # 폴더 생성
-    for new in info:
-        for num, keyword in new:
-            if num == -1:
-                continue
-            folder = str(num) + " " + keyword
-            if folder not in os.listdir(dpath):
-                os.mkdir(dpath + folder)
+    # for new in info:
+    for num, keyword in info:
+        if num == -1:
+            continue
+        folder = str(num) + " " + keyword
+        if folder not in os.listdir(dpath):
+            os.mkdir(dpath + folder)
 
 
     # TODO
@@ -39,6 +39,23 @@ def replace():
     #       신한은행 도급비
     #       신한은행 임대료
     #       신한은행
+    #   CASE 3)
+    #       2022학년도 후기 대학원 입시 구술시험장 준비 및 정...
+    #       봉사학생 근무확인표 및 개인정보수집 동의서.pdf
+    #       간식대 영수증.pdf
+    #   해결방안)
+    #       다른 결의서와 키워드가 겹칠 수 있을 때 :
+    #           최대한 길게 키워드 잡기.
+    #           그럼에도 겹칠 경우 ????
+    #           한번에 replace 하지 말고 여러번 나눠서 ?
+    #       파일마다 중복되는 키워드 없는 경우 :
+    #           직접 올리는 수밖에 없음.
+    #           다른 키워드에 들어가면 문제
+    #   개선사항)
+    #       결재필요 폴더, 결재완료 폴더 생성하기 ?
+    #       만약 파일이 없으면 폴더 생성 X <- 웬만하면 파일 있어서 필요한가?
+    #       폴더 이름 결의서 제목으로 하기 ?
+
 
     # 파일 이동
     folder = []

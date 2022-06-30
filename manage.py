@@ -75,9 +75,12 @@ def search(driver):
     global sema
     while True:
         print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/0(뒤로가기) ")
+        print("검색이 필요 없으시면 엔터를 눌러주세요")
         acc = input().strip()
         if acc == '1' or acc == '2' or acc == '3':
             break
+        elif acc == '':
+            return
         print("잘못된 입력입니다.")
     if acc == '0':
         driver.switch_to.default_content()

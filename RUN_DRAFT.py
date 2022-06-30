@@ -165,24 +165,24 @@ def draft_write(driver):
     cpath(driver,결의서_조회)
     first = True
     while True:
-        # if not first:
-        #     print("\n기안이 완료되면 엔터를 눌러주세요")
-        #     input()
-        # first = False
-        # try:
-        #     driver.find_element(by=By.XPATH, value=기안_종료)
-        # except:
-        #     pass
-        # try:
-        #     driver.switch_to.window(driver.window_handles[0])
-        # except:
-        #     pass
-        # try:
-        #     driver.switch_to.default_content()
-        #     driver.switch_to.frame(조회_프레임)
-        #     driver.find_element(by=By.XPATH, value=닫기)
-        # except:
-        #     pass
+        if not first:
+            print("\n기안이 완료되면 엔터를 눌러주세요")
+            input()
+        first = False
+        try:
+            driver.find_element(by=By.XPATH, value=기안_종료)
+        except:
+            pass
+        try:
+            driver.switch_to.window(driver.window_handles[0])
+        except:
+            pass
+        try:
+            driver.switch_to.default_content()
+            driver.switch_to.frame(조회_프레임)
+            driver.find_element(by=By.XPATH, value=닫기)
+        except:
+            pass
         try:
             driver.switch_to.alert.dismiss()
         except:
@@ -242,9 +242,19 @@ def draft_write(driver):
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
 
-        draft_uproad(driver, title)
-        print("결재정보 입력이 완료되었습니다.")
-        # tme.sleep(1)
+
+        # driver.switch_to.default_content()
+        # time.sleep(0.4)
+        # cid(driver, 기안_종료)
+        # driver.switch_to.window(driver.window_handles[0])
+        # driver.switch_to.default_content()
+        # driver.switch_to.frame(조회_프레임)
+        # cpath(driver, 닫기)
+
+
+        # draft_uproad(driver, title)
+        # print("결재정보 입력이 완료되었습니다.")
+        # time.sleep(1)
         # while True:
         #     try:
         #         driver.switch_to.window(driver.window_handles[0])
