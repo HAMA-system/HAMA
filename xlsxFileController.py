@@ -54,8 +54,12 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
     lcell = lastcell
 
     data = []
-    while get_cell_data(file, sheetname, fcell) != None and get_cell_data(file, sheetname, fcell) != '_':
-        # print(fcell, lcell)
+    while True:
+        cell_data = get_cell_data(file, sheetname, fcell)
+        if cell_data is None or cell_data == '_':
+            break
+        # if cell_data == -1:
+        #     continue
         data.append(get_singleline_data(file, sheetname, fcell, lcell))
         if 65 <= ord(fcell[1]) <= 90:
             fcell = fcell[:2] + str(int(fcell[2:]) + 1)
@@ -103,7 +107,6 @@ def get_all_directory_info():
     file = load_xls(linkData.링크[2])
     s1 = list(set(list(map(tuple,all_data_fetch(file, '결의내역', 'E15', 'G15')))))
     s2 = list(set(list(map(tuple,all_data_fetch(file, '결의내역(정기)', 'E15', 'G15')))))
-
     return s1, s2
 
 if __name__ == '__main__':

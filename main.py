@@ -61,14 +61,14 @@ if __name__ == '__main__':
         driver = autoLogin.afterLogin(driver)
     while True:
         # select = '조회'
-        # select = '작성'
+        select = '작성'
         # select = '수정'
-        select = '기안'
+        # select = '기안'
         if select == '조회':
             manage.lookup(driver)
         elif select == '작성':
-            rep = threading.Thread(target=RUN_REPLACE.replace())
-            rep.start()
+            # rep = threading.Thread(target=RUN_REPLACE.replace())
+            # rep.start()
             manage.write(driver)
         elif select == '수정':
             manage.modify(driver)
