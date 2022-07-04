@@ -165,24 +165,6 @@ def draft_write(driver):
     cpath(driver,결의서_조회)
     first = True
     while True:
-        if not first:
-            print("\n기안이 완료되면 엔터를 눌러주세요")
-            input()
-        first = False
-        try:
-            driver.find_element(by=By.XPATH, value=기안_종료)
-        except:
-            pass
-        try:
-            driver.switch_to.window(driver.window_handles[0])
-        except:
-            pass
-        try:
-            driver.switch_to.default_content()
-            driver.switch_to.frame(조회_프레임)
-            driver.find_element(by=By.XPATH, value=닫기)
-        except:
-            pass
         try:
             driver.switch_to.alert.dismiss()
         except:
@@ -239,9 +221,21 @@ def draft_write(driver):
         cid(driver, 결재)
         cpath(driver, 적용)
         cid(driver, 기록물철)
+
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
 
+        print("기안이 완료되면 엔터를 눌러주세요")
+        input()
+        driver.switch_to.default_content()
+        driver.find_element(by=By.ID, value=기안_종료).click()
+        time.sleep(0.5)
+        driver.switch_to.frame(메인_프레임)
+        driver.find_element(by=By.ID, value=결재확인).click()
+        driver.switch_to.window(driver.window_handles[0])
+        driver.switch_to.default_content()
+        driver.switch_to.frame(조회_프레임)
+        driver.find_element(by=By.XPATH, value=닫기).click()
 
         # driver.switch_to.default_content()
         # time.sleep(0.4)
