@@ -8,25 +8,30 @@ def replace():
     print("파일 이동을 시작합니다.")
     info = get_all_directory_info()
     path = 링크[3] + "in/"
-    dpath = 링크[3] + "out/"
+    dpath = 링크[3] + "결의서 작성 필요/"
 
     # out 폴더 있는지 체크
     isOut = False
     for f in os.listdir(링크[3]):
-        if f == 'out':
+        if f == '결의서 작성 필요':
             isOut = True
             break
     if not isOut:
-        os.mkdir(링크[3] + 'out')
+        os.mkdir(링크[3] + '결의서 작성 필요')
 
     # 폴더 생성
     # for new in info:
-    for num, keyword in info:
+    title_key = dict()
+    for num, keyword, _, title in info:
         if num == -1:
             continue
-        folder = str(num) + " " + keyword
-        if folder not in os.listdir(dpath):
-            os.mkdir(dpath + folder)
+        if title != '_':
+            title_key[title] = keyword
+
+            # folder = str(num) + " " + keyword
+            folder = title
+            if folder not in os.listdir(dpath):
+                os.mkdir(dpath + folder)
 
 
     # TODO
@@ -63,7 +68,8 @@ def replace():
     print("\n파일 이동이 완료되었습니다.\n\n이동된 파일")
     outDir = sorted(os.listdir(dpath),key=lambda x:len("".join(x.split()[1:])),reverse=True)
     for fd in outDir:
-        fd_str = "".join(fd.split()[1:])
+        # fd_str = "".join(fd.split()[1:])
+        fd_str = title_key[fd]
         for f in os.listdir(path):
             f_str = "".join(f.split())
             if re.search(fd_str, f_str):

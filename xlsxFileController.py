@@ -105,7 +105,7 @@ def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
 
 def get_all_directory_info():
     file = load_xls(linkData.링크[2])
-    s1 = list(set(list(map(tuple,all_data_fetch(file, '결의내역', 'E15', 'G15')))))
+    s1 = list(set(list(map(tuple,all_data_fetch(file, '결의내역', 'E15', 'I15')))))
     # s2 = list(set(list(map(tuple,all_data_fetch(file, '결의내역(정기)', 'E15', 'G15')))))
     return s1
 
