@@ -16,10 +16,12 @@ def replace():
     for f in os.listdir(링크[3]):
         if f == '결의서 작성 필요':
             isOut = True
-            break
+        if f == '기안 필요':
+            isDraft = True
     if not isOut:
         os.mkdir(링크[3] + '결의서 작성 필요')
-
+    if not isDraft:
+        os.mkdir(링크[3] + '기안 필요')
     # 폴더 생성
     # for new in info:
     title_key = dict()

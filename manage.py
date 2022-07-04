@@ -396,7 +396,6 @@ def upload(driver, keyword):
     path = ''
     for x in os.listdir(링크[3] + '결의서 작성 필요/'):
         # x_str = x.split()[0]
-        print(x, keyword)
         # if re.search(keyword, x):
         if x == keyword:
             path = 링크[3] + '결의서 작성 필요/' + x + '/'
