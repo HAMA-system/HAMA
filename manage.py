@@ -194,6 +194,7 @@ def write(driver):
         target_data = input_data
         row = 15
         isMonthly = False
+        title = ""
         # Main loop
         for i in range(len(target_data)):
             if target_data[i][0] != -1 or prev != -1:
@@ -210,7 +211,7 @@ def write(driver):
                         prev = target_data[i][0]
                         continue
 
-                    upload(driver, target_data[i][1])
+                    upload(driver, title)
                     cpath(driver,신규)
                     # for p in range(len(target_data)):
                     #     if target_data[p][0] == prev:
@@ -269,6 +270,7 @@ def write(driver):
                     driver.switch_to.frame('ifr_d4_AHG020P')
                 if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
                     fpath(driver,결의서_제목,target_data[i][3])
+                    title = target_data[i][3]
                 fpath(driver,계정과목,target_data[i][8])
                 epath(driver,계정과목)
 
@@ -329,7 +331,7 @@ def write(driver):
                     tax = 0
 
                 save(driver)
-                upload(driver, target_data[i][1])
+                upload(driver, title)
 
                 # for p in range(len(target_data)):
                 #     if target_data[p][0] == prev:
@@ -392,10 +394,13 @@ def taxWrite(driver, num, file, isMonthly, row):
 
 def upload(driver, keyword):
     path = ''
-    for x in os.listdir(링크[3] + 'out/'):
-        x_str = x.split()[0]
-        if re.search(keyword, x):
-            path = 링크[3] + 'out/' + x + '/'
+    for x in os.listdir(링크[3] + '결의서 작성 필요/'):
+        # x_str = x.split()[0]
+        print(x, keyword)
+        # if re.search(keyword, x):
+        if x == keyword:
+            path = 링크[3] + '결의서 작성 필요/' + x + '/'
+            dpath = 링크[3] + '기안 필요/' + x + '/'
             break
 
     if path:
@@ -408,7 +413,9 @@ def upload(driver, keyword):
             print(f, "파일 업로드 완료")
 
         # 나중에 조정해야함
-        time.sleep(0.5)
+
+        os.replace(path, dpath)
+
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(0.1)
@@ -416,6 +423,7 @@ def upload(driver, keyword):
         cpath(driver, 저장)
         time.sleep(0.3)
         dismissAlert(driver)
+
 
 def save(driver):
     while True:

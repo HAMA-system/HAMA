@@ -1,5 +1,6 @@
 import os
 import re
+import time
 
 from xlsxFileController import get_all_directory_info
 from linkData import 링크
@@ -22,12 +23,13 @@ def replace():
     # 폴더 생성
     # for new in info:
     title_key = dict()
+    key_title = dict()
     for num, keyword, _, title in info:
         if num == -1:
             continue
         if title != '_':
             title_key[title] = keyword
-
+            key_title[keyword] = title
             # folder = str(num) + " " + keyword
             folder = title
             if folder not in os.listdir(dpath):
@@ -60,21 +62,28 @@ def replace():
     #       결재필요 폴더, 결재완료 폴더 생성하기 ?
     #       만약 파일이 없으면 폴더 생성 X <- 웬만하면 파일 있어서 필요한가?
     #       폴더 이름 결의서 제목으로 하기 ?
-
-
+    #   결의서 제목으로 Replace 하면 키워드 하나만 써도 됨
+    #   정기내역 추가 해야함
     # 파일 이동
     folder = []
     file = []
     print("\n파일 이동이 완료되었습니다.\n\n이동된 파일")
-    outDir = sorted(os.listdir(dpath),key=lambda x:len("".join(x.split()[1:])),reverse=True)
-    for fd in outDir:
+    # outDir = sorted(os.listdir(dpath),key=lambda x:len("".join(x.split()[1:])),reverse=True)
+    outDir = os.listdir(dpath)
+    for i, x in enumerate(outDir):
+        outDir[i] = title_key[x]
+    outDir = sorted(outDir, key=len, reverse=True)
+    # print(outDir)
+    # time.sleep(10000)
+    for fd_key in outDir:
         # fd_str = "".join(fd.split()[1:])
-        fd_str = title_key[fd]
+        # fd_str = title_key[fd]
+        fd_title = key_title[fd_key]
         for f in os.listdir(path):
             f_str = "".join(f.split())
-            if re.search(fd_str, f_str):
-                print("\n<", f, "> 파일을", "\n-> [", fd, "] 폴더로 이동하였습니다")
-                os.replace(path+f, dpath+fd+'/'+f)
+            if re.search("".join(fd_key.split()), f_str):
+                print("\n<", f, "> 파일을", "\n-> [", fd_title, "] 폴더로 이동하였습니다")
+                os.replace(path+f, dpath+fd_title+'/'+f)
     print("\n남아있는 파일")
     for f in os.listdir(path):
         print("-",f)
