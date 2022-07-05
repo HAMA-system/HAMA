@@ -73,6 +73,7 @@ def replace():
     # outDir = sorted(os.listdir(dpath),key=lambda x:len("".join(x.split()[1:])),reverse=True)
     outDir = os.listdir(dpath)
     for i, x in enumerate(outDir):
+        print(title_key,x)
         outDir[i] = title_key[x]
     outDir = sorted(outDir, key=len, reverse=True)
     # print(outDir)

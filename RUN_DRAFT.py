@@ -8,6 +8,7 @@ from linkData import *
 from autoLogin import *
 from alertController import *
 from selenium.webdriver import ActionChains
+from selenium.webdriver.support.ui import Select
 
 t = 0
 def timeError():
@@ -138,9 +139,9 @@ def draft(driver):
             sc0 = sr1.find_element(by=By.CSS_SELECTOR,value=섀도컬0)
             scr0 = expand_shadow_element(driver, sc0)
             sc1 = scr0.find_element(by=By.CSS_SELECTOR,value=섀도컬1)
-            src1 = expand_shadow_element(driver,sc1)
+            scr1 = expand_shadow_element(driver, sc1)
 
-            color = Select(driver.find_element(by=By.XPATH, value=컬러세팅))
+            color = Select(scr1.find_element(by=By.XPATH, value=컬러세팅))
             color.select_by_index(0)
 
             # Print
