@@ -1,6 +1,7 @@
 import os
 import re
 import time
+import unicodedata
 
 from xlsxFileController import get_all_directory_info
 from linkData import 링크
@@ -11,11 +12,10 @@ def replace():
     autoFolder = os.listdir(링크[3])
     autoPath = 링크[3]
     inPath = 링크[3] + "in/"
-    inFolder = os.listdir(inPath)
     outPath = 링크[3] + "결의서 작성 필요/"
     # outFoler 나중에
 
-    print("파일 이동을 시작합니다.")
+    print("파일 배치를 시작합니다.")
 
     # out 폴더 있는지 체크
     if '결의서 작성 필요' not in autoFolder:
@@ -39,22 +39,20 @@ def replace():
     keyToFileName = dict()
     for fileName in outFolder:
         keyword = fileName.split('#')[-1]
-        print(keyword)
         keywordList.append(keyword)
         keyToFileName[keyword] = fileName
 
     keywordList = sorted(keywordList, key=len, reverse=True)
 
-    print("\n파일 이동이 완료되었습니다.\n\n이동된 파일")
+    print("\n더 이상 옮길 파일이 없습니다.\n\n[ 옮겨진 파일 ]")
     for keyword in keywordList:
-        for inFile in inFolder:
-            if re.search(keyword.replace(" ", ""), inFile.replace(" ", "")):
-                print("\n<", inFile, "> 파일을", "\n-> [", keyToFileName[keyword], "] 폴더로 이동하였습니다")
+        for inFile in os.listdir(inPath):
+            if re.search(unicodedata.normalize('NFC', keyword.replace(" ", "")), unicodedata.normalize('NFC', inFile.replace(" ", ""))):
+                print("(", inFile, ") 파일을", "-> (", keyToFileName[keyword], ") 폴더로 옮겼습니다")
                 os.replace(inPath + inFile, outPath + keyToFileName[keyword] + "/" + inFile)
 
-    print("\n남아있는 파일")
-    for inFile in inFolder:
-        print("-", inFile)
+    print("\n[ 옮겨지지 않은 파일 ]\n- ",end='')
+    print(*sorted(os.listdir(inPath)),sep='\n- ')
     # TODO
     #   CASE 1)
     #       복사
@@ -88,7 +86,7 @@ if __name__ == '__main__':
     r = True
     while r:
         replace()
-        print("\n파일을 이동하시겠습니까? 1(예)/2(종료)")
+        print("\n한번 더 파일을 옮기시겠습니까? 1(예)/2(종료)")
         while True:
             put = input()
             if put == '1':
