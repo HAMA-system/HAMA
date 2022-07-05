@@ -72,8 +72,9 @@ def replace():
     print("\n파일 이동이 완료되었습니다.\n\n이동된 파일")
     # outDir = sorted(os.listdir(dpath),key=lambda x:len("".join(x.split()[1:])),reverse=True)
     outDir = os.listdir(dpath)
+    print(outDir)
     for i, x in enumerate(outDir):
-        print(title_key,x)
+        print(title_key,'ㅇㅇㅇㅇㅇ',x)
         outDir[i] = title_key[x]
     outDir = sorted(outDir, key=len, reverse=True)
     # print(outDir)
@@ -84,7 +85,9 @@ def replace():
         fd_title = key_title[fd_key]
         for f in os.listdir(path):
             f_str = "".join(f.split())
-            if re.search("".join(fd_key.split()), f_str):
+            f_key = "".join(fd_key.split())
+            print(f_key,f_str,re.search(f_key, f_str))
+            if re.search(f_key, f_str):
                 print("\n<", f, "> 파일을", "\n-> [", fd_title, "] 폴더로 이동하였습니다")
                 os.replace(path+f, dpath+fd_title+'/'+f)
     print("\n남아있는 파일")
