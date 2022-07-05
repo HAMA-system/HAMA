@@ -138,11 +138,12 @@ def draft(driver):
             # Color Setting
             sc0 = sr1.find_element(by=By.CSS_SELECTOR,value=섀도컬0)
             scr0 = expand_shadow_element(driver, sc0)
-            sc1 = scr0.find_element(by=By.CSS_SELECTOR,value=섀도컬1)
-            scr1 = expand_shadow_element(driver, sc1)
+            # sc1 = scr0.find_element(by=By.CSS_SELECTOR,value=섀도컬1)
+            # scr1 = expand_shadow_element(driver, sc1)
 
-            color = Select(scr1.find_element(by=By.CLASS_NAME, value=컬러세팅))
+            color = Select(scr0.find_element(by=By.CLASS_NAME, value=컬러세팅))
             color.select_by_index(0)
+
 
             # Print
             r2 = sr1.find_element(by=By.CSS_SELECTOR,value=섀도2)
@@ -328,3 +329,8 @@ def draft_uproad(driver, title):
     #   복사
     #   복사점
     #   복사점 3월.pdf
+
+
+    #   TODO
+    #       엑셀 탐색 -> 키워드, 제목 뽑아냄 -> 제목#키워드 폴더 생성 -> 키워드 길이 내림차순으로 re.search(키워드, pdf파일)
+    #       True -> 제목#키워드 폴더에 넣음
