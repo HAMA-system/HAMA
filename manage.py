@@ -392,14 +392,14 @@ def taxWrite(driver, num, file, isMonthly, row):
     print("세금처리가 완료되었습니다.")
     return file
 
-def upload(driver, keyword):
+def upload(driver, title):
     path = ''
-    for x in os.listdir(링크[3] + '결의서 작성 필요/'):
+    for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
         # x_str = x.split()[0]
         # if re.search(keyword, x):
-        if x == keyword:
-            path = 링크[3] + '결의서 작성 필요/' + x + '/'
-            dpath = 링크[3] + '기안 필요/' + x + '/'
+        if "".join(inFolder.split('#')[:-1]) == title:
+            path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
+            dpath = 링크[3] + '기안 필요/' + inFolder + '/'
             break
 
     if path:
@@ -410,6 +410,7 @@ def upload(driver, keyword):
             time.sleep(0.3)
             cpath(driver, 파일업로드)
             print(f, "파일 업로드 완료")
+
 
         # 나중에 조정해야함
 
