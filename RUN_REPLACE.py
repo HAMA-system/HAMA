@@ -13,6 +13,7 @@ def replace():
 
     # out 폴더 있는지 체크
     isOut = False
+    isDraft = False
     for f in os.listdir(링크[3]):
         if f == '결의서 작성 필요':
             isOut = True
@@ -63,7 +64,6 @@ def replace():
     #   개선사항)
     #       결재필요 폴더, 결재완료 폴더 생성하기 ?
     #       만약 파일이 없으면 폴더 생성 X <- 웬만하면 파일 있어서 필요한가?
-    #       폴더 이름 결의서 제목으로 하기 ?
     #   결의서 제목으로 Replace 하면 키워드 하나만 써도 됨
     #   정기내역 추가 해야함
     # 파일 이동
