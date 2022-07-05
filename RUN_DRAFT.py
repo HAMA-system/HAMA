@@ -141,7 +141,7 @@ def draft(driver):
             sc1 = scr0.find_element(by=By.CSS_SELECTOR,value=섀도컬1)
             scr1 = expand_shadow_element(driver, sc1)
 
-            color = Select(scr1.find_element(by=By.XPATH, value=컬러세팅))
+            color = Select(scr1.find_element(by=By.CLASS_NAME, value=컬러세팅))
             color.select_by_index(0)
 
             # Print

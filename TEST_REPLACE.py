@@ -5,7 +5,6 @@ import time
 from xlsxFileController import get_all_directory_info
 from linkData import 링크
 
-
 def replace():
     info = get_all_directory_info()
     autoFolder = os.listdir(링크[3])
@@ -49,12 +48,12 @@ def replace():
     for keyword in keywordList:
         for inFile in inFolder:
             if re.search(keyword.replace(" ", ""), inFile.replace(" ", "")):
-                print("\n<", inFile, "> 파일을", "\n-> [", keyToFileName[keyword], "] 폴더로 이동하였습니다")
-                os.replace(inPath + inFile, outPath + keyToFileName[keyword] + "/" + inFile)
+                print("\n<",inFile,"> 파일을", "\n-> [",keyToFileName[keyword],"] 폴더로 이동하였습니다")
+                os.replace(inPath+inFile, outPath+keyToFileName[keyword]+"/"+inFile)
 
     print("\n남아있는 파일")
     for inFile in inFolder:
-        print("-", inFile)
+        print("-",inFile)
     # TODO
     #   CASE 1)
     #       복사
@@ -82,8 +81,6 @@ def replace():
     #       만약 파일이 없으면 폴더 생성 X <- 웬만하면 파일 있어서 필요한가?
     #   결의서 제목으로 Replace 하면 키워드 하나만 써도 됨
     #   정기내역 추가 해야함
-
-
 if __name__ == '__main__':
     r = True
     while r:
