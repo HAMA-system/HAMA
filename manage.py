@@ -206,12 +206,13 @@ def write(driver):
                     row = 15 + i
                     isMonthly = False
 
-                    # save(driver)
+                    save(driver)
                     if target_data[i][0] == -1:
                         prev = target_data[i][0]
                         continue
 
-                    upload(driver, title, target_data[i][2])
+                    # print(target_data[i-1][1],target_data[i-1][2],type(target_data[i-1][2]))
+                    upload(driver, title, str(target_data[i-1][2]))
                     cpath(driver,신규)
                     # for p in range(len(target_data)):
                     #     if target_data[p][0] == prev:
@@ -330,7 +331,7 @@ def write(driver):
                     file = taxWrite(driver, prev, file, isMonthly, row)
                     tax = 0
 
-                # save(driver)
+                save(driver)
                 upload(driver, title)
 
                 # for p in range(len(target_data)):
@@ -397,13 +398,14 @@ def upload(driver, title, month='-1'):
     for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
         # x_str = x.split()[0]
         # if re.search(keyword, x):
+        # print(month)
         if month!='-1':
             # print(inFolder)
-            checkFolder = monthly_textReplace(inFolder,"3")
+            checkFolder = monthly_textReplace("".join(inFolder.split('#')[:-1]), month)
             # print(checkFolder)
-            # print("title",title,"!!!!!!","".join(checkFolder.split('#')[:-1]))
+            # print("title",title,"!!!!!!",checkFolder)
             # print(링크[3] + '결의서 작성 필요/' + inFolder + '/')
-        if "".join(checkFolder.split('#')[:-1]).strip() == title.strip():
+        if checkFolder.strip() == title.strip():
             path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
             dpath = 링크[3] + '기안 필요/' + inFolder + '/'
             break
@@ -1126,7 +1128,7 @@ if __name__ == '__main__':
         result = monthly_check(put)
         print(result)
 
-        result = monthly_textReplace(result,"3")
+        result = monthly_textReplace(result,"8")
         print(result)
         # print(monthly_next(put, a, b, y),"<-")
         # print(new_monthly_next(put, a, b, y),"<-")
