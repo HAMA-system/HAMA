@@ -206,12 +206,12 @@ def write(driver):
                     row = 15 + i
                     isMonthly = False
 
-                    save(driver)
+                    # save(driver)
                     if target_data[i][0] == -1:
                         prev = target_data[i][0]
                         continue
 
-                    upload(driver, title)
+                    upload(driver, title, target_data[i][2])
                     cpath(driver,신규)
                     # for p in range(len(target_data)):
                     #     if target_data[p][0] == prev:
@@ -330,7 +330,7 @@ def write(driver):
                     file = taxWrite(driver, prev, file, isMonthly, row)
                     tax = 0
 
-                save(driver)
+                # save(driver)
                 upload(driver, title)
 
                 # for p in range(len(target_data)):
@@ -392,12 +392,18 @@ def taxWrite(driver, num, file, isMonthly, row):
     print("세금처리가 완료되었습니다.")
     return file
 
-def upload(driver, title):
+def upload(driver, title, month='-1'):
     path = ''
     for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
         # x_str = x.split()[0]
         # if re.search(keyword, x):
-        if "".join(inFolder.split('#')[:-1]) == title:
+        if month!='-1':
+            # print(inFolder)
+            checkFolder = monthly_textReplace(inFolder,"3")
+            # print(checkFolder)
+            # print("title",title,"!!!!!!","".join(checkFolder.split('#')[:-1]))
+            # print(링크[3] + '결의서 작성 필요/' + inFolder + '/')
+        if "".join(checkFolder.split('#')[:-1]).strip() == title.strip():
             path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
             dpath = 링크[3] + '기안 필요/' + inFolder + '/'
             break
@@ -410,6 +416,7 @@ def upload(driver, title):
             time.sleep(0.3)
             cpath(driver, 파일업로드)
             print(f, "파일 업로드 완료")
+            print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
 
 
         # 나중에 조정해야함
@@ -1117,6 +1124,9 @@ if __name__ == '__main__':
         print(put,"->")
         # a, b, y, result = monthly_check(put)
         result = monthly_check(put)
+        print(result)
+
+        result = monthly_textReplace(result,"3")
         print(result)
         # print(monthly_next(put, a, b, y),"<-")
         # print(new_monthly_next(put, a, b, y),"<-")
