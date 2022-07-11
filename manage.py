@@ -438,9 +438,9 @@ def upload(driver, title, month='-1'):
 
 def save(driver):
     while True:
-        print("저장하시겠습니까? 1(예)/ 2(아니오)")
-        sv = input()
-        # sv = '1'
+        # print("저장하시겠습니까? 1(예)/ 2(아니오)")
+        # sv = input()
+        sv = '1'
         if sv == '1':
             break
         else:
