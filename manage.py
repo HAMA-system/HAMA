@@ -212,7 +212,7 @@ def write(driver):
                         continue
 
                     # print(target_data[i-1][1],target_data[i-1][2],type(target_data[i-1][2]))
-                    upload(driver, title, str(target_data[i-1][2]))
+                    upload(driver, title)
                     cpath(driver,신규)
                     # for p in range(len(target_data)):
                     #     if target_data[p][0] == prev:
@@ -332,7 +332,7 @@ def write(driver):
                     tax = 0
 
                 save(driver)
-                upload(driver, title, str(target_data[i-1][2]))
+                upload(driver, title)
 
                 # for p in range(len(target_data)):
                 #     if target_data[p][0] == prev:
@@ -393,20 +393,10 @@ def taxWrite(driver, num, file, isMonthly, row):
     print("세금처리가 완료되었습니다.")
     return file
 
-def upload(driver, title, month='-1'):
+def upload(driver, title):
     path = ''
     for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
-        # x_str = x.split()[0]
-        # if re.search(keyword, x):
-        # print(month)
-
-        if month != '-1' or month != '_' or month is None:
-            # print(inFolder)
-            checkFolder = monthly_textReplace("".join(inFolder.split('#')[:-1]), month)
-            # print(checkFolder)
-            # print("title",title,"!!!!!!",checkFolder)
-            # print(링크[3] + '결의서 작성 필요/' + inFolder + '/')
-        print(title, checkFolder)
+        checkFolder = "".join(inFolder.split('#')[:-1])
         if checkFolder.strip() == title.strip():
             path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
             dpath = 링크[3] + '기안 필요/' + inFolder + '/'

@@ -5,7 +5,7 @@ import unicodedata
 
 from xlsxFileController import get_all_directory_info
 from linkData import 링크
-
+from manage import monthly_textReplace
 
 def replace():
     info = get_all_directory_info()
@@ -24,10 +24,13 @@ def replace():
         os.mkdir(링크[3] + '기안 필요')
 
     # for new in info:
-    for num, keyword, _, title in info:
+    for num, keyword, month, title in info:
         if num == -1:
             continue
         if title != '_':
+            if month != '_' and month != -1 and month is not None:
+                print(title, month)
+                title = monthly_textReplace(title, str(month)).strip()
             fileName = title + "#" + keyword
             if fileName not in os.listdir(outPath):
                 os.mkdir(outPath + fileName)
