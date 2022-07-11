@@ -173,12 +173,14 @@ def draft_write(driver):
             pass
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
-        manage.search(driver)
+        if first:
+            manage.search(driver)
+            first = False
 
         print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
 
         # print("다시 검색을 원하시면 1을 입력해주세요")
-        # put = input()
+        put = input()
         # if put == '1':
         #     first = True
         #     continue
@@ -231,6 +233,7 @@ def draft_write(driver):
 
         print("기안이 완료되면 엔터를 눌러주세요")
         input()
+
         driver.switch_to.default_content()
         driver.find_element(by=By.ID, value=기안_종료).click()
         time.sleep(0.5)
