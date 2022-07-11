@@ -332,7 +332,7 @@ def write(driver):
                     tax = 0
 
                 save(driver)
-                upload(driver, title)
+                upload(driver, title, str(target_data[i-1][2]))
 
                 # for p in range(len(target_data)):
                 #     if target_data[p][0] == prev:
@@ -399,12 +399,14 @@ def upload(driver, title, month='-1'):
         # x_str = x.split()[0]
         # if re.search(keyword, x):
         # print(month)
-        if month!='-1':
+
+        if month != '-1' or month != '_' or month is None:
             # print(inFolder)
             checkFolder = monthly_textReplace("".join(inFolder.split('#')[:-1]), month)
             # print(checkFolder)
             # print("title",title,"!!!!!!",checkFolder)
             # print(링크[3] + '결의서 작성 필요/' + inFolder + '/')
+        print(title, checkFolder)
         if checkFolder.strip() == title.strip():
             path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
             dpath = 링크[3] + '기안 필요/' + inFolder + '/'

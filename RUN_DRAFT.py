@@ -176,11 +176,13 @@ def draft_write(driver):
         manage.search(driver)
 
         print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
-        print("다시 검색을 원하시면 1을 입력해주세요")
-        put = input()
-        if put == '1':
-            first = True
-            continue
+
+        # print("다시 검색을 원하시면 1을 입력해주세요")
+        # put = input()
+        # if put == '1':
+        #     first = True
+        #     continue
+
         # try:
         #     driver.switch_to.window(driver.window_handles[0])
         # except:
@@ -248,7 +250,7 @@ def draft_write(driver):
         # cpath(driver, 닫기)
 
 
-        # draft_uproad(driver, title)
+        # draft_upload(driver, title)
         # print("결재정보 입력이 완료되었습니다.")
         # time.sleep(1)
         # while True:
@@ -260,7 +262,7 @@ def draft_write(driver):
         # cid(driver, 기안_종료)
         # print("기안이 완료되었습니다.")
 
-def draft_uproad(driver, title):
+def draft_upload(driver, title):
 
     driver.switch_to.default_content()
     cid(driver, 기안_파일버튼)
