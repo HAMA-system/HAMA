@@ -182,19 +182,27 @@ def draft_write(driver):
             first = False
 
         while True:
-            print("\n변경하실 페이지를 띄우신 후 원하는 버튼을 입력해주세요.")
+            print("\n변경하실 페이지를 띄우신 후 원하시는 버튼을 입력해주세요.")
             print("1(다음달로 복사 후 기안) 2(바로 기안)")
 
             put = input()
-            if put == 1:
+            if put == '1':
                 manage.modify(driver, True)
+                print("파일 업로드가 완료되면 저장 후 엔터를 눌러주세요")
+                input()
+
+                # Alert 오류 제어
+                try:
+                    driver.switch_to.alert.dismiss()
+                except:
+                    pass
                 break
-            elif put == 2:
+            elif put == '2':
+                driver.switch_to.frame('frmPopup')
                 break
             else:
                 print("잘못된 입력입니다.")
 
-        driver.switch_to.frame('frmPopup')
         cid(driver, 기안)
         last = len(driver.window_handles)
 
@@ -238,12 +246,13 @@ def draft_write(driver):
 
         # 기안 업로드 필요
         # draft_upload # 수정 필요
-
+        driver.switch_to.default_content()
+        cid(driver, 기안_파일버튼)
         print("기안이 완료되면 엔터를 눌러주세요")
         input()
 
         # 기안 창 닫기
-        driver.switch_to.default_content()
+        # driver.switch_to.default_content()
         driver.find_element(by=By.ID, value=기안_종료).click()
         time.sleep(0.5)
         driver.switch_to.frame(메인_프레임)

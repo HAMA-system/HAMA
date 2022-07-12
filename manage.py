@@ -463,6 +463,7 @@ def modify(driver, isDraft):
 
     while True:
         if not isDraft:
+
             modify_input()
 
         driver.switch_to.default_content()
