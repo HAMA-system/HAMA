@@ -167,37 +167,38 @@ def draft_write(driver):
     cpath(driver,결의서_조회)
     first = True
     while True:
+        # Alert 오류 제어
         try:
             driver.switch_to.alert.dismiss()
         except:
             pass
+
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
+
+        # 처음에만 검색
         if first:
             manage.search(driver)
             first = False
 
-        print("\n변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
+        while True:
+            print("\n변경하실 페이지를 띄우신 후 원하는 버튼을 입력해주세요.")
+            print("1(다음달로 복사 후 기안) 2(바로 기안)")
 
-        # print("다시 검색을 원하시면 1을 입력해주세요")
-        put = input()
-        # if put == '1':
-        #     first = True
-        #     continue
+            put = input()
+            if put == 1:
+                manage.modify(driver, True)
+                break
+            elif put == 2:
+                break
+            else:
+                print("잘못된 입력입니다.")
 
-        # try:
-        #     driver.switch_to.window(driver.window_handles[0])
-        # except:
-        #     pass
-        # try:
-        #     driver.switch_to.alert.dismiss()
-        # except:
-        #     pass
-        # driver.switch_to.default_content()
-        # driver.switch_to.frame(조회_프레임)
         driver.switch_to.frame('frmPopup')
         cid(driver, 기안)
         last = len(driver.window_handles)
+
+        # 기안 창으로 이동
         while True:
             try:
                 driver.switch_to.window(driver.window_handles[last])
@@ -205,21 +206,26 @@ def draft_write(driver):
             except:
                 pass
         driver.switch_to.frame('message')
+
+        # 테이블에서 기안 제목 및 금액 받아옴
         table = driver.find_element(by=By.ID, value='ctlTable')
         i = 1
         title = driver.find_element(by=By.XPATH, value=기안_제목).get_attribute("innerText")
-        # print(title)
         for tr in table.find_elements(by=By.TAG_NAME, value="tr")[6:]:
             for td in tr.find_elements(by=By.TAG_NAME, value="td")[2:]:
                 money = td.get_attribute("innerText")
             i += 1
         money = int("".join(money.split(",")))
+
+        # 결재정보 저장
         결재 = 부총결
         기록물 = 위탁
         if re.match('.지출결의서.',title):
             기록물 = 용역
             if money >= 300000:
                 결재 = 총결
+
+        # 결재
         driver.switch_to.default_content()
         cid(driver, 결재정보)
         driver.switch_to.frame(메인_프레임)
@@ -227,13 +233,16 @@ def draft_write(driver):
         cid(driver, 결재)
         cpath(driver, 적용)
         cid(driver, 기록물철)
-
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
+
+        # 기안 업로드 필요
+        # draft_upload # 수정 필요
 
         print("기안이 완료되면 엔터를 눌러주세요")
         input()
 
+        # 기안 창 닫기
         driver.switch_to.default_content()
         driver.find_element(by=By.ID, value=기안_종료).click()
         time.sleep(0.5)
@@ -244,26 +253,6 @@ def draft_write(driver):
         driver.switch_to.frame(조회_프레임)
         driver.find_element(by=By.XPATH, value=닫기).click()
 
-        # driver.switch_to.default_content()
-        # time.sleep(0.4)
-        # cid(driver, 기안_종료)
-        # driver.switch_to.window(driver.window_handles[0])
-        # driver.switch_to.default_content()
-        # driver.switch_to.frame(조회_프레임)
-        # cpath(driver, 닫기)
-
-
-        # draft_upload(driver, title)
-        # print("결재정보 입력이 완료되었습니다.")
-        # time.sleep(1)
-        # while True:
-        #     try:
-        #         driver.switch_to.window(driver.window_handles[0])
-        #         break
-        #     except:
-        #         pass
-        # cid(driver, 기안_종료)
-        # print("기안이 완료되었습니다.")
 
 def draft_upload(driver, title):
 

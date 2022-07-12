@@ -452,16 +452,18 @@ def delete(file):
 def modify(driver, isDraft):
     global sema
     global d
-    d = driver
-    ig = threading.Thread(target=ignoreAutoLogout.startTimer)
-    ig.daemon = True
-    ig.start()
 
-    cpath(driver,결의서_조회)
+    if not isDraft:
+        d = driver
+        ig = threading.Thread(target=ignoreAutoLogout.startTimer)
+        ig.daemon = True
+        ig.start()
+
+        cpath(driver,결의서_조회)
 
     while True:
-
-        modify_input()
+        if not isDraft:
+            modify_input()
 
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
