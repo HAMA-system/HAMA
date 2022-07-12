@@ -71,7 +71,7 @@ if __name__ == '__main__':
             # rep.start()
             manage.write(driver)
         elif select == '수정':
-            manage.modify(driver)
+            manage.modify(driver, False)
         elif select == '기안':
             RUN_DRAFT.draft_write(driver)
         elif select == '종료':

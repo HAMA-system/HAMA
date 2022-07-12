@@ -449,7 +449,7 @@ def delete(file):
         # xlsxFileController.save_xls(file)
         print("삭제가 완료되었습니다.")
 
-def modify(driver):
+def modify(driver, isDraft):
     global sema
     global d
     d = driver
@@ -457,37 +457,11 @@ def modify(driver):
     ig.daemon = True
     ig.start()
 
-    hotkey_thread = threading.Thread(target=hotKeyManager.hotkeyStart)
-    hotkey_thread.daemon = True
-    hotkey_thread.start()
-
     cpath(driver,결의서_조회)
 
-    # TODO
-    #   년도 바뀌는 것 생각
-    #   실제 케이스 :
-    #       0. ~~~ 4월 // +1 해도 되면 예외케이스 5. 문제 X, 일단 +1 하는 것으로 선정
-    #       0. ~~~ 4,5월 -> 6,7,8월 // 가능?
-    #   예외 케이스 :
-    #       1. 12월 ~ 3월 ( x월 ~ y월 -> y월 ~ 2*y-x월 , % 고려 필수 )
-    #       2. 2,3월 인데 2월 따로 3월 따로
-    #       3. 22.6.7 ~ 22.9.6 (양옆에 . 확인)
-    #       4. 22/04/07 ( 고려 할 필요 X )
-    #       5. 4월 4월 3월 ( 무조건 +1, n월 발견시 n+1월)
-    #   고려 할 것 :
-    #       03월, 3월, 10월 다르니 월 앞 두번째 받아 숫자면 이용
-    #       1년 지나갈 수 있음
-    #   처리해야 할 순서 :
-    #       1) +1로 변경 ㅇㄹ
-    #       2) 다양한 월 케이스 인식 ㅇㄹ
-    #       3) 분기 넘어 갈 때 % 처리 ㅇㄹ
-    #       4) 분기데이터는 결의일자 +n
-
     while True:
+
         modify_input()
-        # month = modify_input()
-        # print("\n결의서 클릭이 완료되면 엔터를 눌러주세요")
-        # input()
 
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
@@ -500,7 +474,6 @@ def modify(driver):
         res_title = driver.find_element_by_xpath(결의서_제목)
         title.append(res_title.get_attribute("value"))
 
-        # TODO 예외 케이스 있는지 확인 해볼것, 함수화
         # 결의서 날짜 변경
         change = str(int(title[0][5:7])%12 + 1)
         if int(change) < 10:
@@ -543,23 +516,9 @@ def modify(driver):
                 if i == 4:
                     tax_date.append(td.get_attribute("innerText"))
 
-
-        # # 불필요한 띄어쓰기 제거
-        # # title[1] = monthly_textReplace(title[1], month).rstrip()
-        # next_month, next_value = monthly_check(title[1])
-        # title[1] = monthly_next(title[1],next_month,next_value)
-        # for i in range(len(res)):
-        #     res[i] = monthly_next(res[i], next_month, next_value)
-        #     # res[i] = monthly_textReplace(res[i], month).rstrip()
-        # print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
-
-        # 불필요한 띄어쓰기 제거
-        # title[1] = monthly_textReplace(title[1], month).rstrip()
-        # next_month, next_value = monthly_check(title[1])
         title[1] = monthly_check(title[1])
         for i in range(len(res)):
             res[i] = monthly_check(res[i])
-            # res[i] = monthly_textReplace(res[i], month).rstrip()
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
 
         # 날짜 및 제목 입력
@@ -619,17 +578,27 @@ def modify(driver):
             dismissAlert(driver)
             print("저장이 완료되었습니다.")
             time.sleep(2)
-            driver.switch_to.default_content()
-            driver.switch_to.frame(조회_프레임)
-            cpath(driver,닫기)
 
         else:
-            print("창을 닫고 재시작을 원하시면 1 입력해주세요")
-            while input() != '1':
+            print("원하시는 버튼을 입력해주세요. 1(저장) 2(창 닫고 재시작)")
+            put = input()
+            while put != '1' or put != '2':
                 print("잘못된 입력입니다.")
-            driver.switch_to.default_content()
-            driver.switch_to.frame(조회_프레임)
-            cpath(driver,닫기)
+            if put == '1':
+                cpath(driver, 저장)
+                time.sleep(1)
+                dismissAlert(driver)
+                print("저장이 완료되었습니다.")
+                time.sleep(2)
+            if put == '2':
+                break
+
+        # Draft에서 실행된 경우
+        if isDraft:
+            break
+        driver.switch_to.default_content()
+        driver.switch_to.frame(조회_프레임)
+        cpath(driver, 닫기)
         time.sleep(1)
 
         print("\n=====================================================")
