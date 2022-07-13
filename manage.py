@@ -395,7 +395,7 @@ def upload(driver, title):
     path = ''
     for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
         checkFolder = "".join(inFolder.split('#')[:-1])
-        if checkFolder.strip() == title.strip():
+        if checkFolder.replace('$','/').strip() == title.strip():
             path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
             dpath = 링크[3] + '기안 필요/' + inFolder + '/'
             break
@@ -408,12 +408,9 @@ def upload(driver, title):
             time.sleep(0.3)
             cpath(driver, 파일업로드)
             print(f, "파일 업로드 완료")
-            print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
-
-
-        # 나중에 조정해야함
 
         os.replace(path, dpath)
+        print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
 
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
@@ -433,7 +430,6 @@ def save(driver):
             break
         else:
             time.sleep(3)
-
     cpath(driver,저장)
     time.sleep(0.3)
     acceptAlert(driver)

@@ -9,6 +9,8 @@ from manage import monthly_textReplace
 
 def replace():
     info = get_all_directory_info()
+    print(info)
+    # print(temp)
     autoFolder = os.listdir(링크[3])
     autoPath = 링크[3]
     inPath = 링크[3] + "in/"
@@ -24,12 +26,13 @@ def replace():
         os.mkdir(링크[3] + '기안 필요')
 
     # for new in info:
-    for num, keyword, month, title in info:
+    for index, [num, keyword, month, title] in enumerate(info):
+        title = title.replace('/', '$')
+        info[index][3] = title
         if num == -1:
             continue
         if title != '_':
             if month != '_' and month != -1 and month is not None:
-                print(title, month)
                 title = monthly_textReplace(title, str(month)).strip()
             fileName = title + "#" + keyword
             if fileName not in os.listdir(outPath):
