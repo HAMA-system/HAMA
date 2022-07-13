@@ -42,7 +42,13 @@ Hongik Accounting Management Advanced System
   * selenium 작동 중 팝업 알림창으로 인한 오류를 잡아주는 파일
 
 * autoLogin.py
+ * selenium을 이용한 chromedriver로 회계시스템에 로그인을 수행
+ * 사용되는 로그인 아이디와 패스워드는 loginData.xlsx에서 작성
+ * 부가적으로 필요한 함수 포함
+ 
 * dateController.py
+ 
+
 * errorController.py
 * example.xlsx
 * help.py
