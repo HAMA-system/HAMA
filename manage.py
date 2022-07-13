@@ -577,8 +577,9 @@ def modify(driver, isDraft):
         else:
             print("원하시는 버튼을 입력해주세요. 1(저장) 2(창 닫고 재시작)")
             put = input()
-            while put != '1' or put != '2':
+            while put != '1' and put != '2':
                 print("잘못된 입력입니다.")
+                put = input()
             if put == '1':
                 cpath(driver, 저장)
                 time.sleep(1)

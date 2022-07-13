@@ -285,34 +285,28 @@ def draft_upload(driver, title):
         print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
         uploaded = False
 
-    driver.switch_to.parent_frame()
-
     if uploaded:
         time.sleep(1)
+        driver.switch_to.parent_frame()
         print("파일 첨부 완료")
         print("\n결재를 올리시겠습니까? 1(예)")
         print("만약 파일이 잘못된 경우 올바른 파일을 업로드 후 1을 입력해주세요")
-    else:
-        print("파일을 업로드 후 1을 입력해주세요")
 
-    while True:
-        put = input()
-        if put == '1':
-            cpath(driver,기안_업로드)
-            driver.switch_to.default_content()
-            time.sleep(0.2)
-            time.sleep(10000)
-            cid(driver,결재올림)
-            driver.switch_to.frame(메인_프레임)
-            time.sleep(0.2)
-            cid(driver,결재확인)
-            # driver.switch_to.default_content()
-            # time.sleep(0.4)
-            # cid(driver,기안_종료)
-            # driver.switch_to.window(driver.window_handles[0])
-            # driver.switch_to.default_content()
-            # driver.switch_to.frame(조회_프레임)
-            # cpath(driver,닫기)
-            break
-        else:
-            print("잘못된 입력입니다.")
+        while True:
+            put = input()
+            if put == '1':
+                cpath(driver,기안_업로드)
+                driver.switch_to.default_content()
+                time.sleep(0.2)
+                time.sleep(10000)
+                cid(driver,결재올림)
+                driver.switch_to.frame(메인_프레임)
+                time.sleep(0.2)
+                cid(driver,결재확인)
+                break
+            else:
+                print("잘못된 입력입니다.")
+    driver.switch_to.window(driver.window_handles[0])
+    driver.switch_to.default_content()
+    driver.switch_to.frame(조회_프레임)
+    cpath(driver, 닫기)
