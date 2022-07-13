@@ -244,96 +244,75 @@ def draft_write(driver):
         cid(driver, 기록물)
         cpath(driver, 기안_확인)
 
-        # 기안 업로드 필요
-        # draft_upload # 수정 필요
-        driver.switch_to.default_content()
-        cid(driver, 기안_파일버튼)
-        print("기안이 완료되면 엔터를 눌러주세요")
-        input()
+        # 기안 업로드
+        draft_upload(driver, title)
+
+        # driver.switch_to.default_content()
+        # cid(driver, 기안_파일버튼)
+        # print("기안이 완료되면 엔터를 눌러주세요")
+        # input()
 
         # 기안 창 닫기
         # driver.switch_to.default_content()
-        driver.find_element(by=By.ID, value=기안_종료).click()
-        time.sleep(0.5)
-        driver.switch_to.frame(메인_프레임)
-        driver.find_element(by=By.ID, value=결재확인).click()
-        driver.switch_to.window(driver.window_handles[0])
-        driver.switch_to.default_content()
-        driver.switch_to.frame(조회_프레임)
-        driver.find_element(by=By.XPATH, value=닫기).click()
+        # driver.find_element(by=By.ID, value=기안_종료).click()
+        # time.sleep(0.5)
+        # driver.switch_to.frame(메인_프레임)
+        # driver.find_element(by=By.ID, value=결재확인).click()
+        # driver.switch_to.window(driver.window_handles[0])
+        # driver.switch_to.default_content()
+        # driver.switch_to.frame(조회_프레임)
+        # driver.find_element(by=By.XPATH, value=닫기).click()
 
 
 def draft_upload(driver, title):
 
+    uploaded = True
+
     driver.switch_to.default_content()
     cid(driver, 기안_파일버튼)
     time.sleep(0.5)
-    path = 링크[3] + 'out/'
+    path = 링크[3] + '기안 필요/'
     driver.switch_to.frame(메인_프레임)
     driver.switch_to.frame('dadiframe')
-    for x in os.listdir(path):
-        if re.search("".join(x.split()[1:]), title):
-            xpath = path + x + "/"
-            for y in os.listdir(xpath):
-                driver.find_element_by_xpath(기안_파일).send_keys(xpath + y)
-                print(y,"업로드 완료")
+    for folder in os.listdir(path):
+        if re.search("".join(folder.split('#')[:-1]).replace('$','/').strip(), title.strip()):
+            draftFolder = path + folder + "/"
+            for file in os.listdir(draftFolder):
+                driver.find_element_by_xpath(기안_파일).send_keys(draftFolder + file)
+                print(file,"업로드 완료")
             break
-    time.sleep(1)
-    print("파일 첨부 완료")
+    else:
+        print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
+        uploaded = False
+
     driver.switch_to.parent_frame()
-    print("\n결재를 올리시겠습니까? 1(예)")
-    print("만약 파일이 잘못된 경우 올바른 파일을 업로드 후 1을 입력해주세요")
+
+    if uploaded:
+        time.sleep(1)
+        print("파일 첨부 완료")
+        print("\n결재를 올리시겠습니까? 1(예)")
+        print("만약 파일이 잘못된 경우 올바른 파일을 업로드 후 1을 입력해주세요")
+    else:
+        print("파일을 업로드 후 1을 입력해주세요")
+
     while True:
         put = input()
         if put == '1':
             cpath(driver,기안_업로드)
             driver.switch_to.default_content()
             time.sleep(0.2)
+            time.sleep(10000)
             cid(driver,결재올림)
             driver.switch_to.frame(메인_프레임)
             time.sleep(0.2)
             cid(driver,결재확인)
-            driver.switch_to.default_content()
-            time.sleep(0.4)
-            cid(driver,기안_종료)
-            driver.switch_to.window(driver.window_handles[0])
-            driver.switch_to.default_content()
-            driver.switch_to.frame(조회_프레임)
-            cpath(driver,닫기)
+            # driver.switch_to.default_content()
+            # time.sleep(0.4)
+            # cid(driver,기안_종료)
+            # driver.switch_to.window(driver.window_handles[0])
+            # driver.switch_to.default_content()
+            # driver.switch_to.frame(조회_프레임)
+            # cpath(driver,닫기)
             break
         else:
             print("잘못된 입력입니다.")
-    # cpath(driver, '/html/body/div/div[2]/ul/li/a/span')
-    # driver.switch_to.default_content()
-    # time.sleep(100)
-
-    # TODO
-    #   같은 파일이 여럿 있을 때
-    #   - 대학로캠퍼스 신한은행 연간임대료
-    #       - 2022-03-31_신한은행연납.pdf
-    #   - 서울캠(신한은행) 임대료
-    #       - 신한은행 2022년 입금.pdf
-    #       - 신한은행 2022년 위탁료.pdf
-    #   - 대학로캠퍼스 신한은행 관리비(2월) 입금
-    #       - 2022-03-07 신한은행.pdf
-    #   - 서울캠(신한은행) 관리비2월분)
-    #       - 신한은행 입금 1.pdf
-    #       - 신한은행 입금 2.pdf
-    #       - 신한은행 2월.pdf
-
-    # TODO
-    #   방법 생각
-    #   - 폴더 이름을 결의서 제목으로?
-    #       -> 파일은 키워드로 찾아 넣기
-    #       문제점 : 별도의 추가 프로세스 필요, 편리한가
-    #   -
-    #   별도
-    #   - 작성 필요 폴더, 기안 필요 폴더, 완료 폴더 생성하면 편리하실지
-    #   복사
-    #   복사점
-    #   복사점 3월.pdf
-
-
-    #   TODO
-    #       엑셀 탐색 -> 키워드, 제목 뽑아냄 -> 제목#키워드 폴더 생성 -> 키워드 길이 내림차순으로 re.search(키워드, pdf파일)
-    #       True -> 제목#키워드 폴더에 넣음
