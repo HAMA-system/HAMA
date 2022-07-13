@@ -27,8 +27,6 @@ def replace():
     for index, [num, keyword, month, title] in enumerate(info):
         title = title.replace('/', '$')
         info[index][3] = title
-        if num == -1:
-            continue
         if title != '_':
             if month != '_' and month is not None:
                 title = monthly_textReplace(title, str(month)).strip()
