@@ -9,11 +9,11 @@ import dateController
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
 
-import hotKeyManager
+# import hotKeyManager
 from autoLogin import *
 from linkData import *
 from alertController import *
-from hotKeyManager import *
+# from hotKeyManager import *
 from copy import deepcopy
 import xlsxFileController
 import ignoreAutoLogout
@@ -634,51 +634,6 @@ def modify_input():
         # print("잘못된 입력입니다.")
     # mod_month = month
     # return month
-
-def find_res():
-    global d
-    driver = d
-    print("res thread start")
-    table = driver.find_element_by_xpath(
-        '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[1]/div[1]/div/div/table')
-    tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-    while res:
-        res.pop()
-    test = 0
-    for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
-        i = 0
-        for td in tr.find_elements(by=By.TAG_NAME, value="td"):
-            i += 1
-            print(td.get_attribute("innerText"), end='\t')
-            if i == 10:
-                res.append(td.get_attribute("innerText"))
-        print()
-        test += 1
-    print()
-    print("res thread end",res)
-    return
-    # ft = threading.Thread(target=find_tax)
-    # ft.daemon = True
-    # ft.start()
-
-def find_tax():
-    global d
-    driver = d
-    "tax thread start"
-    table = driver.find_element_by_xpath(
-        '/html/body/form/div[5]/table/tbody/tr/td[2]/table/tbody/tr/td/table/tbody/tr[3]/td/div[3]/div/div[1]/div')
-    tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-    while tax_date:
-        tax_date.pop()
-    for tr in tbody.find_elements(by=By.TAG_NAME, value="tr"):
-        i = 0
-        for td in tr.find_elements(by=By.TAG_NAME, value="td"):
-            i += 1
-            print(td.get_attribute("innerText"), end='\t')
-            if i == 4:
-                tax_date.append(td.get_attribute("innerText"))
-        print()
-    print()
 
 def month_inc(month, val):
     ret = []
