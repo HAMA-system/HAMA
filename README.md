@@ -25,7 +25,7 @@ Hongik Accounting Management Advanced System
 
 ## Files
 
-### 핵심파일
+### Essential Files
  
 ####  **main.py**
   	chromedriver를 사용하여 회계 시스템에 접속하고 다른 함수를 실행하도록 연결해주는 main 파일
@@ -37,7 +37,7 @@ Hongik Accounting Management Advanced System
 	 파일 내부 함수에 대한 자세한 내용은 별첨
 
 ---
-### 실행 파일
+### Execute Files
 
 #### **RUN_LOOKUP.py**
    	기간, 결의서 내용 등으로 편리하게 결의서 검색하기 위한 실행파일
@@ -56,7 +56,7 @@ Hongik Accounting Management Advanced System
    	RUN_DRAFT와 합쳐졌음 (07.13)
   
 ---
-### 함수 라이브러리
+### Function Library
   
 ####  KorStringRecognizer.py
    	프로그램 내부에서 osdir을 통해 읽어들인 파일명과 하드코딩한 문자열이 동일하지 않는 오류가 발생하여 해결한 파일
@@ -96,7 +96,7 @@ Hongik Accounting Management Advanced System
   	회계 시스템에 로그인한 채 장시간 방치할 때 자동 로그아웃이 되지 않도록 방지하는 파일
 	
 ---
-### 임시 파일
+### Temporary Files
 
 #### _ttest_
    	Replace 테스트를 위한 임시 폴더
@@ -105,7 +105,7 @@ Hongik Accounting Management Advanced System
    	Mac 환경에서 자동으로 생성되는 파일로 삭제해도 되는 파일  
 	
 ---
-### 기타
+### Etc
 
 ####  _icon_
    	Lookup, Modify, Write, Draft, Replace 등 실행파일에 사용될 아이콘 파일들
