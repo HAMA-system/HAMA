@@ -23,8 +23,6 @@ import asyncio
 sema = 0
 d = ''
 mod_month = "-1"
-tax_date = []
-res = []
 def refresh():
     # TODO
     #   작성에서도 되게 바꿔야 함.
@@ -458,12 +456,11 @@ def modify(driver, isDraft):
         ig = threading.Thread(target=ignoreAutoLogout.startTimer)
         ig.daemon = True
         ig.start()
-
         cpath(driver,결의서_조회)
 
     while True:
-        if not isDraft:
 
+        if not isDraft:
             modify_input()
 
         driver.switch_to.default_content()
@@ -472,6 +469,9 @@ def modify(driver, isDraft):
 
         # 결의서 제목 및 날짜 저장
         title = []
+        res = []
+        tax_date = []
+
         res_date = driver.find_element_by_xpath(결의일자_번호)
         title.append(res_date.get_attribute("value"))
         res_title = driver.find_element_by_xpath(결의서_제목)
@@ -511,7 +511,6 @@ def modify(driver, isDraft):
         # 내부 데이터 수집 (세금)
         table = driver.find_element_by_xpath(세금계산_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
-        tax_date = []
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
             for td in tr.find_elements(by=By.TAG_NAME, value="td"):
@@ -528,12 +527,10 @@ def modify(driver, isDraft):
         time.sleep(0.5)
         fpath(driver, 집행요청일, title[0])
         epath(driver, 집행요청일)
-
         time.sleep(0.5)
         fpath(driver, 지급예정일, title[0])
         epath(driver, 지급예정일)
         acceptAlert(driver)
-
         fpath(driver,결의서_제목, title[1])
         driver.find_element_by_xpath(세부사항).clear()
 
@@ -548,7 +545,6 @@ def modify(driver, isDraft):
         if tax_date and tax_date[0] != '':
             cpath(driver, 세금계산_탭)
 
-            # TODO 함수화
             # 세금 날짜 변경
             for i in range(len(tax_date)):
                 change = str(int(tax_date[i][5:7]) % 12 + 1)
@@ -598,7 +594,7 @@ def modify(driver, isDraft):
 
         # Draft에서 실행된 경우
         if isDraft:
-            break
+            return
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
         cpath(driver, 닫기)
