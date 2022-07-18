@@ -94,6 +94,7 @@ Hongik Accounting Management Advanced System
 
 ####  ignoreAutoLogout.py
 * 회계 시스템에 로그인한 채 장시간 방치할 때 자동 로그아웃이 되지 않도록 방지하는 파일
+* [Function Library](#func_library)
 	
 ---
 ### Temporary Files
