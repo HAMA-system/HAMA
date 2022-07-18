@@ -25,12 +25,12 @@
 * <a>와 </a>의 형태로 문자열을 구별하여 읽어들임
 
 ##  alertController.py
-* selenium 작동 중 팝업 알림창으로 인한 오류를 잡아주는 파일
+* selenium 작동 중 팝업 알림창으로 인한 오류를 잡기 위해 닫거나 확인을 누르도록 구현
 
 ##  autoLogin.py
 * selenium을 이용한 chromedriver로 회계시스템에 로그인을 수행
 * 사용되는 로그인 아이디와 패스워드는 loginData.xlsx에서 작성
-* 부가적으로 필요한 함수 포함
+* driver 객체와 xpath, id 또는 name 값을 넘겨서 웹 내 특정 오브젝트를 클릭하거나 텍스트를 입력하는 일을 수행하는 함수가 포함되어 있음
 
 ##  ignoreAutoLogout.py
 * 회계 시스템에 로그인한 채 장시간 방치할 때 자동 로그아웃이 되지 않도록 방지하는 파일
