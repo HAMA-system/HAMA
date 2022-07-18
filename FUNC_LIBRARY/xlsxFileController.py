@@ -1,6 +1,6 @@
 import openpyxl
-import errorController
-import linkData
+from . import errorController
+from HIDDEN_FILES import linkData
 
 
 def load_xls(filename):

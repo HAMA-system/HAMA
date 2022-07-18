@@ -1,6 +1,6 @@
-loginData.xlsx
+HIDDEN_FILES/loginData.xlsx
 loginData.py
-linkData.py
+HIDDEN_FILES/linkData.py
 main_backup.py
 manage_backup.py
 *.spec
@@ -10,7 +10,7 @@ build
 data*.xlsx
 chromedriver.exe
 test.py
-errorCase.txt
+_etc/errorCase.txt
 *.pyc
 __pycache__
 in

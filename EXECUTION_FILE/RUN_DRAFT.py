@@ -1,13 +1,9 @@
 import re
 import threading
-import time
 import os
 
-import manage
-from linkData import *
-from autoLogin import *
-from alertController import *
-from selenium.webdriver import ActionChains
+from ESSENTIAL_FILES import manage
+from FUNC_LIBRARY.autoLogin import *
 from selenium.webdriver.support.ui import Select
 
 t = 0

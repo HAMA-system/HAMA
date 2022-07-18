@@ -1,10 +1,8 @@
 from selenium import webdriver
-import xlsxFileController
-import dateController
-import errorController
-import autoLogin
-import manage
-import sys, os, time
+from FUNC_LIBRARY import errorController, autoLogin
+from ESSENTIAL_FILES import manage
+
+
 def set_chromedriver():
     try:
         # driver = webdriver.Chrome("./chromedriver.exe")

@@ -1,8 +1,7 @@
 # import threading
 import time
-import linkData
-import autoLogin
-import manage # TODO 나중에 manage -> main 으로 옮겨야 함
+from ESSENTIAL_FILES import manage
+
 timer = 0
 
 def startTimer():

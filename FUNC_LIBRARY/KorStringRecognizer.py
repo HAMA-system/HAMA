@@ -1,4 +1,4 @@
-from linkData import 링크
+from HIDDEN_FILES.linkData import 링크
 import unicodedata
 
 

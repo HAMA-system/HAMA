@@ -1,11 +1,10 @@
 import os
 import re
-import time
 import unicodedata
 
-from xlsxFileController import get_all_directory_info
-from linkData import 링크
-from manage import monthly_textReplace
+from FUNC_LIBRARY.xlsxFileController import get_all_directory_info
+from HIDDEN_FILES.linkData import 링크
+from ESSENTIAL_FILES.manage import monthly_textReplace
 
 def replace():
     info = get_all_directory_info()
