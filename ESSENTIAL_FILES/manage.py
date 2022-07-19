@@ -382,10 +382,7 @@ def upload(driver, title):
         driver.switch_to.window(driver.window_handles[0])
         time.sleep(0.1)
         driver.switch_to.frame(작성_프레임)
-        cpath(driver, 저장)
-        time.sleep(0.3)
-        dismissAlert(driver)
-
+        save(driver)
 
 def save(driver):
     while True:
@@ -531,29 +528,25 @@ def modify(driver, isDraft):
                 time.sleep(0.1)
             cpath(driver,결의내역_탭)
 
-        print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
-        s = input()
-        if s == '1':
-            cpath(driver, 저장)
-            time.sleep(1)
-            dismissAlert(driver)
-            print("저장이 완료되었습니다.")
-            time.sleep(2)
-
-        else:
-            print("원하시는 버튼을 입력해주세요. 1(저장) 2(창 닫고 재시작)")
-            put = input()
-            while put != '1' and put != '2':
-                print("잘못된 입력입니다.")
-                put = input()
-            if put == '1':
-                cpath(driver, 저장)
-                time.sleep(1)
-                dismissAlert(driver)
-                print("저장이 완료되었습니다.")
-                time.sleep(2)
-            if put == '2':
-                break
+        save(driver)
+        print("저장이 완료되었습니다.")
+        # print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
+        # s = input()
+        # if s == '1':
+        #     save(driver)
+        #     print("저장이 완료되었습니다.")
+        #
+        # else:
+        #     print("원하시는 버튼을 입력해주세요. 1(저장) 2(창 닫고 재시작)")
+        #     put = input()
+        #     while put != '1' and put != '2':
+        #         print("잘못된 입력입니다.")
+        #         put = input()
+        #     if put == '1':
+        #         save(driver)
+        #         print("저장이 완료되었습니다.")
+        #     if put == '2':
+        #         break
 
         # Draft에서 실행된 경우
         if isDraft:

@@ -33,13 +33,6 @@ def expand_shadow_element(driver, element):
     return shadow_root
 d = None
 
-# TODO
-#   - Print
-#       흑백 처리
-#       멈추면 오류나는거 다시 고쳐야함
-#   - Replace
-#       따로 파일 옮기는 프로그램 생성
-#
 def draft(driver):
 
     global d
@@ -94,7 +87,6 @@ def draft(driver):
         for i in range(start, end+1):
             # 시작할 때, 반복할 때 주소가 달라야 클릭이 됨
             t = 5
-            # if i == start:
             if first:
                 num = 문서번호1[:64] + str(i) + 문서번호1[65:]
                 first = False
@@ -111,7 +103,6 @@ def draft(driver):
             time.sleep(5)
             while True:
                 if t >= 20:
-                    # print("TEST")
                     t = 0
                     driver.get("https://ngw.hongik.ac.kr/myoffice/ezportal/index_portal.aspx")
                     return
@@ -119,11 +110,8 @@ def draft(driver):
                     driver.switch_to.window(driver.window_handles[1])
                     break
                 except:
-                    # print("no window")
                     time.sleep(3)
             t = 5
-            # d = driver
-
             # ** shadow-root 같은 element는 find_element(by=) 이용해야함 **
             # driver.switch_to.window(driver.window_handles[1])
             r0 = driver.find_element(by=By.CSS_SELECTOR, value=섀도0)
@@ -184,8 +172,9 @@ def draft_write(driver):
             put = input()
             if put == '1':
                 manage.modify(driver, True)
-                print("파일 업로드가 완료되면 저장 후 엔터를 눌러주세요")
+                print("파일 업로드가 완료되면 엔터를 눌러주세요")
                 input()
+                manage.save(driver)
 
                 # Alert 오류 제어
                 try:
@@ -200,6 +189,15 @@ def draft_write(driver):
                 print("잘못된 입력입니다.")
 
         cid(driver, 기안)
+        try:
+            driver.switch_to.alert.dismiss()
+            print("업로드된 파일이 없습니다.\n파일 업로드 후 엔터를 눌러주세요")
+            input()
+            manage.save(driver)
+            cid(driver, 기안)
+
+        except:
+            pass
         last = len(driver.window_handles)
 
         # 기안 창으로 이동
@@ -241,7 +239,8 @@ def draft_write(driver):
         cpath(driver, 기안_확인)
 
         # 기안 업로드
-        draft_upload(driver, title)
+        draft_upload(driver, title, True)
+        # draft_upload(driver, title, False)
 
         # driver.switch_to.default_content()
         # cid(driver, 기안_파일버튼)
@@ -260,7 +259,7 @@ def draft_write(driver):
         # driver.find_element(by=By.XPATH, value=닫기).click()
 
 
-def draft_upload(driver, title):
+def draft_upload(driver, title, isFile):
 
     uploaded = True
 
@@ -278,8 +277,15 @@ def draft_upload(driver, title):
                 print(file,"업로드 완료")
             break
     else:
-        print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
+        print("기안 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
         uploaded = False
+        while True:
+            try:
+                driver.switch_to.window(driver.window_handles[1])
+                time.sleep(1)
+            except:
+                driver.switch_to.window(driver.window_handles[0])
+                break
 
     if uploaded:
         time.sleep(1)
@@ -306,3 +312,4 @@ def draft_upload(driver, title):
     driver.switch_to.default_content()
     driver.switch_to.frame(조회_프레임)
     cpath(driver, 닫기)
+
