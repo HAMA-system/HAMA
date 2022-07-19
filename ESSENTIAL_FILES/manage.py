@@ -6,11 +6,9 @@ import sys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
 
-# import hotKeyManager
 from FUNC_LIBRARY.autoLogin import *
 from HIDDEN_FILES.linkData import *
 from FUNC_LIBRARY.alertController import *
-# from hotKeyManager import *
 from copy import deepcopy
 from FUNC_LIBRARY import xlsxFileController, dateController, autoLogin, ignoreAutoLogout
 import threading
@@ -19,8 +17,6 @@ sema = 0
 d = ''
 mod_month = "-1"
 def refresh():
-    # TODO
-    #   작성에서도 되게 바꿔야 함.
     cpath(d,조회)
 
 def printProgress(i, max):
@@ -33,10 +29,8 @@ def monthly_textReplace(prev,month):
     result_string = ""
 
     for p in text_list:
-        # print(p)
         m = r.match(p)
         if m:
-            # print(m)
             result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
         else:
             result_string += p + " "
@@ -78,12 +72,11 @@ def search(driver):
     if acc == '0':
         driver.switch_to.default_content()
         return
+
     while True:
         sema = 1
         print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
         res = input().strip()
-        # TODO
-        #   modify처럼 형식 변경 필요
         if res == '1' or res == '2' or res == '3' or res == '4':
             break
         print("잘못된 입력입니다.")
@@ -94,6 +87,7 @@ def search(driver):
         if len(month) == 1 or len(month) == 2 or len(month) == 4:
             break
         print("잘못된 입력입니다.")
+
     print("원하는 검색어를 입력해주세요. (없으면 공백)")
     srch = input().strip()
 
@@ -129,8 +123,6 @@ def search(driver):
         fname(driver, 'DpFrDt', month + '0301')
         fname(driver, 'DpToDt', str(int(month) + 1) + '0228')
 
-    # elif month == '종료':
-    #     break
     else:
         print("잘못된 입력입니다.")
     if len(month) != 4:
@@ -166,9 +158,6 @@ def write(driver):
         driver.switch_to.default_content()
         cpath(driver,결의서_작성)
         driver.switch_to.frame(작성_프레임)
-        # progress = 0.0
-        # progrexx_max = xlsxFileController.get_max_row(file,'결의내역','E')
-        # progress_size = 30
 
         print("\n\n\n=================================")
         while True:
@@ -179,7 +168,6 @@ def write(driver):
 
         file = xlsxFileController.load_xls(링크[2])
         input_data = xlsxFileController.all_data_fetch(file, '결의내역', 'E15', 'X15')
-        # monthly_data = xlsxFileController.all_data_fetch(file,'결의내역(정기)','E15','W15')
         w = 0
         prev = input_data[0][0]
         tax = 0
@@ -188,6 +176,7 @@ def write(driver):
         row = 15
         isMonthly = False
         title = ""
+
         # Main loop
         for i in range(len(target_data)):
             if target_data[i][0] != -1 or prev != -1:
@@ -204,12 +193,8 @@ def write(driver):
                         prev = target_data[i][0]
                         continue
 
-                    # print(target_data[i-1][1],target_data[i-1][2],type(target_data[i-1][2]))
                     upload(driver, title)
                     cpath(driver,신규)
-                    # for p in range(len(target_data)):
-                    #     if target_data[p][0] == prev:
-                    #         xlsxFileController.put_cell_data(file, '결의내역', 'E'+str(p+15), -1)
                     time.sleep(0.5)
 
                     print("구분번호 :", target_data[i][0])
@@ -228,18 +213,10 @@ def write(driver):
                             target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
 
 
-                # sys.stdout.flush()
-                # printProgress(progress/progrexx_max, progress_size)
-                # progress += progress/progrexx_max
                 time.sleep(0.5)
                 if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
                     target_data[i][4] = str(target_data[i][4])[:10]
-                    # if target_data[i][2][:4] != '2022':
-                    #     time.sleep(1)
-                    #     fpath(driver, 회계년도, target_data[i][2][:2])
-                    #     fpath(driver, 'txtSAcctYear', target_data[i][2][:4])
-                    #     time.sleep(5000)
-                    #     time.sleep(0.2)
+
                 time.sleep(0.2)
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
                 if target_data[i][5] is not None and target_data[i][5] != '' and target_data[i][5] != '_':
@@ -252,6 +229,7 @@ def write(driver):
                 if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
                     fpath(driver,결의일자_번호,target_data[i][4])
                 select = Select(driver.find_element_by_id('ddlResolutionDiv'))
+
                 if target_data[i][6] is not None and target_data[i][6] != '' and target_data[i][6] != '_':
                     test3 = {"수입" : 0, "지출" : 1, "대체" : 2}
                     select.select_by_index(test3[target_data[i][6]])
@@ -262,6 +240,7 @@ def write(driver):
                     epath(driver,사업팝업)
                     driver.switch_to.default_content()
                     driver.switch_to.frame('ifr_d4_AHG020P')
+
                 if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
                     fpath(driver,결의서_제목,target_data[i][3])
                     title = target_data[i][3]
@@ -327,20 +306,12 @@ def write(driver):
                 save(driver)
                 upload(driver, title)
 
-                # for p in range(len(target_data)):
-                #     if target_data[p][0] == prev:
-                #         xlsxFileController.put_cell_data(file, '결의내역', 'E' + str(p+15), -1)
                 print("입력이 완료되었습니다.")
                 print("구분번호 미변경시 중복 입력될 수 있으니 확인 부탁드립니다.")
-                # xlsxFileController.save_xls(file)
-        # delete(file)
 
     except:
         print('오류가 발생하여 초기화면으로 돌아갑니다')
-        # driver.refresh()
         autoLogin.afterLogin(driver)
-        # xlsxFileController.save_xls(file)
-
 
 
 def taxWrite(driver, num, file, isMonthly, row):
@@ -677,28 +648,20 @@ def monthly_check(prev):
 
     for p in text_list:
         if c.search(p):
-            # print("MATCH :",p)
             f = c.findall(p)
-            # for x in f:
-            #     print(dateController.strtodate(int(x[0]),int(x[1]),int(x[2])).strftime("%y.%-m.%d"))
             if len(f)==2:
                 date1 = datetime.datetime(int(f[0][0]),int(f[0][1]),int(f[0][2]))
                 date2 = datetime.datetime(int(f[1][0]),int(f[1][1]),int(f[1][2]))
-                # print(dateController.date2dateByDays(date1,date2))
                 if dateController.date2dateByDays(date1, date2)>300:
                     #1년 단위 차이라고 가정
                     # year_gap = dateController.date2dateByYears(date1,date2)
                     year_gap = round(dateController.date2dateByDays(date1, date2) / 365)
-                    # print("year_gap",year_gap)
-                    # print(dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap))
                     t = re.sub("[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
                                dateController.jumpDateByYear(date1, year_gap) + "~" + dateController.jumpDateByYear(date2, year_gap), p)
                     result += t + " "
                     # result += dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap)
                 elif dateController.date2dateByDays(date1, date2)>31:
                     month_gap = round(dateController.date2dateByDays(date1, date2) / 31)
-                    # print("month_gap",month_gap)
-                    # print(dateController.jumpDateByMonth(date1,month_gap)+"~"+dateController.jumpDateByMonth(date2,month_gap))
                     t = re.sub("[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
                                dateController.jumpDateByMonth(date1, month_gap) + "~" + dateController.jumpDateByMonth(date2, month_gap), p)
                     result += t + " "
@@ -706,9 +669,7 @@ def monthly_check(prev):
                 result += p + " "
         else:
             check = False
-            # print("p:",p)
             if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
-                # print(int(p[:-1]))
                 temp = []
                 m = l
                 x = []
@@ -718,61 +679,30 @@ def monthly_check(prev):
                         if '0' <= prev[m + 1] <= '9':
                             s += prev[m + 1]
                             m += 1
-                        # ret.append(s)
                         x.append(int(s))
                     m += 1
                 for tmp in temp:
                     x.append(int(s))
                 ret_y.append([int(pprev[:-1]),x])
             elif r.match(p) or q2.match(p):
-                # TODO 임시 처리
-                # if r.match(p):
-                #     print("r",p)
-                # print("year no")
                 temp = []
                 m = l
                 while m < l + len(p):
-                    # print("w",prev[m])
                     if '0' <= prev[m] <= '9':
-                        # print("1")
                         s = prev[m]
                         if '0' <= prev[m+1] <= '9':
                             s += prev[m+1]
                             m += 1
-                        # ret.append(s)
                         temp.append(s)
-                        # print(temp,"t")
                     m += 1
-                # for tmp in temp:
-                #     ret.append(tmp)
                 ret.append(temp)
-                # print(ret,"ret")
-            # elif only_y.search(p):
-            #     check = True
-            #     f = only_y.findall(p)
-            #     # print(f,result)
-            #     if len(f)==2:
-            #         year_gap = int(f[1][0])-int(f[0][0])+1
-            #         # print(year_gap)
-            #         t = re.sub('(\d+)(년)(분*)[~\-](\d+)(년)(분*)',str(int(f[0][0])+year_gap)+f[0][1]+f[0][2]+"~"+str(int(f[1][0])+year_gap)+f[1][1]+f[1][2],p)
-            #         result += t + " "
-            #     else:
-            #         year_gap = 1
-            #         t = re.sub('(\d+)(년)(분*)',str(int(f[0][0]) + year_gap) + f[0][1] + f[0][2], p)
-            #         result += t + " "
 
             l += len(p)+1
             pprev = p
 
-            if check==False:
-                # print(p, ret, key, ret_y)
+            if not check:
                 result += new_monthly_next(p, ret, key, ret_y) + " "
-                # print("r",result)
 
-    # print(result+"<=result")
-    # ret,key,ret_y -> a,b,y
-    # new_monthly_next(put,a,b,y)
-    # return ret, key, ret_y, result
     return result
 
 def monthly_next(prev, month, val, ymonth):
@@ -780,13 +710,11 @@ def monthly_next(prev, month, val, ymonth):
     cymonth = deepcopy(ymonth)
     n = len(prev)
     s = ""
+
     # 일반적 케이스
-    print("cm",cmonth)
     for m in cmonth:
-        print("m",m)
         if val == 0:
             # %d월 확인
-            print("cmonth",cmonth)
             next_month = month_inc(cmonth, 1)
             for i in range(len(cmonth)):
                 cmonth[i] = int(cmonth[i])
@@ -803,9 +731,6 @@ def monthly_next(prev, month, val, ymonth):
                 if re.search(cmonth[i], prev):
                     prev = re.sub(cmonth[i], next_month[i], prev)
 
-        # 연속 달
-        # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지 / 있으면 안됨
-        #   12,1 제목 + 12 / 1 적요 => dict 처리
         if val == 1:
             # %d,%d월 확인 + %d월,%d월?
             last = int(cmonth[-1])
@@ -825,30 +750,19 @@ def monthly_next(prev, month, val, ymonth):
             first = int(cmonth[0])
             value = last - first%12
             next_month = month_inc(cmonth,value+1)
-            # nlast = int(next_month[1])
-            # nfirst = int(next_month[0])
             for i in range(2):
                 cmonth[i] += "월"
                 next_month[i] += "월"
-            # print(month,'\n',next_month)
 
-            # if nlast < nfirst:
-            #     if last > first:
-            #         month.sort(reverse=True)
-            #         print(month, '\n', next_month)
-                # next_month.sort(reverse=True)
-                # month.sort(reverse=True)
             for i in range(1,-1,-1):
                 if re.search(cmonth[i], prev):
                     prev = re.sub(cmonth[i], next_month[i], prev)
 
     # 연도 포함 대체
-    print(cymonth)
     for m in cymonth:
         if val == 0:
             # %d월 확인
             next_month = ymonth_inc(cymonth, 1)
-            print(cymonth)
             for i in range(len(cymonth[1])):
                 cymonth[1][i] += "월"
                 next_month[1][i] += "월"
@@ -858,9 +772,6 @@ def monthly_next(prev, month, val, ymonth):
                 if re.search(cymonth[0] + ' ' + cymonth[1][i], prev):
                     prev = re.sub(cymonth[0] + ' ' + cymonth[1][i], next_month[i], prev)
 
-        # 연속 달
-        # TODO ex)관리비 2,3월 수도요금 3,4월 <- 있는지 / 있으면 안됨
-        #   12,1 제목 + 12 / 1 적요 => dict 처리
         if val == 1:
             # %d,%d월 확인 + %d월,%d월?
             last = int(cmonth[-1])
@@ -876,44 +787,26 @@ def monthly_next(prev, month, val, ymonth):
         # 분기 || 연단위
         if val == 2:
             # %d월~%d월 확인 + %d~%d월 ?
-            print(cmonth)
             last = int(cmonth[1])
             first = int(cmonth[0])
             value = last - first % 12
             next_month = month_inc(cmonth, value + 1)
-            # nlast = int(next_month[1])
-            # nfirst = int(next_month[0])
             for i in range(2):
                 cmonth[i] += "월"
                 next_month[i] += "월"
-            # print(month,'\n',next_month)
 
-            # if nlast < nfirst:
-            #     if last > first:
-            #         month.sort(reverse=True)
-            #         print(month, '\n', next_month)
-            # next_month.sort(reverse=True)
-            # month.sort(reverse=True)
             for i in range(1, -1, -1):
                 if re.search(cmonth[i], prev):
                     prev = re.sub(cmonth[i], next_month[i], prev)
 
         return prev
 
-
-# TODO
-#   exe 파일 아이콘 넣기
-#   연도 바뀔 때 처리
-#   기안 페이지 변경
-
 def new_monthly_next(prev, month, val, ymonth):
-    # print(prev, month, val, ymonth)
-    # print("dd")
     cmonth = deepcopy(month)
     cmonth.sort(key=lambda x:int(x[0]))
     cymonth = deepcopy(ymonth)
-    # print(cymonth)
     cymonth.sort(key=lambda x:int(x[0]))
+
     # 1. 그냥 개별 월 ex) 3월, 4월 -> 5월, 6월
     #                   3,4월 -> 5,6월
     #                   3월 -> 4월
@@ -925,19 +818,16 @@ def new_monthly_next(prev, month, val, ymonth):
     # 2번 연도가 개입하는 경우 -> ex) 2021년 10월 ~ 12월 -> 2022년 1월 ~ 3월
 
     #연도가 없음
-    if len(cymonth)==0:
+    if len(cymonth) == 0:
         for xi in range(len(cmonth)-1,-1,-1):
             x = cmonth[xi]
             interval = int(x[-1])-int(x[0])+1
-            if interval<0:
+            if interval < 0:
                 interval += 12
             next_months = month_inc(x,interval)
 
-            # print(next_months)
-
             for i in range(len(x)-1,-1,-1):
                 if re.search(str(x[i]), prev):
-                    # print(prev)
                     if int(next_months[i])<100:
                         prev = re.sub("\A"+str(x[i])+"월", ""+next_months[i]+"월", prev)
                         prev = re.sub("~"+str(x[i])+"월", "~"+next_months[i]+"월", prev)
@@ -961,26 +851,18 @@ def new_monthly_next(prev, month, val, ymonth):
                         # prev = re.sub(str(x[i])+",", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
                         # prev = re.sub(str(x[i])+"~", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"~", prev)
 
-            # print(prev)
-
-
     #연도가 있음
     else:
         next_months = []
         for x in cymonth:
             year = x[0]
             months = x[1]
-            # print(x)
             next_months.append(month_inc(months, months[-1]-months[0]+1))
-            print(next_months)
-        #
-        # print(cymonth[0][1],next_months[0])
         # months.sort(reverse=True)
         # next_months.sort(reverse=True)
 
         for j in range(len(next_months)-1,-1,-1):
             for i in range(len(cymonth[j][1])):
-                # print(cymonth[j][1], next_months[j])
 
                 if re.search(str(cymonth[j][1][i]), prev):
                     # prev = re.sub(str(cymonth[j][1][i]),next_months[j][i],prev)
@@ -1010,17 +892,6 @@ def new_monthly_next(prev, month, val, ymonth):
 
                 if int(next_months[j][0]) >= 100:
                     prev = re.sub(str(cymonth[j][0])+"년 ", "",prev)
-        # print(prev)
-
-        # print(month_inc(ymonth[0][1],3))
-
-    # #val 0 -> 3월 / 3월분 등등
-    # if val==0:
-    #
-    # #val 1 -> 3월,4월 / 3,4월 등등
-    # elif val==1:
-    # #val 2 -> 4월~6월 / 4~6월 등등
-    # else:
 
     return prev
 
@@ -1033,18 +904,8 @@ if __name__ == '__main__':
             break
         print("------------------")
         print(put,"->")
-        # a, b, y, result = monthly_check(put)
         result = monthly_check(put)
         print(result)
 
         result = monthly_textReplace(result,"8")
         print(result)
-        # print(monthly_next(put, a, b, y),"<-")
-        # print(new_monthly_next(put, a, b, y),"<-")
-        # test = input()
-        # print(test)
-        # print(a,b)
-        # print(monthly_next(test, a, b))
-        # print(a)
-
-        # break
