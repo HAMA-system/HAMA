@@ -9,6 +9,7 @@ def load_xls(filename):
         return xlsfile
     except:
         errorController.errorMsg(1)
+        return None
 
 def get_cell_data(file, sheetname ,cell):
     # print(sheetname)
