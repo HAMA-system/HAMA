@@ -1,11 +1,20 @@
 import openpyxl
-from . import errorController
+import errorController
 from HIDDEN_FILES import linkData
+from HIDDEN_FILES.linkData import *
 
 
 def load_xls(filename):
     try:
         xlsfile = openpyxl.load_workbook(filename, read_only=True, data_only=True)
+        return xlsfile
+    except:
+        errorController.errorMsg(1)
+        return None
+
+def load_xls_w(filename):
+    try:
+        xlsfile = openpyxl.load_workbook(filename, read_only=False, data_only=True)
         return xlsfile
     except:
         errorController.errorMsg(1)
@@ -75,8 +84,36 @@ def all_data_fetch(file, sheetname, firstcell, lastcell):
 
 def put_cell_data(file, sheetname, cell, text):
     # w = file.active
+    # w.cell(row=1,column=1).value
+    # s = file[sheetname]
+    # s[cell] = text
     s = file[sheetname]
-    s[cell] = text
+    print(s)
+    s.cell(row=1,column=1).value = 'test'
+
+def put_singleline_data(file, sheetname, firstcell, lastcell, line):
+    cell = firstcell
+    data = []
+
+    if firstcell[1:] != lastcell[1:]:
+        if 65 <= ord(firstcell[1]) <= 90:
+            if firstcell[2:] != lastcell[2:]:
+                errorController.errorMsg(2)
+                return data
+        else:
+            errorController.errorMsg(2)
+            return data
+
+    i = 0
+    while cell != lastcell:
+        # data.append(get_cell_data(file,sheetname,cell))
+        put_cell_data(file,sheetname,cell,line[i])
+        if 65 <= ord(cell[1]) <= 90:
+            cell = cell[0] + chr(ord(cell[1])+1) + cell[2:]
+        else:
+            cell = chr(ord(cell[:1])+1) + cell[1:]
+        i += 1
+    # return data
 
 def save_xls(file):
     file.save(linkData.링크[2])
@@ -111,7 +148,10 @@ def get_all_directory_info():
     return s1
 
 if __name__ == '__main__':
-    print(get_all_directory_info())
+    # print(get_all_directory_info())
+    file = load_xls_w(링크[3]+'HIDDEN_FILES/afterdata.xlsx')
+    put_cell_data(file,'결의내역','E15','test')
+    save_xls(file)
     # file = load_xls(linkData.링크[2])
     # target_data = all_data_fetch(file, '결의내역', 'E15', 'G15')
     # print(target_data)
