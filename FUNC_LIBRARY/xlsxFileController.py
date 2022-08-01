@@ -1,5 +1,5 @@
 import openpyxl
-import errorController
+from FUNC_LIBRARY import errorController
 from HIDDEN_FILES import linkData
 from HIDDEN_FILES.linkData import *
 
@@ -14,7 +14,7 @@ def load_xls(filename):
 
 def load_xls_w(filename):
     try:
-        xlsfile = openpyxl.load_workbook(filename, read_only=False, data_only=True)
+        xlsfile = openpyxl.load_workbook(filename, read_only=False, data_only=False)
         return xlsfile
     except:
         errorController.errorMsg(1)
@@ -115,8 +115,8 @@ def put_singleline_data(file, sheetname, firstcell, lastcell, line):
         i += 1
     # return data
 
-def save_xls(file):
-    file.save(linkData.링크[2])
+def save_xls(file,link):
+    file.save(link)
 
 def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
     i = row
@@ -151,7 +151,7 @@ if __name__ == '__main__':
     # print(get_all_directory_info())
     file = load_xls_w(링크[3]+'HIDDEN_FILES/afterdata.xlsx')
     put_cell_data(file,'결의내역','E15','test')
-    save_xls(file)
+    save_xls(file,링크[3]+'HIDDEN_FILES/afterdata.xlsx')
     # file = load_xls(linkData.링크[2])
     # target_data = all_data_fetch(file, '결의내역', 'E15', 'G15')
     # print(target_data)

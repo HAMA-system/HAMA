@@ -27,15 +27,15 @@ def match():
 
     print('모든 파일 로드에 성공하였습니다.')
 
-    for line in input1:
-        # print(line)
-        # print(line[5])
-
-        for cont in input3:
-            if line[5]==cont[1]:
-                print(line[5],cont[1])
-                xlsxFileController.put_singleline_data(링크[3]+'HIDDEN_FILES/afterdata.xlsx','결의내역(정기)','E15','X15',cont)
-                xlsxFileController.save_xls(링크[3]+'HIDDEN_FILES/afterdata.xlsx')
+    # for line in input1:
+    #     # print(line)
+    #     # print(line[5])
+    #
+    #     for cont in input3:
+    #         if line[5]==cont[1]:
+    #             print(line[5],cont[1])
+    #             xlsxFileController.put_singleline_data(링크[3]+'HIDDEN_FILES/afterdata.xlsx','결의내역(정기)','E15','X15',cont)
+    #             xlsxFileController.save_xls(링크[3]+'HIDDEN_FILES/afterdata.xlsx')
 
 
 
