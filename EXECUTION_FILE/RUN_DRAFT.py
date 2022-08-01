@@ -270,7 +270,8 @@ def draft_upload(driver, title, isFile):
     driver.switch_to.frame(메인_프레임)
     driver.switch_to.frame('dadiframe')
     for folder in os.listdir(path):
-        if re.search("".join(folder.split('#')[:-1]).replace('$','/').strip(), title.strip()):
+        searchKey = "".join(folder.split('#')[:-1]).replace('$','/').replace("(","\(").replace(")","\)").strip()
+        if re.search(searchKey, title.strip()):
             draftFolder = path + folder + "/"
             for file in os.listdir(draftFolder):
                 driver.find_element_by_xpath(기안_파일).send_keys(draftFolder + file)
@@ -300,7 +301,6 @@ def draft_upload(driver, title, isFile):
                 cpath(driver,기안_업로드)
                 driver.switch_to.default_content()
                 time.sleep(0.2)
-                time.sleep(10000)
                 cid(driver,결재올림)
                 driver.switch_to.frame(메인_프레임)
                 time.sleep(0.2)
