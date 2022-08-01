@@ -195,7 +195,7 @@ def write(driver):
 
                     upload(driver, title)
                     cpath(driver,신규)
-                    time.sleep(0.5)
+                    # time.sleep(0.5)
 
                     print("구분번호 :", target_data[i][0])
 
@@ -213,11 +213,11 @@ def write(driver):
                             target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
 
 
-                time.sleep(0.5)
+                # time.sleep(0.5)
                 if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
                     target_data[i][4] = str(target_data[i][4])[:10]
 
-                time.sleep(0.2)
+                # time.sleep(0.2)
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
                 if target_data[i][5] is not None and target_data[i][5] != '' and target_data[i][5] != '_':
                     if target_data[i][5] == '등록금':
@@ -248,11 +248,11 @@ def write(driver):
                 epath(driver,계정과목)
 
                 if target_data[i][9] is not None and target_data[i][9] != '' and target_data[i][9] != '_':
-                    time.sleep(0.1)
+                    # time.sleep(0.1)
                     fpath(driver,관리코드,target_data[i][9])
-                    time.sleep(0.1)
+                    # time.sleep(0.1)
                     epath(driver,관리코드)
-                    time.sleep(0.2)
+                    # time.sleep(0.2)
                     try:
                         driver.switch_to.alert.accept()
                     except:
@@ -288,7 +288,7 @@ def write(driver):
                 if target_data[i][18] is not None and target_data[i][18] != '' and target_data[i][18] != '_':
                     fpath(driver,적요,target_data[i][18])
 
-                time.sleep(0.2)
+                # time.sleep(0.2)
                 cpath(driver,결의내역_제출)
                 time.sleep(0.3)
 
@@ -431,31 +431,46 @@ def modify(driver, isDraft):
         res = []
         tax_date = []
 
-        res_date = driver.find_element_by_xpath(결의일자_번호)
-        title.append(res_date.get_attribute("value"))
+        # title[0] 나중에 변경 해야함
+        title.append("temp")
+        # res_date = driver.find_element_by_xpath(결의일자_번호)
+        # title.append(res_date.get_attribute("value"))
         res_title = driver.find_element_by_xpath(결의서_제목)
         title.append(res_title.get_attribute("value"))
 
-        # 결의서 날짜 변경
-        change = str(int(title[0][5:7])%12 + 1)
-        if int(change) < 10:
-            change = "0" + change
-        title[0] = title[0][:5] + change + title[0][7:]
-
-        # 달마다 없는 날짜 처리
-        if int(change) == 1:
-            if int(title[0][8:]) > 28:
-                title[0] = title[0][:8] + str(28)
-        if int(title[0][8:]) == 31:
-            if int(change) != 7:
-                title[0] = title[0][:8] + str(30)
+        # 필요 없어짐
+        # # 결의서 날짜 변경
+        # change = str(int(title[0][5:7])%12 + 1)
+        # if int(change) < 10:
+        #     change = "0" + change
+        # title[0] = title[0][:5] + change + title[0][7:]
+        #
+        # # 달마다 없는 날짜 처리
+        # if int(change) == 1:
+        #     if int(title[0][8:]) > 28:
+        #         title[0] = title[0][:8] + str(28)
+        # if int(title[0][8:]) == 31:
+        #     if int(change) != 7:
+        #         title[0] = title[0][:8] + str(30)
 
         # 복사 창 이동
         cpath(driver, 복사)
-        alert = driver.switch_to.alert
-        alert.send_keys(title[0])
-        for _ in range(3):
-            acceptAlert(driver)
+        # alert = driver.switch_to.alert
+        # alert.send_keys(title[0])
+
+        while True:
+            try:
+                alert = driver.switch_to.alert
+                time.sleep(0.5)
+            except:
+                break
+
+        # for _ in range(3):
+        #     acceptAlert(driver)
+
+        res_date = driver.find_element_by_xpath(결의일자_번호)
+        title[0] = res_date.get_attribute("value")
+
 
         # 내부 데이터 수집 (결의항목)
         table = driver.find_element_by_xpath(결의서_테이블)
@@ -483,13 +498,13 @@ def modify(driver, isDraft):
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
 
         # 날짜 및 제목 입력
-        time.sleep(0.5)
+        # time.sleep(0.5)
         fpath(driver, 집행요청일, title[0])
         epath(driver, 집행요청일)
-        time.sleep(0.5)
-        fpath(driver, 지급예정일, title[0])
-        epath(driver, 지급예정일)
-        acceptAlert(driver)
+        time.sleep(0.3)
+        # fpath(driver, 지급예정일, title[0])
+        # epath(driver, 지급예정일)
+        # acceptAlert(driver)
         fpath(driver,결의서_제목, title[1])
         driver.find_element_by_xpath(세부사항).clear()
 
@@ -499,6 +514,10 @@ def modify(driver, isDraft):
             fpath(driver, 적요, res[i])
             cpath(driver, 결의내역_제출)
             time.sleep(0.1)
+
+
+        time.sleep(10000)
+
 
         # 세금 작성
         if tax_date and tax_date[0] != '':
