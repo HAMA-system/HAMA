@@ -5,6 +5,7 @@ from HIDDEN_FILES.linkData import *
 
 
 def load_xls(filename):
+    print('파일을 불러오는 중입니다. 잠시만 기다려주세요.')
     try:
         xlsfile = openpyxl.load_workbook(filename, read_only=True, data_only=True)
         return xlsfile
@@ -13,6 +14,7 @@ def load_xls(filename):
         return None
 
 def load_xls_w(filename):
+    print('파일을 불러오는 중입니다. 잠시만 기다려주세요.')
     try:
         xlsfile = openpyxl.load_workbook(filename, read_only=False, data_only=False)
         return xlsfile
@@ -88,8 +90,15 @@ def put_cell_data(file, sheetname, cell, text):
     # s = file[sheetname]
     # s[cell] = text
     s = file[sheetname]
-    print(s)
-    s.cell(row=1,column=1).value = 'test'
+    # print(s)
+    if 65 <= ord(cell[1]) <= 90:
+        c = (ord(cell[0]) - 64) * 26 + ord(cell[1]) - 64
+        r = int(cell[2:])
+    else:
+        c = ord(cell[0]) - 64
+        r = int(cell[1:])
+
+    s.cell(row=r,column=c).value = text
 
 def put_singleline_data(file, sheetname, firstcell, lastcell, line):
     cell = firstcell
@@ -116,7 +125,9 @@ def put_singleline_data(file, sheetname, firstcell, lastcell, line):
     # return data
 
 def save_xls(file,link):
+    print('파일을 저장하는 중입니다. 잠시만 기다려주세요.')
     file.save(link)
+    print('파일 저장 완료')
 
 def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
     i = row
@@ -150,7 +161,9 @@ def get_all_directory_info():
 if __name__ == '__main__':
     # print(get_all_directory_info())
     file = load_xls_w(링크[3]+'HIDDEN_FILES/afterdata.xlsx')
-    put_cell_data(file,'결의내역','E15','test')
+    put_cell_data(file,'결의내역','H35','test')
+    put_cell_data(file,'결의내역','AH25','test')
+    put_singleline_data(file,'결의내역','E15','H15',['t','e','st'])
     save_xls(file,링크[3]+'HIDDEN_FILES/afterdata.xlsx')
     # file = load_xls(linkData.링크[2])
     # target_data = all_data_fetch(file, '결의내역', 'E15', 'G15')
