@@ -88,8 +88,17 @@ def put_cell_data(file, sheetname, cell, text):
     # s = file[sheetname]
     # s[cell] = text
     s = file[sheetname]
-    print(s)
-    s.cell(row=1,column=1).value = 'test'
+    # print(s)
+    if 65 <= ord(cell[1]) <= 90:
+        c = (ord(cell[0]) - 64) * 26 + ord(cell[1]) - 64
+        r = int(cell[2:])
+        print(cell,c,r)
+    else:
+        c = ord(cell[0]) - 64
+        r = int(cell[1:])
+        print(cell,c,r)
+
+    s.cell(row=r,column=c).value = 'test'
 
 def put_singleline_data(file, sheetname, firstcell, lastcell, line):
     cell = firstcell
@@ -116,7 +125,9 @@ def put_singleline_data(file, sheetname, firstcell, lastcell, line):
     # return data
 
 def save_xls(file,link):
+    print('파일을 저장하는 중입니다. 잠시만 기다려주세요.')
     file.save(link)
+    print('파일 저장 완료')
 
 def delete_completed_row(file, sheetname, firstcolumn, lastcolumn, row):
     i = row
@@ -150,7 +161,8 @@ def get_all_directory_info():
 if __name__ == '__main__':
     # print(get_all_directory_info())
     file = load_xls_w(링크[3]+'HIDDEN_FILES/afterdata.xlsx')
-    put_cell_data(file,'결의내역','E15','test')
+    put_cell_data(file,'결의내역','H35','test')
+    put_cell_data(file,'결의내역','AH25','test')
     save_xls(file,링크[3]+'HIDDEN_FILES/afterdata.xlsx')
     # file = load_xls(linkData.링크[2])
     # target_data = all_data_fetch(file, '결의내역', 'E15', 'G15')
