@@ -516,9 +516,6 @@ def modify(driver, isDraft):
             time.sleep(0.1)
 
 
-        time.sleep(10000)
-
-
         # 세금 작성
         if tax_date and tax_date[0] != '':
             cpath(driver, 세금계산_탭)
