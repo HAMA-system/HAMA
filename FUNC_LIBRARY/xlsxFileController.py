@@ -115,14 +115,48 @@ def put_singleline_data(file, sheetname, firstcell, lastcell, line):
 
     i = 0
     while cell != lastcell:
-        # data.append(get_cell_data(file,sheetname,cell))
         put_cell_data(file,sheetname,cell,line[i])
         if 65 <= ord(cell[1]) <= 90:
             cell = cell[0] + chr(ord(cell[1])+1) + cell[2:]
         else:
             cell = chr(ord(cell[:1])+1) + cell[1:]
         i += 1
-    # return data
+
+def put_singleline_data_for_bank(file, sheetname, firstcell, lastcell, line):
+    cell = firstcell
+    data = []
+    match_dir = ['E','F','H','I','J','K','M','N','O','P','Q','R','U','V','W','X']
+    pass_dir = ['K','R','S']
+    if firstcell[1:] != lastcell[1:]:
+        if 65 <= ord(firstcell[1]) <= 90:
+            if firstcell[2:] != lastcell[2:]:
+                errorController.errorMsg(2)
+                return data
+        else:
+            errorController.errorMsg(2)
+            return data
+
+    i = 0
+    while cell != lastcell:
+        if cell[0] in pass_dir:
+            if 65 <= ord(cell[1]) <= 90:
+                cell = cell[0] + chr(ord(cell[1]) + 1) + cell[2:]
+            else:
+                cell = chr(ord(cell[:1]) + 1) + cell[1:]
+            continue
+        if cell[0] in match_dir:
+            ncell = match_dir[i]+cell[1:]
+            if line[i] is None:
+                tmp = '_'
+            else:
+                tmp = line[i]
+            put_cell_data(file,sheetname,ncell,tmp)
+            i += 1
+
+        if 65 <= ord(cell[1]) <= 90:
+            cell = cell[0] + chr(ord(cell[1]) + 1) + cell[2:]
+        else:
+            cell = chr(ord(cell[:1]) + 1) + cell[1:]
 
 def save_xls(file,link):
     print('파일을 저장하는 중입니다. 잠시만 기다려주세요.')
@@ -160,11 +194,11 @@ def get_all_directory_info():
 
 if __name__ == '__main__':
     # print(get_all_directory_info())
-    file = load_xls_w(링크[3]+'HIDDEN_FILES/afterdata.xlsx')
+    file = load_xls_w(링크[4]+'afterdata.xlsx')
     put_cell_data(file,'결의내역','H35','test')
     put_cell_data(file,'결의내역','AH25','test')
     put_singleline_data(file,'결의내역','E15','H15',['t','e','st'])
-    save_xls(file,링크[3]+'HIDDEN_FILES/afterdata.xlsx')
+    save_xls(file,링크[4]+'afterdata.xlsx')
     # file = load_xls(linkData.링크[2])
     # target_data = all_data_fetch(file, '결의내역', 'E15', 'G15')
     # print(target_data)
