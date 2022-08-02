@@ -35,8 +35,10 @@ def match():
         for cont in input3:
             if line[5]==cont[1]:
                 # print(line[5],cont[1])
-                # print(cont)
-                xlsxFileController.put_singleline_data_for_bank(output,'결의내역','E'+str(i),'X'+str(i),cont)
+                print(cont)
+                ncont = cont[:6] + cont[7:13]
+                print(ncont)
+                xlsxFileController.put_singleline_data_for_bank(output,'결의내역','E'+str(i),'T'+str(i),ncont)
                 i += 1
     xlsxFileController.save_xls(output,링크[4]+'afterdata.xlsx')
 
