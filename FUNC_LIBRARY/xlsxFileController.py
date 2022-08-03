@@ -122,7 +122,7 @@ def put_singleline_data(file, sheetname, firstcell, lastcell, line):
             cell = chr(ord(cell[:1])+1) + cell[1:]
         i += 1
 
-def put_singleline_data_for_bank(file, sheetname, firstcell, lastcell, line):
+def put_singleline_data_for_bank(file, sheetname, firstcell, lastcell, line, date):
     cell = firstcell
     data = []
     match_dir = ['E','F','H','I','J','K','M','N','O','P','Q','R','U','V','W','X']
@@ -144,14 +144,17 @@ def put_singleline_data_for_bank(file, sheetname, firstcell, lastcell, line):
             else:
                 cell = chr(ord(cell[:1]) + 1) + cell[1:]
             continue
-        if cell[0] in match_dir:
+        if cell[0]=='I':
+            put_cell_data(file,sheetname,cell,date)
+        elif cell[0] in match_dir:
             ncell = match_dir[i]+cell[1:]
             if line[i] is None:
                 tmp = '_'
             else:
                 tmp = line[i]
             put_cell_data(file,sheetname,ncell,tmp)
-            i += 1
+
+        i += 1
 
         if 65 <= ord(cell[1]) <= 90:
             cell = cell[0] + chr(ord(cell[1]) + 1) + cell[2:]
