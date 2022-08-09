@@ -6,12 +6,12 @@ from HIDDEN_FILES.linkData import *
 
 def load_xls(filename):
     print('파일을 불러오는 중입니다. 잠시만 기다려주세요.')
-    # try:
-    xlsfile = openpyxl.load_workbook(filename, read_only=True, data_only=True)
-    return xlsfile
-    # except:
-    #     errorController.errorMsg(1)
-    #     return None
+    try:
+        xlsfile = openpyxl.load_workbook(filename, read_only=True, data_only=True)
+        return xlsfile
+    except:
+        errorController.errorMsg(1)
+        return None
 
 def load_xls_w(filename):
     print('파일을 불러오는 중입니다. 잠시만 기다려주세요.')

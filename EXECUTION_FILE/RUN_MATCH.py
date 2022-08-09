@@ -10,14 +10,10 @@ def match():
 
     inputfile = xlsxFileController.load_xls(링크[4]+'bank.xlsx')
     if inputfile is None:
-        print("bank.xlsx 파일이 올바르지 않습니다.")
-        time.sleep(2)
+        print("bank.xlsx 파일이 올바르지 않습니다.\n잠시 후 프로그램이 종료됩니다.")
+        time.sleep(3)
         return
-    input1 = xlsxFileController.all_data_fetch(inputfile,'신한은행_거래내역조회','A9','L9')
-    if input1 is None:
-        print("data.xlsx 파일이 올바르지 않습니다.")
-        time.sleep(2)
-        return
+    input1 = xlsxFileController.all_data_fetch(inputfile,'신한은행_거래내역조회','A9','J9')
     # print(*input2,sep='\n')
     # print(*input1,sep='\n')
     # print(*input3,sep='\n')
