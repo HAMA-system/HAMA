@@ -9,7 +9,15 @@ def match():
     print('엑셀파일을 로드하는 중입니다.\n결의내역 또는 결의내역(정기)의 내용이 많을 경우 데이터 로드시간이 1분 이상 소요될 수 있습니다.')
 
     inputfile = xlsxFileController.load_xls(링크[4]+'bank.xlsx')
+    if inputfile is None:
+        print("bank.xlsx 파일이 올바르지 않습니다.")
+        time.sleep(2)
+        return
     input1 = xlsxFileController.all_data_fetch(inputfile,'신한은행_거래내역조회','A9','L9')
+    if input1 is None:
+        print("data.xlsx 파일이 올바르지 않습니다.")
+        time.sleep(2)
+        return
     # print(*input2,sep='\n')
     # print(*input1,sep='\n')
     # print(*input3,sep='\n')
