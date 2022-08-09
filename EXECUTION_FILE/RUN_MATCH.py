@@ -1,5 +1,7 @@
 import os
 import shutil
+import time
+
 from FUNC_LIBRARY import xlsxFileController
 from HIDDEN_FILES.linkData import *
 
@@ -52,7 +54,8 @@ def match():
                 i += 1
     xlsxFileController.save_xls(output,링크[4]+'afterdata.xlsx')
 
-
+    print("모든 작업이 완료되어 5초 후 프로그램이 종료됩니다")
+    time.sleep(5)
 
 if __name__ == '__main__':
     match()
