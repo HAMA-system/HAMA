@@ -1,5 +1,7 @@
 import os
 import shutil
+import time
+
 from FUNC_LIBRARY import xlsxFileController
 from HIDDEN_FILES.linkData import *
 
@@ -7,7 +9,11 @@ def match():
     print('엑셀파일을 로드하는 중입니다.\n결의내역 또는 결의내역(정기)의 내용이 많을 경우 데이터 로드시간이 1분 이상 소요될 수 있습니다.')
 
     inputfile = xlsxFileController.load_xls(링크[4]+'bank.xlsx')
-    input1 = xlsxFileController.all_data_fetch(inputfile,'신한은행_거래내역조회','A9','L9')
+    if inputfile is None:
+        print("bank.xlsx 파일이 올바르지 않습니다.\n잠시 후 프로그램이 종료됩니다.")
+        time.sleep(3)
+        return
+    input1 = xlsxFileController.all_data_fetch(inputfile,'신한은행_거래내역조회','A9','J9')
     # print(*input2,sep='\n')
     # print(*input1,sep='\n')
     # print(*input3,sep='\n')
@@ -52,7 +58,8 @@ def match():
                 i += 1
     xlsxFileController.save_xls(output,링크[4]+'afterdata.xlsx')
 
-
+    print("모든 작업이 완료되어 5초 후 프로그램이 종료됩니다")
+    time.sleep(5)
 
 if __name__ == '__main__':
     match()
