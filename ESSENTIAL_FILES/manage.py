@@ -546,6 +546,17 @@ def modify(driver, isDraft):
 
         save(driver)
         print("저장이 완료되었습니다.")
+
+        find_pdf_list = modify_draft(title)
+
+        # modify upload 할 파일 찾았을 때
+        if find_pdf_list is not None:
+            pass
+
+        # 없을 때
+        else:
+            pass
+
         # print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
         # s = input()
         # if s == '1':
@@ -575,6 +586,32 @@ def modify(driver, isDraft):
         print("\n=====================================================")
 
 
+def modify_draft(title):
+    완료 = 링크[3] + '완료'
+    find_modify_list = []
+    find_draft_list = []
+    for modify_folder in os.listdir(완료):
+        modify_title = "".join(modify_folder.split('#')[:-1])
+        # 폴더 제목에서 %d월 형식의 숫자 제외하기
+        if delete_month(modify_title) == delete_month(title.replace('/', '$')):
+            # %d월 형식 제외한 title과 비교하여 일치하면 폴더 진입
+            for pdf in os.listdir(완료 + "/" + modify_folder):
+                # 폴더 내 pdf 파일의 %d월 형식 제외
+                find_modify_list.append(delete_month(pdf))
+            break
+
+    # in 폴더에서 %월 제외한 pdf 파일과 일치하는 pdf 파일 찾기
+    for pdf in os.listdir(링크[3] + "in"):
+        if delete_month(pdf) in find_modify_list:
+            find_draft_list.append(pdf)
+    return find_draft_list
+    # 일치하는 pdf 파일을 modify 할 때 업로드 후 기안 필요 폴더에 넣기
+
+
+def delete_month(name):
+    flag = re.compile("(\d)+월")
+    name = re.sub(flag, "월", name)
+    return name
 
 # TODO
 #   /d/d? 꼴로 바꾸기

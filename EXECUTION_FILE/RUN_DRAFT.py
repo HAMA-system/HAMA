@@ -199,12 +199,11 @@ def draft_write(driver):
 
         except:
             pass
-        last = len(driver.window_handles)
 
         # 기안 창으로 이동
         while True:
             try:
-                driver.switch_to.window(driver.window_handles[last])
+                driver.switch_to.window(driver.window_handles[1])
                 break
             except:
                 pass
