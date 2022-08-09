@@ -393,9 +393,12 @@ def save(driver):
             break
         else:
             time.sleep(3)
+    print(1)
     cpath(driver,저장)
+    print("A")
     time.sleep(0.3)
     acceptAlert(driver)
+    print(2)
 
 def delete(file):
     print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
@@ -492,7 +495,7 @@ def modify(driver, isDraft):
                 if i == 4:
                     tax_date.append(td.get_attribute("innerText"))
 
-        title[1] = monthly_check(title[1])
+        title[1] = monthly_check(title[1]).strip()
         for i in range(len(res)):
             res[i] = monthly_check(res[i])
         print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
@@ -547,16 +550,39 @@ def modify(driver, isDraft):
         save(driver)
         print("저장이 완료되었습니다.")
 
-        find_pdf_list = modify_draft(title)
+        modify_draft(title[1])
+        path = ''
+        for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
+            checkFolder = "".join(inFolder.split('#')[:-1])
+            if checkFolder.replace('$', '/').strip() == title[1].strip():
+                path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
+                dpath = 링크[3] + '기안 필요/' + inFolder + '/'
+                break
 
-        # modify upload 할 파일 찾았을 때
-        if find_pdf_list is not None:
-            pass
+        if path:
+            cpath(driver, 첨부파일)
+            driver.switch_to.window(driver.window_handles[1])
+            for f in os.listdir(path):
+                driver.find_element_by_xpath(파일선택).send_keys(path + f)
+                time.sleep(0.3)
+                cpath(driver, 파일업로드)
+                print(f, "파일 업로드 완료")
 
-        # 없을 때
+            os.replace(path, dpath)
+            print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
+
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
+            time.sleep(0.1)
+            driver.switch_to.frame(조회_프레임)
+
+            # 해야함
+            driver.switch_to.frame('frmPopup')
+            save(driver)
         else:
-            pass
-
+            print("파일을 찾을 수 없습니다")
+            print("파일을 올리고 저장 후 엔터를 눌러주세요.")
+            input()
         # print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
         # s = input()
         # if s == '1':
@@ -604,7 +630,11 @@ def modify_draft(title):
     for pdf in os.listdir(링크[3] + "in"):
         if delete_month(pdf) in find_modify_list:
             find_draft_list.append(pdf)
-    return find_draft_list
+    draft_folder = 링크[3] + '결의서 작성 필요/' + title.replace('/', '$') + '#_/'
+    os.mkdir(draft_folder)
+    for draft_file in find_draft_list:
+        os.replace(링크[3] + "in/" + draft_file, draft_folder + draft_file)
+
     # 일치하는 pdf 파일을 modify 할 때 업로드 후 기안 필요 폴더에 넣기
 
 

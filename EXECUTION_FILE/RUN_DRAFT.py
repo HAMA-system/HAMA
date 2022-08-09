@@ -173,9 +173,6 @@ def draft_write(driver):
             put = input()
             if put == '1':
                 manage.modify(driver, True)
-                print("파일 업로드가 완료되면 엔터를 눌러주세요")
-                input()
-                manage.save(driver)
 
                 # Alert 오류 제어
                 try:
