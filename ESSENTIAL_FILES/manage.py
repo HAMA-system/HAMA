@@ -393,12 +393,9 @@ def save(driver):
             break
         else:
             time.sleep(3)
-    print(1)
     cpath(driver,저장)
-    print("A")
     time.sleep(0.3)
     acceptAlert(driver)
-    print(2)
 
 def delete(file):
     print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
@@ -631,7 +628,8 @@ def modify_draft(title):
         if delete_month(pdf) in find_modify_list:
             find_draft_list.append(pdf)
     draft_folder = 링크[3] + '결의서 작성 필요/' + title.replace('/', '$') + '#_/'
-    os.mkdir(draft_folder)
+    if title.replace('/', '$') + '#_' not in os.listdir(링크[3] + '결의서 작성 필요/'):
+        os.mkdir(draft_folder)
     for draft_file in find_draft_list:
         os.replace(링크[3] + "in/" + draft_file, draft_folder + draft_file)
 
