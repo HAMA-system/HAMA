@@ -1,9 +1,26 @@
-import os
 import shutil
 import time
+import re
 
 from FUNC_LIBRARY import xlsxFileController
 from HIDDEN_FILES.linkData import *
+
+mem = []
+expt = []
+
+def keyword_matching(text, keyword):
+    # 월 있으면 한번만 고려하도록
+    # print(re.search('[0-9]월',text))
+    # print(re.search(keyword,text))
+
+    if re.search(keyword,text) is not None:
+        if re.search('[0-9]월',text) is not None:
+            return keyword, True
+        else:
+            return keyword, False
+    else:
+        return keyword, None
+
 
 def match():
     print('엑셀파일을 로드하는 중입니다.\n결의내역 또는 결의내역(정기)의 내용이 많을 경우 데이터 로드시간이 1분 이상 소요될 수 있습니다.')
@@ -49,6 +66,25 @@ def match():
         # print(line[5])
 
         for cont in input3:
+            k, r = keyword_matching(line[5], cont[1])
+            if r == True:
+                # print(k, "는 월 포함됨")
+                ncont = cont[:6] + cont[7:13]
+                # print(ncont)
+                xlsxFileController.put_singleline_data_for_bank(output, '결의내역', 'E' + str(i), 'T' + str(i), ncont, line[0])
+                i += 1
+            elif k not in mem:
+                if r is None:
+                    # print(k, "는 없음")
+                    expt.append(line[5])
+                else:
+                    mem.append(k)
+                    # print(k, "는 그냥")
+                    ncont = cont[:6] + cont[7:13]
+                    # print(ncont)
+                    xlsxFileController.put_singleline_data_for_bank(output, '결의내역', 'E' + str(i), 'T' + str(i), ncont, line[0])
+                    i += 1
+
             if line[5]==cont[1]:
                 # print(line[5],cont[1])
                 # print(cont)
@@ -58,8 +94,39 @@ def match():
                 i += 1
     xlsxFileController.save_xls(output,링크[4]+'afterdata.xlsx')
 
+    E = set(expt)
+    print("일치하는 키워드를 찾지 못한 항목이",len(E),"개 있습니다.")
+    if expt!=[]:
+        print(*E,sep='\t')
     print("모든 작업이 완료되어 5초 후 프로그램이 종료됩니다")
     time.sleep(5)
 
 if __name__ == '__main__':
     match()
+    # k, r = keyword_matching('나는 향차이입니다','향차이')
+    # if k not in mem:
+    #     if r is None:
+    #         print(k,"는 없음")
+    #     elif r == True:
+    #         mem.append(k)
+    #         print(k,"는 월 포함됨")
+    #     else:
+    #         mem.append(k)
+    #         print(k,"는 그냥")
+    #
+    # k, r = keyword_matching('나는 향차이입니다', '향차이')
+    # if k not in mem:
+    #     if r is None:
+    #         print(k, "는 없음")
+    #     elif r == True:
+    #         mem.append(k)
+    #         print(k, "는 월 포함됨")
+    #     else:
+    #         mem.append(k)
+    #         print(k, "는 그냥")
+
+# TODO
+# 1. 키워드는 'ㅁㅁㅁ n월' 처럼 몇월로 써지면 중복 허용
+# 2. 나머지는 같은 키워드면 중복 무시하고 한번만 작성되도록 (가장 늦은 날짜)
+# 3. 공과금으로 작성된 내용은 한번에 작성하고 가장 늦은 날짜로 거래날짜 작성
+# 4. 작성되지 않고 넘어간 내용은 콘솔에 뿌려서 확인 가능하게 하기
