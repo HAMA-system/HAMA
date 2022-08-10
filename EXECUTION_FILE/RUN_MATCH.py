@@ -30,7 +30,7 @@ def match():
         print("bank.xlsx 파일이 올바르지 않습니다.\n잠시 후 프로그램이 종료됩니다.")
         time.sleep(3)
         return
-    bank_sheet_name = inputfile.get_sheet_names()[0]
+    bank_sheet_name = inputfile.sheetnames[0]
     input1 = xlsxFileController.all_data_fetch(inputfile,bank_sheet_name,'A9','J9')
     # print(*input2,sep='\n')
     # print(*input1,sep='\n')
@@ -55,6 +55,7 @@ def match():
     input2 = xlsxFileController.all_data_fetch(output, '결의내역', 'E15', 'X15')
 
     i = 0
+    next_change = False
     for _ in range(len(input2)):
         # print(input2[i][0])
         if input2[i][1] is not None and len(input2[i][1])<30:
@@ -66,40 +67,57 @@ def match():
         # print(line)
         # print(line[5])
 
+        checkExpt = True
+        prev = input3[-1][1]
         for cont in input3:
             k, r = keyword_matching(line[5], cont[1])
+            # print(line[5], cont[1])
+            if next_change==True and prev != k:
+                # print(prev, k)
+                mem.append(prev)
+                next_change = False
             if r == True:
+                checkExpt = False
+                next_change = True
                 # print(k, "는 월 포함됨")
                 ncont = cont[:6] + cont[7:13]
                 # print(ncont)
                 xlsxFileController.put_singleline_data_for_bank(output, '결의내역', 'E' + str(i), 'T' + str(i), ncont, line[0])
                 i += 1
             elif k not in mem:
-                if r is None:
-                    # print(k, "는 없음")
-                    expt.append(line[5])
-                else:
-                    mem.append(k)
+                if r is not None:
+                    checkExpt = False
+                    next_change = True
                     # print(k, "는 그냥")
                     ncont = cont[:6] + cont[7:13]
                     # print(ncont)
                     xlsxFileController.put_singleline_data_for_bank(output, '결의내역', 'E' + str(i), 'T' + str(i), ncont, line[0])
                     i += 1
 
-            if line[5]==cont[1]:
-                # print(line[5],cont[1])
-                # print(cont)
-                ncont = cont[:6] + cont[7:13]
-                # print(ncont)
-                xlsxFileController.put_singleline_data_for_bank(output,'결의내역','E'+str(i),'T'+str(i),ncont,line[0])
-                i += 1
+            prev = k
+
+        # print(mem)
+        # print(k, "는 없음")
+        # if k not in mem:
+        if checkExpt==True:
+            expt.append(line[5])
+            # print("찾을 수 없음 :", line)
+
+            # if line[5]==cont[1]:
+            #     # print(line[5],cont[1])
+            #     # print(cont)
+            #     ncont = cont[:6] + cont[7:13]
+            #     # print(ncont)
+            #     xlsxFileController.put_singleline_data_for_bank(output,'결의내역','E'+str(i),'T'+str(i),ncont,line[0])
+            #     i += 1
     xlsxFileController.save_xls(output,링크[4]+'afterdata.xlsx')
 
     E = set(expt)
     print("일치하는 키워드를 찾지 못한 항목이",len(E),"개 있습니다.")
     if expt!=[]:
+        print("매칭하지 못한 항목 : ")
         print(*E,sep='\t')
-    print("모든 작업이 완료되어 5초 후 프로그램이 종료됩니다")
+    print("\n모든 작업이 완료되어 5초 후 프로그램이 종료됩니다")
     time.sleep(5)
 
 if __name__ == '__main__':
