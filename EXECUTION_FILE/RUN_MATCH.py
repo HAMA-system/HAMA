@@ -30,7 +30,8 @@ def match():
         print("bank.xlsx 파일이 올바르지 않습니다.\n잠시 후 프로그램이 종료됩니다.")
         time.sleep(3)
         return
-    input1 = xlsxFileController.all_data_fetch(inputfile,'신한은행_거래내역조회','A9','J9')
+    bank_sheet_name = inputfile.get_sheet_names()[0]
+    input1 = xlsxFileController.all_data_fetch(inputfile,bank_sheet_name,'A9','J9')
     # print(*input2,sep='\n')
     # print(*input1,sep='\n')
     # print(*input3,sep='\n')
@@ -130,3 +131,4 @@ if __name__ == '__main__':
 # 2. 나머지는 같은 키워드면 중복 무시하고 한번만 작성되도록 (가장 늦은 날짜)
 # 3. 공과금으로 작성된 내용은 한번에 작성하고 가장 늦은 날짜로 거래날짜 작성
 # 4. 작성되지 않고 넘어간 내용은 콘솔에 뿌려서 확인 가능하게 하기
+
