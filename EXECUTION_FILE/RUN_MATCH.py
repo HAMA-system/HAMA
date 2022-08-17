@@ -70,7 +70,9 @@ def match():
         checkExpt = True
         prev = input3[-1][1]
         for cont in input3:
-            k, r = keyword_matching(line[5], cont[1])
+            if cont[1] is None or line[5] is None:
+                continue
+            k, r = keyword_matching(str(line[5]), str(cont[1]))
             # print(line[5], cont[1])
             if next_change==True and prev != k:
                 # print(prev, k)
