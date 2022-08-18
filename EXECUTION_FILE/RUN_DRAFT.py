@@ -96,6 +96,45 @@ def draft(driver):
             print(i,"번 문서 인쇄중...",sep='')
             cpath(driver, num)
             time.sleep(3)
+            try:
+                cid(driver, 'tabAttachInfoDT')
+                pdf_num = 1
+                print_path = 'C:/Users/admin/Downloads/'
+                while True:
+                    try:
+                        pdf_link = '/html/body/div[3]/div[1]/div/span[2]/span[2]/span/span/div[1]/div[3]/div/div[1]/ul/li/ul/ul/li/a['+str(pdf_num)+']/ul/li/span'
+                        pdf_down = driver.find_element(by=By.XPATH, value=pdf_link)
+                        pdf_down.click()
+                        pdf_num += 1
+                        t = 0
+                        Max = 0
+                        last_file = ''
+                        # 가장 최근에 추가된 파일로 이용.
+                        # 이름 추출하여 비교하는 게 시간 더 오래 걸림
+                        for file in os.listdir(print_path):
+                            written_time = os.path.getctime(print_path + file)
+                            if Max < written_time:
+                                Max = written_time
+                                last_file = file
+                            os.startfile(print_path + file, 'print')
+                            time.sleep(1)
+                    except:
+                        break
+            except:
+                pass
+            # 다운로드 폴더에서 pdf 파일 이름 비교 후 프린트
+            # os.startfile("test", "print")
+
+            # 어디 경로로 들어가는지
+            # 기본 인쇄 옵션 어떻게 되는지
+            # 엑셀 어떻게 되는지
+            # 가장 최근 문서 vs 이름 찾기
+
+            # test = driver.find_element(by=By.XPATH,
+            #                            value='/html/body/div[3]/div[1]/div/span[2]/span[2]/span/span/div[1]/div[3]/div/div[1]/ul/li/ul')
+            # for li in test.find_elements(by=By.TAG_NAME, value="li")[1:]:
+            #     print(li.get_attribute("innerText"))
+
             cpath(driver, 인쇄)
             time.sleep(1)
             driver.switch_to.frame(메인_프레임)
