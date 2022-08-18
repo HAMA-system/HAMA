@@ -117,7 +117,8 @@ def draft(driver):
                                 Max = written_time
                                 last_file = file
                             os.startfile(print_path + file, 'print')
-                            time.sleep(1)
+                            print(file, "파일이 프린트되고 있습니다.")
+                            time.sleep(0.5)
                     except:
                         break
             except:
