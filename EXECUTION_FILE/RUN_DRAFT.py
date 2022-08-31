@@ -5,6 +5,7 @@ import time
 
 from ESSENTIAL_FILES import manage
 from FUNC_LIBRARY.autoLogin import *
+from FUNC_LIBRARY import ignoreAutoLogout
 from selenium.webdriver.support.ui import Select
 
 t = 0
@@ -28,6 +29,8 @@ def timeError():
     # print("오류 메시지가 뜨더라도 잠시 기다려주세요.")
     # t = 0
     # draft(d)
+def refresh():
+    cpath(d,조회)
 
 def expand_shadow_element(driver, element):
     shadow_root = driver.execute_script('return arguments[0].shadowRoot', element)
@@ -191,7 +194,12 @@ def draft(driver):
         print("모든 문서 출력이 완료되었습니다.")
 
 def draft_write(driver):
-
+    global d
+    d = driver
+    ig = threading.Thread(target=ignoreAutoLogout.startTimer)
+    ig.daemon = True
+    ignoreAutoLogout.timer = 0
+    ig.start()
     cpath(driver,결의서_조회)
     first = True
     while True:
