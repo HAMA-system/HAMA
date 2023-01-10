@@ -8,6 +8,13 @@ from HIDDEN_FILES.linkData import *
 mem = []
 expt = []
 
+
+def left_align(text, length, padding=' '):
+    from wcwidth import wcswidth
+    text = str(text)
+    return text + padding * max(0, (length - wcswidth(text)))
+
+
 def keyword_matching(text, keyword):
     # 월 있으면 한번만 고려하도록
     # print(re.search('[0-9]월',text))
@@ -63,15 +70,22 @@ def match():
         else:
             break
     i += 15
-    for line in input1:
+
+    # input1 : bank 거래 내역
+    for row_num in range(len(input1)):
+        line = input1[row_num]
+
         # print(line)
         # print(line[5])
 
         checkExpt = True
+
+        # input3 : 결의 내역(정기)
         prev = input3[-1][1]
         for cont in input3:
             if cont[1] is None or line[5] is None:
                 continue
+
             k, r = keyword_matching(str(line[5]), str(cont[1]))
             # print(line[5], cont[1])
             if next_change==True and prev != k:
@@ -87,6 +101,7 @@ def match():
                 xlsxFileController.put_singleline_data_for_bank(output, '결의내역', 'E' + str(i), 'T' + str(i), ncont, line[0])
                 i += 1
             elif k not in mem:
+                # print(k) # 결의 내역 키워드
                 if r is not None:
                     checkExpt = False
                     next_change = True
@@ -102,9 +117,9 @@ def match():
         # print(k, "는 없음")
         # if k not in mem:
         if checkExpt==True:
-            expt.append(line[5])
+            expt.append((row_num + 9, line[0], line[1], line[3], line[4], line[5]))
+            # print(row_num + 8)
             # print("찾을 수 없음 :", line)
-
             # if line[5]==cont[1]:
             #     # print(line[5],cont[1])
             #     # print(cont)
@@ -112,13 +127,34 @@ def match():
             #     # print(ncont)
             #     xlsxFileController.put_singleline_data_for_bank(output,'결의내역','E'+str(i),'T'+str(i),ncont,line[0])
             #     i += 1
+
     xlsxFileController.save_xls(output,링크[4]+'afterdata.xlsx')
+
+    # E = set(expt)
+    # print("일치하는 키워드를 찾지 못한 항목이",len(E),"개 있습니다.")
+    # if expt!=[]:
+    #     print("매칭하지 못한 항목 : ")
+    #     print(*E,sep='\t')
 
     E = set(expt)
     print("일치하는 키워드를 찾지 못한 항목이",len(E),"개 있습니다.")
+    print("* 매칭하지 못한 항목")
     if expt!=[]:
-        print("매칭하지 못한 항목 : ")
-        print(*E,sep='\t')
+        print(left_align("행번호", 15),
+              left_align("거래일자", 15),
+              left_align("시각", 15),
+              left_align("출금액", 15),
+              left_align("입금액", 15),
+              left_align("거래내용", 15))
+
+        for row in expt:
+            print(left_align(row[0], 15) + "\t"
+                  + left_align(row[1], 15) + "\t"
+                  + left_align(row[2], 15) + "\t"
+                  + left_align(row[3], 15) + "\t"
+                  + left_align(row[4], 15) + "\t"
+                  + left_align(row[5], 15))
+
     print("\n모든 작업이 완료되어 5초 후 프로그램이 종료됩니다")
     time.sleep(5)
 

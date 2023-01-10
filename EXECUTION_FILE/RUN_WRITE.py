@@ -1,13 +1,14 @@
 from selenium import webdriver
 from FUNC_LIBRARY import errorController, autoLogin
 from ESSENTIAL_FILES import manage
-
+from HIDDEN_FILES import linkData
 
 def set_chromedriver():
     try:
         # driver = webdriver.Chrome("./chromedriver.exe")
         # driver = webdriver.Chrome("C:/auto/chromedriver.exe")
-        driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
+        # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
+        driver = webdriver.Chrome(linkData.링크[0])
         # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
         # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/dist/chromedriver")
 
