@@ -25,3 +25,5 @@ ttest
 ~$*.xlsx
 bank.xlsx
 .DS_Store
+HIDDEN_FILES/**
+HIDDEN_FILES.**

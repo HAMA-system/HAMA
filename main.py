@@ -5,9 +5,10 @@ from FUNC_LIBRARY import autoLogin
 from ESSENTIAL_FILES import manage
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from EXECUTION_FILE import RUN_DRAFT
 
+from webdriver_manager.chrome import ChromeDriverManager
+
+from EXECUTION_FILE import RUN_DRAFT
 
 def set_chromedriver():
     while True:
