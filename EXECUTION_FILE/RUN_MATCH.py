@@ -172,52 +172,16 @@ def match():
         if check_expt is True:
             bank_expt.append((bank_row_num + 8, bank_row[0], bank_row[1], bank_row[3], bank_row[4], bank_row[5]))
 
-        ## data_xlsx_period_data : data.xlsx 결의 내역(정기)
-        # prev = data_xlsx_period_data[-1][1]
-        # for data_period_row in data_xlsx_period_data:
-        #     # cont: 결의내역(정기)의 키워드가 없거나 line: 입금자명이 없으면
-        #     if data_period_row[1] is None or bank_row[5] is None:
-        #         continue
-        #
-        #     keyword, r = keyword_matching(str(bank_row[5]), str(data_period_row[1]))
-        #     if next_change is True and prev != keyword:
-        #         # print(prev, k)
-        #         bank_mem.append(prev)
-        #         data_mem.append(keyword)
-        #         next_change = False
-        #
-        #     if r is True or (keyword not in bank_mem and r is not None):
-        #         check_expt = False
-        #         next_change = True
-        #         # print(k, "는 월 포함됨")
-        #         ncont = data_period_row[:6] + data_period_row[7:13]
-        #         # print(ncont)
-        #         xlsxFileController.put_singleline_data_for_bank(output_xlsx, '결의내역', 'E' + str(i),
-        #                                                         'T' + str(i), ncont, bank_row[0])
-        #         i += 1
-        #     # elif keyword not in bank_mem and r is not None:
-        #     #     checkExpt = False
-        #     #     next_change = True
-        #     #     # print(k, "는 그냥")
-        #     #     ncont = data_period_row[:6] + data_period_row[7:13]
-        #     #     # print(ncont)
-        #     #     xlsxFileController.put_singleline_data_for_bank
-        #     #     (output_xlsx, '결의내역', 'E' + str(i), 'T' + str(i), ncont, bank_row[0])
-        #     #     i += 1
-        #     prev = keyword
-        #
-        # if check_expt is True:
-        #     bank_expt.append((bank_row_num + 9, bank_row[0], bank_row[1], bank_row[3], bank_row[4], bank_row[5]))
-
     xlsxFileController.save_xls(output_xlsx, output_file_path)
 
-    if data_mem:
-        print("\n* 중복을 제외하여 총", str(data_period_length), "개의 내역 중")
-        print("일치하는 키워드를 찾지 못한 항목이", len(data_mem), "개 있습니다.\n")
-        print("******************** [" +  data_file_name + "] ********************")
-        print(left_align("행번호", 6), left_align("키워드", 30), left_align("지출", 11))
-        for row in data_mem:
-            print(left_align(row[0], 6), left_align(row[1], 30), left_align(row[2], 11))
+    # 삭제
+    # if data_mem:
+    #     print("\n* 중복을 제외하여 총", str(data_period_length), "개의 내역 중")
+    #     print("일치하는 키워드를 찾지 못한 항목이", len(data_mem), "개 있습니다.\n")
+    #     print("******************** [" +  data_file_name + "] ********************")
+    #     print(left_align("행번호", 6), left_align("키워드", 30), left_align("지출", 11))
+    #     for row in data_mem:
+    #         print(left_align(row[0], 6), left_align(row[1], 30), left_align(row[2], 11))
 
     bank_expt_length = set(bank_expt)
     if bank_expt:
