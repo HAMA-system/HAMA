@@ -146,6 +146,7 @@ def match():
         dup_count = 0
 
     data_period_length = len(data_mem)
+
     # bank_xlsx_data : bank.xlsx 거래 내역
     for bank_row_num in range(len(bank_xlsx_data)):
         bank_row = bank_xlsx_data[bank_row_num]
@@ -232,67 +233,6 @@ def match():
         print_similar(bank_expt, data_mem)
         # 비슷한 키워드 매칭
 
-        ## data_xlsx_period_data : data.xlsx 결의 내역(정기)
-        # prev = data_xlsx_period_data[-1][1]
-        # for data_period_row in data_xlsx_period_data:
-        #     # cont: 결의내역(정기)의 키워드가 없거나 line: 입금자명이 없으면
-        #     if data_period_row[1] is None or bank_row[5] is None:
-        #         continue
-        #
-        #     keyword, r = keyword_matching(str(bank_row[5]), str(data_period_row[1]))
-        #     if next_change is True and prev != keyword:
-        #         # print(prev, k)
-        #         bank_mem.append(prev)
-        #         data_mem.append(keyword)
-        #         next_change = False
-        #
-        #     if r is True or (keyword not in bank_mem and r is not None):
-        #         check_expt = False
-        #         next_change = True
-        #         # print(k, "는 월 포함됨")
-        #         ncont = data_period_row[:6] + data_period_row[7:13]
-        #         # print(ncont)
-        #         xlsxFileController.put_singleline_data_for_bank(output_xlsx, '결의내역', 'E' + str(i),
-        #                                                         'T' + str(i), ncont, bank_row[0])
-        #         i += 1
-        #     # elif keyword not in bank_mem and r is not None:
-        #     #     checkExpt = False
-        #     #     next_change = True
-        #     #     # print(k, "는 그냥")
-        #     #     ncont = data_period_row[:6] + data_period_row[7:13]
-        #     #     # print(ncont)
-        #     #     xlsxFileController.put_singleline_data_for_bank
-        #     #     (output_xlsx, '결의내역', 'E' + str(i), 'T' + str(i), ncont, bank_row[0])
-        #     #     i += 1
-        #     prev = keyword
-        #
-        # if check_expt is True:
-        #     bank_expt.append((bank_row_num + 9, bank_row[0], bank_row[1], bank_row[3], bank_row[4], bank_row[5]))
-
-    xlsxFileController.save_xls(output_xlsx, output_file_path)
-
-    if data_mem:
-        print("\n* 중복을 제외하여 총", str(data_period_length), "개의 내역 중")
-        print("일치하는 키워드를 찾지 못한 항목이", len(data_mem), "개 있습니다.\n")
-        print("******************** [" +  data_file_name + "] ********************")
-        print(left_align("행번호", 6), left_align("키워드", 30), left_align("지출", 11))
-        for row in data_mem:
-            print(left_align(row[0], 6), left_align(row[1], 30), left_align(row[2], 11))
-
-    bank_expt_length = set(bank_expt)
-    if bank_expt:
-        print("\n* 총", str(len(bank_xlsx_data)), "개의 내역 중,")
-        print("일치하는 키워드를 찾지 못한 항목이", len(bank_expt_length), "개 있습니다.\n")
-        print("******************** [" + bank_file_name + "] ********************")
-        print(left_align("행번호", 7), left_align("거래일자", 12), left_align("시각", 10),
-              left_align("출금액", 11), left_align("입금액", 11), left_align("거래내용", 12))
-        for row in bank_expt:
-            print(left_align(row[0], 7), left_align(row[1], 12), left_align(row[2], 10),
-                  left_align(row[3], 11), left_align(row[4], 11), left_align(row[5], 12))
-
-        print_similar(bank_expt, data_mem)
-        # 비슷한 키워드 매칭
-
     # menu = input("\n수동 입력을 진행하시겠습니까? (0: 종료, 1: 진행) : ")
     # if menu == 1:
     #     manual_match(output_xlsx, bank_expt, i)
@@ -300,7 +240,6 @@ def match():
 
     print("\n모든 작업이 완료되어 5초 후 프로그램이 종료됩니다.")
     time.sleep(5)
-
 
 if __name__ == '__main__':
     match()
