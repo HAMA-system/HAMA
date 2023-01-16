@@ -53,8 +53,11 @@ if __name__ == '__main__':
     # print(time.time()-start)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
-    # dr = True
-    dr = False
+
+    #### only draft option ####
+    dr = True
+    # dr = False
+
     if dr:
         while True:
             RUN_DRAFT.draft(driver)
