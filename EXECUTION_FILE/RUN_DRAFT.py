@@ -1,4 +1,5 @@
 import re
+import subprocess
 import threading
 import os
 import time
@@ -175,8 +176,9 @@ def draft(driver):
                 print("첨부 파일 다운로드를 시작합니다")
                 cid(driver, 'tabAttachInfoDT')
                 pdf_num = 1
-                # print_path = 'C:/Users/admin/Downloads/'
-                print_path = '/Users/gengminy/Downloads/'
+                # print_path = 'C:/Users/admin/Downloads/'      #prod
+                # print_path = '/Users/gengminy/Downloads/'     #local mac
+                print_path = 'C:/Users/kls19/Downloads/'         #local win
                 while True:
                     try:
                         pdf_link = '/html/body/div[3]/div[1]/div/span[2]/span[2]/span/span/div[1]/div[3]/div/div[1]/ul/li/ul/ul/li/a['+str(pdf_num)+']/ul/li/span'
@@ -196,14 +198,24 @@ def draft(driver):
                             if Max < written_time:
                                 Max = written_time
                                 last_file = file
-                        print(print_path + last_file, "파일이 프린트되고 있습니다.")
+                        print(print_path + last_file, "파일이 프린트되고 있습니다...")
                         os.startfile(print_path + last_file, 'print')
                     except:
+                        print("첨부파일 출력 완료")
                         break
             except:
                 pass
 
-            cpath(driver, 기안_창닫기)
+            driver.switch_to.default_content()
+            driver.switch_to.frame(기안_프레임2)
+            try:
+                close_btn = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "embed_Close")))
+                close_btn.click()
+            except:
+                input("창 닫기에 실패하였습니다. 수동으로 종료 후 [Enter]를 눌러주세요")
+                pass
+
+            print(i, "번 문서 출력 완료", sep='')
 
         print("모든 문서 출력이 완료되었습니다.")
 
