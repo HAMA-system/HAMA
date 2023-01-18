@@ -158,12 +158,19 @@ def match():
 
             # 키워드와 금액이 일치하면
             if str(bank_row[5]) == str(data_row[1]) and str(bank_row[4]) == str(data_row[2]):
-                bank_mem.append(bank_row)
-                data_mem.remove(data_row)
-                data_period_index = data_row[0] - 15
-                ncont = data_xlsx_period_data[data_period_index][:6] + data_xlsx_period_data[data_period_index][7:13]
-                xlsxFileController.put_singleline_data_for_bank(output_xlsx, '결의내역', 'E' + str(i),
-                                                                'T' + str(i), ncont, bank_row[0])
+                bank_mem.append(bank_row)   # 일치한 은행 기록
+                data_mem.remove(data_row)   # 일치한 데이터 삭제
+                data_period_index = data_row[0] - 15    # 실제 데이터 위치
+
+                # print(data_xlsx_period_data[data_period_index])
+                keyword_name = data_xlsx_period_data[data_period_index][1]
+                keyword_date = bank_row[0]
+                # deprecated
+                # ncont = data_xlsx_period_data[data_period_index][:6] + data_xlsx_period_data[data_period_index][7:13]
+                # xlsxFileController.put_singleline_data_for_bank(output_xlsx, '결의내역', 'E' + str(i),
+                #                                                 'T' + str(i), ncont, bank_row[0])
+                xlsxFileController.put_cell_data(output_xlsx, "결의내역", 'F' + str(i), keyword_name)   # 키워드
+                xlsxFileController.put_cell_data(output_xlsx, "결의내역", 'I' + str(i), keyword_date)   # 결의일자
                 i += data_row[3] + 1
                 # print(i, data_row)
                 check_expt = False
@@ -202,8 +209,8 @@ def match():
     #     manual_match(output_xlsx, bank_expt, i)
     input("\n* 작업을 마치려면 [Enter] 키를 입력하세요. ")
 
-    print("\n모든 작업이 완료되어 5초 후 프로그램이 종료됩니다.")
-    time.sleep(5)
+    print("\n모든 작업이 완료되어 3초 후 프로그램이 종료됩니다.")
+    time.sleep(3)
 
 if __name__ == '__main__':
     match()
