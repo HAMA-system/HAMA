@@ -120,7 +120,8 @@ def search(driver):
     elif month == '12':
         fname(driver, 'DpFrDt', dateController.date1year())
     elif len(month) == 4:
-        fname(driver, 'DpFrDt', month + '0301')
+        # fname(driver, 'DpFrDt', month + '0301') 정책변경 -> 시작년도 2020년 고정
+        fname(driver, 'DpFrDt', '20200301')
         fname(driver, 'DpToDt', str(int(month) + 1) + '0228')
 
     else:
