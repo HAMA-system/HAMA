@@ -416,7 +416,7 @@ def modify(driver, isDraft):
         ig = threading.Thread(target=ignoreAutoLogout.startTimer)
         ig.daemon = True
         ig.start()
-        cpath(driver,결의서_조회)
+        cpath(driver, 결의서_조회)
 
     while True:
 
@@ -493,10 +493,15 @@ def modify(driver, isDraft):
                 if i == 4:
                     tax_date.append(td.get_attribute("innerText"))
 
+        ##
+        ## 연도 제거
+        ##
+        title[1] = delete_year_str(title[1])
+
         title[1] = monthly_check(title[1]).strip()
         for i in range(len(res)):
             res[i] = monthly_check(res[i])
-        print("결의서 날짜 + 제목", title, "", "적요", *res,"", sep='\n')
+        print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep='\n')
 
         # 날짜 및 제목 입력
         # time.sleep(0.5)
@@ -516,7 +521,6 @@ def modify(driver, isDraft):
             cpath(driver, 결의내역_제출)
             time.sleep(0.1)
 
-
         # 세금 작성
         if tax_date and tax_date[0] != '':
             cpath(driver, 세금계산_탭)
@@ -535,7 +539,7 @@ def modify(driver, isDraft):
                     elif int(change) != 7:
                         tax_date[i] = tax_date[i][:8] + str(30)
 
-            print("세금 날짜", *tax_date, "",sep='\n')
+            print("세금 날짜", *tax_date, "", sep='\n')
 
             # 세금 작성
             for i in range(len(tax_date)):
@@ -543,7 +547,7 @@ def modify(driver, isDraft):
                 fpath(driver, 발행일자, tax_date[i])
                 cpath(driver, 세금계산_제출)
                 time.sleep(0.1)
-            cpath(driver,결의내역_탭)
+            cpath(driver, 결의내역_탭)
 
         save(driver)
         print("저장이 완료되었습니다.")
@@ -698,14 +702,34 @@ def ymonth_inc(ymonth, val):
     r.append(ret)
     return r
 
+
+def delete_year_str(string):
+    y_space = re.compile('(\d*)( 년)')
+    y_back = re.compile('(\d*)(년 )')
+    y = re.compile('(\d*)(년)')
+    y_ = re.compile('(\d+)(년)(분*)')
+
+    ret = string
+    ret = re.sub(y_space, "", ret)
+    ret = re.sub(y_back, "", ret)
+    ret = re.sub(y, "", ret)
+    ret = re.sub(y_, "", ret)
+
+    return ret
+
+
 def monthly_check(prev):
     r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
     q2 = re.compile('(\D*)([\d~]*\d+)(월)(\D*)')
     n = re.compile(('\d[ , ]+\d'))
     q = re.compile(('~'))
     y = re.compile('(\d*)(년)')
+    # yy = re.compile('(\d*)( 년)')
+    # yyy = re.compile('(\d*)(년 )')
+    # only_y = re.compile('(\d+)(년)(분*)')
     c = re.compile("[']*(\d*)\.(\d*)\.(\d*)(\.)*")
-    only_y = re.compile('(\d+)(년)(분*)')
+
+    prev = delete_year_str(prev)
 
     # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
     l, key = 0, 0
@@ -724,10 +748,10 @@ def monthly_check(prev):
     for p in text_list:
         if c.search(p):
             f = c.findall(p)
-            if len(f)==2:
-                date1 = datetime.datetime(int(f[0][0]),int(f[0][1]),int(f[0][2]))
-                date2 = datetime.datetime(int(f[1][0]),int(f[1][1]),int(f[1][2]))
-                if dateController.date2dateByDays(date1, date2)>300:
+            if len(f) == 2:
+                date1 = datetime.datetime(int(f[0][0]), int(f[0][1]), int(f[0][2]))
+                date2 = datetime.datetime(int(f[1][0]), int(f[1][1]), int(f[1][2]))
+                if dateController.date2dateByDays(date1, date2) > 300:
                     #1년 단위 차이라고 가정
                     # year_gap = dateController.date2dateByYears(date1,date2)
                     year_gap = round(dateController.date2dateByDays(date1, date2) / 365)
@@ -744,7 +768,9 @@ def monthly_check(prev):
                 result += p + " "
         else:
             check = False
+            # 년도가 등장하는 부분 시작
             if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
+                # print(pprev)
                 temp = []
                 m = l
                 x = []
@@ -758,7 +784,11 @@ def monthly_check(prev):
                     m += 1
                 for tmp in temp:
                     x.append(int(s))
-                ret_y.append([int(pprev[:-1]),x])
+                ret_y.append([int(pprev[:-1]), x])
+                # year_part = pprev
+                #연도 붙이기
+                # print("ret_y = " + str(ret_y))
+            # 년도가 등장하는 부분 종료
             elif r.match(p) or q2.match(p):
                 temp = []
                 m = l
@@ -774,10 +804,14 @@ def monthly_check(prev):
 
             l += len(p)+1
             pprev = p
+            # print(pprev)
 
-            if not check:
-                result += new_monthly_next(p, ret, key, ret_y) + " "
+        if not check:
+            # print(p, ret_y)
+            # print(p, ret)
+            result += new_monthly_next(p, ret, key, ret_y) + " "
 
+    result = delete_year_str(result)
     return result
 
 def monthly_next(prev, month, val, ymonth):
@@ -971,16 +1005,36 @@ def new_monthly_next(prev, month, val, ymonth):
     return prev
 
 if __name__ == '__main__':
-    sys.stdin = open(링크[3]+"_etc/errorCase.txt")
-    input()
-    while True:
-        put = input()
-        if put[0] == "<":
-            break
-        print("------------------")
-        print(put,"->")
-        result = monthly_check(put)
-        print(result)
 
-        result = monthly_textReplace(result,"8")
-        print(result)
+    test_text = "테스트용(실습 2022년 12월) 지급"
+    test2 = "12월"
+    test3 = "2021 21년"
+    test4 = "서울캠 경비용역 도급비(2022년 12월분)"
+    test5 = "서울캠 경비용역 도급비(2022년도 12월분)"
+    # test5 = "기능직2 직원 휴일 당직수당 지급(2022년12월분)"
+    # test5 = "기능직2 직원 휴일 당직수당 지급(222222년 11월, 12월분)"
+
+    # title[1] = monthly_check(title[1]).strip()
+    # for i in range(len(res)):
+    #     res[i] = monthly_check(res[i])
+
+
+    print(monthly_check(test_text))
+    # print(monthly_check(test2))
+    # print(monthly_check(test3))
+    print(monthly_check(test4))
+    print(monthly_check(test5))
+
+    # sys.stdin = open(링크[3]+"_etc/errorCase.txt")
+    # input()
+    # while True:
+    #     put = input()
+    #     if put[0] == "<":
+    #         break
+    #     print("------------------")
+    #     print(put,"->")
+    #     result = monthly_check(put)
+    #     print(result)
+    #
+    #     result = monthly_textReplace(result,"8")
+    #     print(result)
