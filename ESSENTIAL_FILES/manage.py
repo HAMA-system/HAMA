@@ -552,14 +552,21 @@ def modify(driver, isDraft):
         save(driver)
         print("저장이 완료되었습니다.")
 
+        mkdir_if_not_exist()
+
         modify_draft(title[1])
         path = ''
-        for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
-            checkFolder = "".join(inFolder.split('#')[:-1])
-            if checkFolder.replace('$', '/').strip() == title[1].strip():
-                path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
-                dpath = 링크[3] + '기안 필요/' + inFolder + '/'
-                break
+        depth = ''
+        try:
+            for inFolder in os.listdir('/결의서 작성 필요/'):
+                checkFolder = "".join(inFolder.split('#')[:-1])
+                if checkFolder.replace('$', '/').strip() == title[1].strip():
+                    path = '/결의서 작성 필요/' + inFolder + '/'
+                    dpath = '/기안 필요/' + inFolder + '/'
+                    break
+        except:
+            print("경로 설정 오류 - 파일 저장에 실패했습니다")
+            pass
 
         if path:
             cpath(driver, 첨부파일)
@@ -570,8 +577,12 @@ def modify(driver, isDraft):
                 cpath(driver, 파일업로드)
                 print(f, "파일 업로드 완료")
 
-            os.replace(path, dpath)
-            print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
+            try:
+                os.replace(path, dpath)
+                print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
+            except:
+                print("경로 설정 오류 - 기안 필요 파일 이동에 실패했습니다")
+                pass
 
             driver.close()
             driver.switch_to.window(driver.window_handles[0])
@@ -614,29 +625,48 @@ def modify(driver, isDraft):
         print("\n=====================================================")
 
 
+def mkdir_if_not_exist():
+    target_dir = './완료'
+    need_dir = './결의서 작성 필요'
+    draft_dir = './기안 필요'
+    input_dir = './in'
+
+    if not os.path.exists(target_dir):
+        os.mkdir(target_dir)
+    if not os.path.exists(need_dir):
+        os.mkdir(need_dir)
+    if not os.path.exists(draft_dir):
+        os.mkdir(draft_dir)
+    if not os.path.exists(input_dir):
+        os.mkdir(input_dir)
+
 def modify_draft(title):
-    완료 = 링크[3] + '완료'
+    target_dir = './완료'
+    need_dir = './결의서 작성 필요'
+    draft_dir = './기안 필요'
+    input_dir = './in'
+
     find_modify_list = []
     find_draft_list = []
-    for modify_folder in os.listdir(완료):
+    for modify_folder in os.listdir(target_dir):
         modify_title = "".join(modify_folder.split('#')[:-1])
         # 폴더 제목에서 %d월 형식의 숫자 제외하기
         if delete_month(modify_title) == delete_month(title.replace('/', '$')):
             # %d월 형식 제외한 title과 비교하여 일치하면 폴더 진입
-            for pdf in os.listdir(완료 + "/" + modify_folder):
+            for pdf in os.listdir(target_dir + "/" + modify_folder):
                 # 폴더 내 pdf 파일의 %d월 형식 제외
                 find_modify_list.append(delete_month(pdf))
             break
 
     # in 폴더에서 %월 제외한 pdf 파일과 일치하는 pdf 파일 찾기
-    for pdf in os.listdir(링크[3] + "in"):
+    for pdf in os.listdir(input_dir):
         if delete_month(pdf) in find_modify_list:
             find_draft_list.append(pdf)
-    draft_folder = 링크[3] + '결의서 작성 필요/' + title.replace('/', '$') + '#_/'
-    if title.replace('/', '$') + '#_' not in os.listdir(링크[3] + '결의서 작성 필요/'):
+    draft_folder = need_dir + '/' + title.replace('/', '$') + '#_/'
+    if title.replace('/', '$') + '#_' not in os.listdir(need_dir):
         os.mkdir(draft_folder)
     for draft_file in find_draft_list:
-        os.replace(링크[3] + "in/" + draft_file, draft_folder + draft_file)
+        os.replace(input_dir + '/' + draft_file, draft_folder + draft_file)
 
     # 일치하는 pdf 파일을 modify 할 때 업로드 후 기안 필요 폴더에 넣기
 
