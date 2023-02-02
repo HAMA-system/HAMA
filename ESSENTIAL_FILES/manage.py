@@ -3,6 +3,8 @@ import os
 import re
 import sys
 
+from datetime import *
+from dateutil.relativedelta import *
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
 
@@ -525,28 +527,22 @@ def modify(driver, isDraft):
         if tax_date and tax_date[0] != '':
             cpath(driver, 세금계산_탭)
 
-            # 세금 날짜 변경
-            for i in range(len(tax_date)):
-                change = str(int(tax_date[i][5:7]) % 12 + 1)
-                if int(change) < 10:
-                    change = "0" + change
-                tax_date[i] = tax_date[i][:5] + change + tax_date[i][7:]
+            try:
+                # dateutil 로 대체
+                for i in range(len(tax_date)):
+                    tax_date[i] = datetime.strptime(tax_date[i], "%Y-%m-%d") + relativedelta(months=1)
+                    tax_date[i] = datetime.strftime(tax_date[i], "%Y-%m-%d")
 
-                # 달마다 없는 날짜 처리
-                if int(tax_date[i][8:]) == 31:
-                    if int(change) == 1:
-                        tax_date[i] = title[i][:8] + str(28)
-                    elif int(change) != 7:
-                        tax_date[i] = tax_date[i][:8] + str(30)
+                print("세금 날짜", *tax_date, "", sep='\n')
 
-            print("세금 날짜", *tax_date, "", sep='\n')
-
-            # 세금 작성
-            for i in range(len(tax_date)):
-                cpath(driver, 세금계산_링크 + '['+str(i+2)+']')
-                fpath(driver, 발행일자, tax_date[i])
-                cpath(driver, 세금계산_제출)
-                time.sleep(0.1)
+                # 세금 작성
+                for i in range(len(tax_date)):
+                    cpath(driver, 세금계산_링크 + '['+str(i+2)+']')
+                    fpath(driver, 발행일자, tax_date[i])
+                    cpath(driver, 세금계산_제출)
+                    time.sleep(0.1)
+            except:
+                print("세금 날짜 작성에 실패하였습니다")
             cpath(driver, 결의내역_탭)
 
         save(driver)
@@ -735,11 +731,17 @@ def ymonth_inc(ymonth, val):
 
 def delete_year_str(string):
     y_space = re.compile('(\d*)( 년)')
+    ydo_back = re.compile('(\d*)(년도 )')
+    ydo_space = re.compile('(\d*)( 년도)')
+    ydo = re.compile('(\d*)(년도)')
     y_back = re.compile('(\d*)(년 )')
     y = re.compile('(\d*)(년)')
     y_ = re.compile('(\d+)(년)(분*)')
 
     ret = string
+    ret = re.sub(ydo_back, "", ret)
+    ret = re.sub(ydo_space, "", ret)
+    ret = re.sub(ydo, "", ret)
     ret = re.sub(y_space, "", ret)
     ret = re.sub(y_back, "", ret)
     ret = re.sub(y, "", ret)
@@ -1054,6 +1056,11 @@ if __name__ == '__main__':
     # print(monthly_check(test3))
     print(monthly_check(test4))
     print(monthly_check(test5))
+
+    # tax_date = ['2022-12-25']
+    # tax_strpdate = datetime.strptime(tax_date[0], "%Y-%m-%d")
+    # tax_strpdate = tax_strpdate + relativedelta(months=1)
+    # tax_strpdate = datetime.strftime(tax_strpdate, "%Y-%m-%d")
 
     # sys.stdin = open(링크[3]+"_etc/errorCase.txt")
     # input()
