@@ -176,9 +176,7 @@ def draft(driver):
                 print("첨부 파일 다운로드를 시작합니다")
                 cid(driver, 'tabAttachInfoDT')
                 pdf_num = 1
-                # print_path = 'C:/Users/admin/Downloads/'      #prod
-                # print_path = '/Users/gengminy/Downloads/'     #local mac
-                print_path = 'C:/Users/kls19/Downloads/'         #local win
+                print_path = download_path
                 while True:
                     try:
                         pdf_link = '/html/body/div[3]/div[1]/div/span[2]/span[2]/span/span/div[1]/div[3]/div/div[1]/ul/li/ul/ul/li/a['+str(pdf_num)+']/ul/li/span'
@@ -348,7 +346,8 @@ def draft_upload(driver, title, isFile):
         if re.search(searchKey, title.strip()):
             draftFolder = path + folder + "/"
             for file in os.listdir(draftFolder):
-                driver.find_element_by_xpath(기안_파일).send_keys(draftFolder + file)
+                abs_file_path = os.path.abspath(draftFolder + file)
+                driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
 
                 # 로딩 안되고 올라가면 스킵되는 듯?
                 time.sleep(1.5)

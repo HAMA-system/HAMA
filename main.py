@@ -54,9 +54,9 @@ if __name__ == '__main__':
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
 
-    #### only draft option ####
-    # dr = True
-    dr = False
+    #### only printing option ####
+    dr = True
+    # dr = False
 
     if dr:
         while True:
