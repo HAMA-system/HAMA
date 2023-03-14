@@ -243,7 +243,7 @@ def draft_write(driver):
 
         while True:
             print("\n변경하실 페이지를 띄우신 후 원하시는 버튼을 입력해주세요.")
-            print("1(다음달로 복사 후 기안) 2(바로 기안)")
+            print("1(다음달로 복사 후 기안) 2(바로 기안) 3(검색으로 돌아가기)")
 
             put = input()
             if put == '1':
@@ -258,8 +258,14 @@ def draft_write(driver):
             elif put == '2':
                 driver.switch_to.frame('frmPopup')
                 break
+            elif put == '3':
+                first = True
+                break
+                
             else:
                 print("잘못된 입력입니다.")
+        if first == True:
+            continue
 
         cid(driver, 기안)
         try:

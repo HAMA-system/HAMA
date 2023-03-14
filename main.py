@@ -55,8 +55,8 @@ if __name__ == '__main__':
     driver = autoLogin.login(driver)
 
     #### only printing option ####
-    dr = True
-    # dr = False
+    # dr = True
+    dr = False
 
     if dr:
         while True:
