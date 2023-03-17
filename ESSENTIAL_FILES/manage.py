@@ -272,12 +272,16 @@ def write(driver):
                         fpath(driver, 귀속부서, target_data[i][11])
                         epath(driver, 귀속부서)
 
-                if target_data[i][12] is not None and target_data[i][12] != '' and target_data[i][12] != '_':
-                    if target_data[i][12] == '기숙사':
-                        dorm(driver, 예산부서, 예산부서팝업)
-                    else:
-                        fpath(driver, 예산부서, target_data[i][12])
-                        epath(driver, 예산부서)
+                print("귀속부서 완")
+
+                # if target_data[i][12] is not None and target_data[i][12] != '' and target_data[i][12] != '_':
+                #     if target_data[i][12] == '기숙사':
+                #         dorm(driver, 예산부서, 예산부서팝업)
+                #     else:
+                #         fpath(driver, 예산부서, target_data[i][12])
+                #         epath(driver, 예산부서)
+
+                print("예산부서 완")
 
                 select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
 
