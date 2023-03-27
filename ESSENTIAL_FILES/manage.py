@@ -155,36 +155,34 @@ def lookup(driver):
             print("=====================================================")
 
 def write(driver):
+    driver.switch_to.default_content()
+    cpath(driver,결의서_작성)
+    driver.switch_to.frame(작성_프레임)
 
-    try:
+    print("\n\n\n=================================")
+    while True:
+        print("결의서를 작성하시겠습니까? 1(예)/2(아니오)")
+        yes = input()
+        if yes == '1':
+            break
 
-        driver.switch_to.default_content()
-        cpath(driver,결의서_작성)
-        driver.switch_to.frame(작성_프레임)
+    file = xlsxFileController.load_xls(링크[2])
+    input_data = xlsxFileController.all_data_fetch(file, '결의내역', 'E15', 'X15')
+    w = 0
+    prev = input_data[0][0]
+    tax = 0
 
-        print("\n\n\n=================================")
-        while True:
-            print("결의서를 작성하시겠습니까? 1(예)/2(아니오)")
-            yes = input()
-            if yes == '1':
-                break
+    target_data = input_data
+    row = 15
+    isMonthly = False
+    title = ""
 
-        file = xlsxFileController.load_xls(링크[2])
-        input_data = xlsxFileController.all_data_fetch(file, '결의내역', 'E15', 'X15')
-        w = 0
-        prev = input_data[0][0]
-        tax = 0
-
-        target_data = input_data
-        row = 15
-        isMonthly = False
-        title = ""
-
-        # Main loop
-        for i in range(len(target_data)):
-            if target_data[i][0] != -1 or prev != -1:
-                w = 1
-                if prev != target_data[i][0]:
+    # Main loop
+    for i in range(len(target_data)):
+        if target_data[i][0] != -1 or prev != -1:
+            w = 1
+            if prev != target_data[i][0]:
+                try:
                     if tax == 1:
                         file = taxWrite(driver, prev, file, isMonthly, row)
                         tax = 0
@@ -201,26 +199,31 @@ def write(driver):
                     # time.sleep(0.5)
 
                     print("구분번호 :", target_data[i][0])
+                    print("사업코드 입력 완료")
+                except:
+                    input("* 세금 계산 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+        
 
-                print(i + 15, '행 입력중입니다.', sep='')
+            print(i + 15, '행 입력중입니다.', sep='')
 
-                # 정기 체크
-                if target_data[i][1] is not None and target_data[i][1] != '' and target_data[i][1] != '_':
-                    isMonthly = True
-                    if target_data[i][2] != '' and target_data[i][2] != '_':
-                        target_data[i][18] = str(target_data[i][18])
-                        target_data[i][2] = str(target_data[i][2])
-                        target_data[i][18] = monthly_textReplace(target_data[i][18], target_data[i][2])
+            # 정기 체크
+            if target_data[i][1] is not None and target_data[i][1] != '' and target_data[i][1] != '_':
+                isMonthly = True
+                if target_data[i][2] != '' and target_data[i][2] != '_':
+                    target_data[i][18] = str(target_data[i][18])
+                    target_data[i][2] = str(target_data[i][2])
+                    target_data[i][18] = monthly_textReplace(target_data[i][18], target_data[i][2])
 
-                        if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
-                            target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
+                    if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
+                        target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
 
 
-                # time.sleep(0.5)
-                if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
-                    target_data[i][4] = str(target_data[i][4])[:10]
-
-                # time.sleep(0.2)
+            time.sleep(0.5)
+            if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
+                target_data[i][4] = str(target_data[i][4])[:10]
+            
+            time.sleep(0.2)
+            try:
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
                 if target_data[i][5] is not None and target_data[i][5] != '' and target_data[i][5] != '_':
                     if target_data[i][5] == '등록금':
@@ -228,11 +231,20 @@ def write(driver):
                     elif target_data[i][5] == '비등록금' or target_data[i][5] == '(서울)기숙사':
                         select.select_by_index(1)
                     time.sleep(0.2)
+                print("회계 구분 입력 완료")
+            except:
+                input("* 회계 구분 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
+            try:
                 if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
                     fpath(driver,결의일자_번호,target_data[i][4])
                 select = Select(driver.find_element_by_id('ddlResolutionDiv'))
+                print("결의일자 번호 입력 완료")
+            except:
+                input("* 결의일자 번호 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
+
+            try:
                 if target_data[i][6] is not None and target_data[i][6] != '' and target_data[i][6] != '_':
                     test3 = {"수입" : 0, "지출" : 1, "대체" : 2}
                     select.select_by_index(test3[target_data[i][6]])
@@ -243,13 +255,21 @@ def write(driver):
                     epath(driver,사업팝업)
                     driver.switch_to.default_content()
                     driver.switch_to.frame('ifr_d4_AHG020P')
+                print("사업코드 입력 완료")
+            except:
+                input("* 사업코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
+            try:
                 if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
                     fpath(driver,결의서_제목,target_data[i][3])
                     title = target_data[i][3]
                 fpath(driver,계정과목,target_data[i][8])
                 epath(driver,계정과목)
+                print("계정과목 입력 완료")
+            except : 
+                input("* 계정과목 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
+            try:
                 if target_data[i][9] is not None and target_data[i][9] != '' and target_data[i][9] != '_':
                     # time.sleep(0.1)
                     fpath(driver,관리코드,target_data[i][9])
@@ -264,25 +284,29 @@ def write(driver):
                         time.sleep(0.2)
                         driver.switch_to.default_content()
                         driver.switch_to.frame('ifr_d4_AHG020P')
-
+                    print("관리코드 입력 완료") 
+            except : 
+                input("* 관리코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+            
+            try:
                 if target_data[i][11] is not None and target_data[i][11] != '' and target_data[i][11] != '_':
                     if target_data[i][11] == '기숙사':
                         dorm(driver, 귀속부서, 귀속부서팝업)
                     else:
                         fpath(driver, 귀속부서, target_data[i][11])
                         epath(driver, 귀속부서)
+                print("귀속부서 입력 완료")
+            except : 
+                input("* 귀속부서 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
-                print("귀속부서 완")
+            # if target_data[i][12] is not None and target_data[i][12] != '' and target_data[i][12] != '_':
+            #     if target_data[i][12] == '기숙사':
+            #         dorm(driver, 예산부서, 예산부서팝업)
+            #     else:
+            #         fpath(driver, 예산부서, target_data[i][12])
+            #         epath(driver, 예산부서)
 
-                # if target_data[i][12] is not None and target_data[i][12] != '' and target_data[i][12] != '_':
-                #     if target_data[i][12] == '기숙사':
-                #         dorm(driver, 예산부서, 예산부서팝업)
-                #     else:
-                #         fpath(driver, 예산부서, target_data[i][12])
-                #         epath(driver, 예산부서)
-
-                print("예산부서 완")
-
+            try:
                 select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
 
                 test2 = {"없음" : 0, "세금" : 1, "기타" : 2, "현금" : 3}
@@ -294,74 +318,79 @@ def write(driver):
                     fpath(driver,수입,target_data[i][17])
                 if target_data[i][18] is not None and target_data[i][18] != '' and target_data[i][18] != '_':
                     fpath(driver,적요,target_data[i][18])
+                print("금액 입력 완료")   
+            except:
+                input("* 금액(적요) 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
-                # time.sleep(0.2)
-                cpath(driver,결의내역_제출)
-                time.sleep(0.3)
+            # time.sleep(0.2)
+            cpath(driver,결의내역_제출)
+            time.sleep(0.3)
 
-                if target_data[i][13] == '세금':
-                    tax = 1
-                    dismissAlert(driver)
+            if target_data[i][13] == '세금':
+                tax = 1
+                dismissAlert(driver)
 
-            prev = target_data[i][0]
+        prev = target_data[i][0]
 
-            if i == len(target_data)-1 and w == 1:
-                if tax == 1:
-                    file = taxWrite(driver, prev, file, isMonthly, row)
-                    tax = 0
+        if i == len(target_data)-1 and w == 1:
+            if tax == 1:
+                file = taxWrite(driver, prev, file, isMonthly, row)
+                tax = 0
 
-                save(driver)
-                upload(driver, title)
+            save(driver)
+            upload(driver, title)
 
-                print("입력이 완료되었습니다.")
-                print("구분번호 미변경시 중복 입력될 수 있으니 확인 부탁드립니다.")
+            print("입력이 완료되었습니다.")
+            print("구분번호 미변경시 중복 입력될 수 있으니 확인 부탁드립니다.")
 
-    except:
-        print('오류가 발생하여 초기화면으로 돌아갑니다')
-        autoLogin.afterLogin(driver)
+
 
 
 def taxWrite(driver, num, file, isMonthly, row):
-    time.sleep(0.3)
-    cpath(driver, 세금계산_탭)
-    tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB' + str(row), 'AJ' + str(row))
-    for j in range(len(tax_data)):
-        if tax_data[j][0] == num:
-            test = {"매입세금-불" : 1, "매입세금" : 2, "매입계산" : 3, "매출세금" : 4, "매출계산" : 5,
-                    "매출세금-불" : 6, "수입세금" : 7, "수입계산" : 8, "매입세금-간" : 9}
-            select = Select(driver.find_element_by_xpath(과세구분))
-            select.select_by_index(test[tax_data[j][1]])
-            fpath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
-            epath(driver, 발행일자)
-            fpath(driver, 거래처, '')
-            epath(driver, 거래처)
-            time.sleep(0.5)  # 없어도 돌아가긴 함
-            driver.switch_to.frame('frmPopup')
-            if 48 <= ord(str(tax_data[j][3])[0]) <= 57:
-                fpath(driver, 사업자번호, tax_data[j][3])
-                epath(driver, 사업자번호)
-            else:
-                fpath(driver, 거래처명, tax_data[j][3])
-                epath(driver, 거래처명)
-            driver.switch_to.default_content()
-            driver.switch_to.frame('ifr_d4_AHG020P')
-            if tax_data[j][4] is not None and tax_data[j][4] != '' and tax_data[j][4] != '_':
-                fpath(driver, 공급가액, tax_data[j][4])
-                fpath(driver, 세액, tax_data[j][5])
+    try:
+        time.sleep(0.3)
+        cpath(driver, 세금계산_탭)
+        tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB' + str(row), 'AJ' + str(row))
+        for j in range(len(tax_data)):
+            if tax_data[j][0] == num:
+                test = {"매입세금-불" : 1, "매입세금" : 2, "매입계산" : 3, "매출세금" : 4, "매출계산" : 5,
+                        "매출세금-불" : 6, "수입세금" : 7, "수입계산" : 8, "매입세금-간" : 9}
+                select = Select(driver.find_element_by_xpath(과세구분))
+                select.select_by_index(test[tax_data[j][1]])
+                fpath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
+                epath(driver, 발행일자)
+                fpath(driver, 거래처, '')
+                epath(driver, 거래처)
+                time.sleep(0.5)  # 없어도 돌아가긴 함
+                driver.switch_to.frame('frmPopup')
+                if 48 <= ord(str(tax_data[j][3])[0]) <= 57:
+                    fpath(driver, 사업자번호, tax_data[j][3])
+                    epath(driver, 사업자번호)
+                else:
+                    fpath(driver, 거래처명, tax_data[j][3])
+                    epath(driver, 거래처명)
+                driver.switch_to.default_content()
+                driver.switch_to.frame('ifr_d4_AHG020P')
+                if tax_data[j][4] is not None and tax_data[j][4] != '' and tax_data[j][4] != '_':
+                    fpath(driver, 공급가액, tax_data[j][4])
+                    fpath(driver, 세액, tax_data[j][5])
 
-            select = Select(driver.find_element_by_id('ddlBillDiv'))
-            test1 = {"일반" : 1, "전자" : 2, "현금" : 3}
-            select.select_by_index(test1[tax_data[j][6]])
-            cpath(driver, 세금계산_제출)
-            time.sleep(0.5)
-    # for p in range(len(tax_data)):
-    #     if tax_data[p][0] == num:
-    #         if isMonthly:
-    #             xlsxFileController.put_cell_data(file, '결의내역', 'AB' + str(p+row), -1)
-    #         else:
-    #             xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
-    cpath(driver, 결의내역_탭)
-    print("세금처리가 완료되었습니다.")
+                select = Select(driver.find_element_by_id('ddlBillDiv'))
+                test1 = {"일반" : 1, "전자" : 2, "현금" : 3}
+                select.select_by_index(test1[tax_data[j][6]])
+                cpath(driver, 세금계산_제출)
+                time.sleep(0.5)
+        # for p in range(len(tax_data)):
+        #     if tax_data[p][0] == num:
+        #         if isMonthly:
+        #             xlsxFileController.put_cell_data(file, '결의내역', 'AB' + str(p+row), -1)
+        #         else:
+        #             xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
+        cpath(driver, 결의내역_탭)
+        print("세금처리가 완료되었습니다.")
+    except:
+        print('오류')
+        return
     return file
 
 def upload(driver, title):
