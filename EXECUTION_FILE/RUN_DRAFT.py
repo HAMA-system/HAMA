@@ -241,42 +241,57 @@ def draft_write(driver):
             manage.search(driver)
             first = False
 
+
+
+        # 기안 메뉴 loop
         while True:
-            print("\n변경하실 페이지를 띄우신 후 원하시는 버튼을 입력해주세요.")
-            print("1(다음달로 복사 후 기안) 2(바로 기안) 3(검색으로 돌아가기)")
+            # 선택지 loop
+            while True:
+                print("\n변경하실 페이지를 띄우신 후 원하시는 버튼을 입력해주세요.")
+                put = input("1(다음달로 복사 후 기안) 2(바로 기안) 3(검색으로 돌아가기)\n")
+                if put == '1':
+                    manage.modify(driver, True)
 
-            put = input()
-            if put == '1':
-                manage.modify(driver, True)
+                    # Alert 오류 제어
+                    try:
+                        driver.switch_to.alert.dismiss()
+                    except:
+                        pass
+                    break
+                elif put == '2':
+                    try:
+                        print("frame 처리중입니다... 최대 30초 소요될 수 있습니다.")
+                        driver.switch_to.frame('frmPopup')
+                    except:
+                        pass
+                    break
+                elif put == '3':
+                    first = True
+                    break
+                else:
+                    print("잘못된 입력입니다.")
+            # 검색으로 돌아가기
+            if first == True:
+                break
+            # 선택지 loop end
 
-                # Alert 오류 제어
-                try:
-                    driver.switch_to.alert.dismiss()
-                except:
-                    pass
-                break
-            elif put == '2':
-                driver.switch_to.frame('frmPopup')
-                break
-            elif put == '3':
-                first = True
-                break
-                
-            else:
-                print("잘못된 입력입니다.")
-        if first == True:
-            continue
-
-        cid(driver, 기안)
-        try:
-            driver.switch_to.alert.dismiss()
-            print("업로드된 파일이 없습니다.\n파일 업로드 후 엔터를 눌러주세요")
-            input()
-            manage.save(driver)
             cid(driver, 기안)
 
-        except:
-            pass
+            # 파일 업로드 실패 처리
+            try:
+                driver.switch_to.alert.dismiss()
+                print("업로드된 파일이 없습니다. 다시 시도해주세요.\n")
+                # driver.switch_to.frame(조회_프레임)
+                # input()
+                # manage.save(driver)
+                # cid(driver, 기안)
+            except:
+                break
+        # 기안 메뉴 loop end
+
+        # 검색으로 돌아가기
+        if first == True:
+            continue
 
         # 기안 창으로 이동
         while True:
