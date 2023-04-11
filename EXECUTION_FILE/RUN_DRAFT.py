@@ -244,6 +244,7 @@ def draft_write(driver):
 
 
         # 기안 메뉴 loop
+        no_file = False # 파일 오류 여부 체크
         while True:
             # 선택지 loop
             while True:
@@ -260,8 +261,10 @@ def draft_write(driver):
                     break
                 elif put == '2':
                     try:
-                        print("frame 처리중입니다... 최대 30초 소요될 수 있습니다.")
-                        driver.switch_to.frame('frmPopup')
+                        print("iFrame 처리중입니다... 최대 30초 소요될 수 있습니다.")
+                        if no_file == False:
+                            driver.switch_to.frame('frmPopup')
+                        no_file = True
                     except:
                         pass
                     break
