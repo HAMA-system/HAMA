@@ -4,6 +4,8 @@ import re
 import sys
 
 from datetime import *
+
+import selenium.webdriver
 from dateutil.relativedelta import *
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
@@ -271,20 +273,27 @@ def write(driver):
 
             try:
                 if target_data[i][9] is not None and target_data[i][9] != '' and target_data[i][9] != '_':
-                    # time.sleep(0.1)
+                    time.sleep(0.1)
                     fpath(driver,관리코드,target_data[i][9])
-                    # time.sleep(0.1)
+                    time.sleep(0.1)
                     epath(driver,관리코드)
-                    # time.sleep(0.2)
+                    time.sleep(0.2)
                     try:
+                        print(target_data[i][9])
                         driver.switch_to.alert.accept()
                     except:
                         driver.switch_to.frame('frmPopup')
-                        epath(driver,관리팝업)
+                        epath(driver,관리팝업) # 입력이 바로 될 경우
+
+                        # 테이블 더블 클릭
+                        actions = ActionChains(driver)
+                        table_td_1 = driver.find_element_by_xpath("/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]")
+                        actions.double_click(table_td_1).perform()
+
                         time.sleep(0.2)
                         driver.switch_to.default_content()
                         driver.switch_to.frame('ifr_d4_AHG020P')
-                    print("관리코드 입력 완료") 
+                    print("관리코드 입력 완료")
             except : 
                 input("* 관리코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
             
