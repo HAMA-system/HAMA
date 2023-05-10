@@ -261,12 +261,12 @@ def draft_write(driver):
                     break
                 elif put == '2':
                     try:
-                        print("iFrame 처리중입니다... 최대 30초 소요될 수 있습니다.")
+                        print("로드 중입니다. 최대 30초 소요될 수 있습니다.")
                         if no_file == False:
                             driver.switch_to.frame('frmPopup')
                         no_file = True
                     except:
-                        pass
+                        print("잘못된 입력입니다. 다시 시도해주세요")
                     break
                 elif put == '3':
                     first = True
@@ -278,7 +278,11 @@ def draft_write(driver):
                 break
             # 선택지 loop end
 
-            cid(driver, 기안)
+            try:
+                cid(driver, 기안)
+            except:
+                print("기안할 수 없습니다. 다시 확인하고 시도해주세요.")
+                break
 
             # 파일 업로드 실패 처리
             try:

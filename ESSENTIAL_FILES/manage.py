@@ -597,11 +597,11 @@ def modify(driver, isDraft):
         path = ''
         depth = ''
         try:
-            for inFolder in os.listdir('/결의서 작성 필요/'):
+            for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
                 checkFolder = "".join(inFolder.split('#')[:-1])
-                if checkFolder.replace('$', '/').strip() == title[1].strip():
-                    path = '/결의서 작성 필요/' + inFolder + '/'
-                    dpath = '/기안 필요/' + inFolder + '/'
+                if checkFolder.replace('$', '/').strip() == title.strip():
+                    path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
+                    dpath = 링크[3] + '기안 필요/' + inFolder + '/'
                     break
         except:
             print("경로 설정 오류 - 파일 저장에 실패했습니다")

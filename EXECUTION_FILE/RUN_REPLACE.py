@@ -8,8 +8,6 @@ from ESSENTIAL_FILES.manage import monthly_textReplace
 
 def replace():
     info = get_all_directory_info()
-    autoFolder = os.listdir(링크[3])
-    autoPath = 링크[3]
     inPath = 링크[3] + "in/"
     outPath = 링크[3] + "결의서 작성 필요/"
     # outFoler 나중에
@@ -17,10 +15,7 @@ def replace():
     print("파일 배치를 시작합니다.")
 
     # out 폴더 있는지 체크
-    if '결의서 작성 필요' not in autoFolder:
-        os.mkdir(링크[3] + '결의서 작성 필요')
-    if '기안 필요' not in autoFolder:
-        os.mkdir(링크[3] + '기안 필요')
+    mkdir_if_not_exist()
 
     # for new in info:
     for index, [num, keyword, month, title] in enumerate(info):
@@ -82,6 +77,20 @@ def replace():
     #   결의서 제목으로 Replace 하면 키워드 하나만 써도 됨
     #   정기내역 추가 해야함
 
+def mkdir_if_not_exist():
+    target_dir = 링크[3] + '완료'
+    need_dir = 링크[3] + '결의서 작성 필요'
+    draft_dir = 링크[3] + '기안 필요'
+    input_dir = 링크[3] + 'in'
+
+    if not os.path.exists(target_dir):
+        os.mkdir(target_dir)
+    if not os.path.exists(need_dir):
+        os.mkdir(need_dir)
+    if not os.path.exists(draft_dir):
+        os.mkdir(draft_dir)
+    if not os.path.exists(input_dir):
+        os.mkdir(input_dir)
 
 if __name__ == '__main__':
     r = True
