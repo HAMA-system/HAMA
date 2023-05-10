@@ -599,7 +599,7 @@ def modify(driver, isDraft):
         try:
             for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
                 checkFolder = "".join(inFolder.split('#')[:-1])
-                if checkFolder.replace('$', '/').strip() == title.strip():
+                if checkFolder.replace('$', '/').strip() == title[1].strip():
                     path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
                     dpath = 링크[3] + '기안 필요/' + inFolder + '/'
                     break
