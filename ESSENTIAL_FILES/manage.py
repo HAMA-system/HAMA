@@ -18,40 +18,49 @@ from FUNC_LIBRARY import xlsxFileController, dateController, autoLogin, ignoreAu
 import threading
 
 sema = 0
-d = ''
+d = ""
 mod_month = "-1"
+
+
 def refresh():
-    cpath(d,조회)
+    cpath(d, 조회)
+
 
 def printProgress(i, max):
-    c = int(i*max)
-    sys.stdout.write('\r[' + '#'*c + ' '*(max-c-1) + ']\t\t[' + str(int(i*100)) + '%]')
+    c = int(i * max)
+    sys.stdout.write(
+        "\r[" + "#" * c + " " * (max - c - 1) + "]\t\t[" + str(int(i * 100)) + "%]"
+    )
 
-def monthly_textReplace(prev,month):
-    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
+
+def monthly_textReplace(prev, month):
+    r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
     text_list = prev.split()
     result_string = ""
 
     for p in text_list:
         m = r.match(p)
         if m:
-            result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
+            result_string += re.sub(
+                "(\D*)([\d,]*\d+)(월)(\D*)", "\g<1>" + month + "\g<3>\g<4> ", p
+            )
         else:
             result_string += p + " "
 
     print(result_string)
     return result_string
 
+
 def dorm(driver, dep, pop):
-    fpath(driver, dep, '')
+    fpath(driver, dep, "")
     epath(driver, dep)
 
     try:
         driver.switch_to.alert.accept()
     except:
-        driver.switch_to.frame('frmPopup')
+        driver.switch_to.frame("frmPopup")
         epath(driver, pop)
-        fpath(driver, 소속코드, 'A33100')
+        fpath(driver, 소속코드, "A33100")
         epath(driver, 소속코드)
         time.sleep(0.3)
         actions = ActionChains(driver)
@@ -60,7 +69,8 @@ def dorm(driver, dep, pop):
         actions.double_click(doubleClick)
         actions.perform()
         driver.switch_to.default_content()
-        driver.switch_to.frame('ifr_d4_AHG020P')
+        driver.switch_to.frame("ifr_d4_AHG020P")
+
 
 def search(driver):
     global sema
@@ -68,12 +78,12 @@ def search(driver):
         print("회계 구분번호를 입력해주세요. ex) 1(등록금)/2(비등록금)/0(뒤로가기) ")
         print("검색이 필요 없으시면 엔터를 눌러주세요")
         acc = input().strip()
-        if acc == '1' or acc == '2' or acc == '3':
+        if acc == "1" or acc == "2" or acc == "3":
             break
-        elif acc == '':
+        elif acc == "":
             return
         print("잘못된 입력입니다.")
-    if acc == '0':
+    if acc == "0":
         driver.switch_to.default_content()
         return
 
@@ -81,7 +91,7 @@ def search(driver):
         sema = 1
         print("결의서 구분번호를 입력해주세요. ex) 1(전체)/2(수입)/3(지출)/4(대체)")
         res = input().strip()
-        if res == '1' or res == '2' or res == '3' or res == '4':
+        if res == "1" or res == "2" or res == "3" or res == "4":
             break
         print("잘못된 입력입니다.")
 
@@ -96,46 +106,44 @@ def search(driver):
     srch = input().strip()
 
     if len(month) == 4:
-        fname(driver, 'txtSAcctYear', month)
+        fname(driver, "txtSAcctYear", month)
     else:
-        fname(driver, 'txtSAcctYear', '2021')
+        fname(driver, "txtSAcctYear", "2021")
     select = Select(driver.find_element_by_xpath(회계구분_조회))
-    if acc == '1':
+    if acc == "1":
         select.select_by_index(0)
-    elif acc == '2':
+    elif acc == "2":
         select.select_by_index(1)
 
     select = Select(driver.find_element_by_xpath(결의서구분))
-    if res == '1':
+    if res == "1":
         select.select_by_index(0)
-    elif res == '2':
+    elif res == "2":
         select.select_by_index(1)
-    elif res == '3':
+    elif res == "3":
         select.select_by_index(2)
-    elif res == '4':
+    elif res == "4":
         select.select_by_index(3)
 
-    if month == '1':
-        fname(driver, 'DpFrDt', dateController.date1month())
-    elif month == '3':
-        fname(driver, 'DpFrDt', dateController.date3month())
-    elif month == '6':
-        fname(driver, 'DpFrDt', dateController.date6month())
-    elif month == '12':
-        fname(driver, 'DpFrDt', dateController.date1year())
+    if month == "1":
+        fname(driver, "DpFrDt", dateController.date1month())
+    elif month == "3":
+        fname(driver, "DpFrDt", dateController.date3month())
+    elif month == "6":
+        fname(driver, "DpFrDt", dateController.date6month())
+    elif month == "12":
+        fname(driver, "DpFrDt", dateController.date1year())
     elif len(month) == 4:
         # fname(driver, 'DpFrDt', month + '0301') 정책변경 -> 시작년도 2020년 고정
-        fname(driver, 'DpFrDt', '20200301')
-        fname(driver, 'DpToDt', str(int(month) + 1) + '0228')
+        fname(driver, "DpFrDt", "20200301")
+        fname(driver, "DpToDt", str(int(month) + 1) + "0228")
 
     else:
         print("잘못된 입력입니다.")
     if len(month) != 4:
-        fname(driver, 'DpToDt', dateController.dateToday())
+        fname(driver, "DpToDt", dateController.dateToday())
     fpath(driver, 제목_검색, srch)
-    cname(driver, 'CSMenuButton1$List')
-
-
+    cname(driver, "CSMenuButton1$List")
 
 
 def lookup(driver):
@@ -146,7 +154,7 @@ def lookup(driver):
     ig.daemon = True
     ig.start()
     driver.switch_to.default_content()
-    cpath(driver,결의서_조회)
+    cpath(driver, 결의서_조회)
     driver.switch_to.frame(조회_프레임)
 
     while True:
@@ -156,20 +164,21 @@ def lookup(driver):
             search(driver)
             print("=====================================================")
 
+
 def write(driver):
     driver.switch_to.default_content()
-    cpath(driver,결의서_작성)
+    cpath(driver, 결의서_작성)
     driver.switch_to.frame(작성_프레임)
 
     print("\n\n\n=================================")
     while True:
         print("결의서를 작성하시겠습니까? 1(예)/2(아니오)")
         yes = input()
-        if yes == '1':
+        if yes == "1":
             break
 
     file = xlsxFileController.load_xls(링크[2])
-    input_data = xlsxFileController.all_data_fetch(file, '결의내역', 'E15', 'X15')
+    input_data = xlsxFileController.all_data_fetch(file, "결의내역", "E15", "X15")
     w = 0
     prev = input_data[0][0]
     tax = 0
@@ -197,40 +206,58 @@ def write(driver):
                         continue
 
                     upload(driver, title)
-                    cpath(driver,신규)
+                    cpath(driver, 신규)
                     # time.sleep(0.5)
 
                     print("구분번호 :", target_data[i][0])
                     print("사업코드 입력 완료")
                 except:
                     input("* 세금 계산 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
-        
 
-            print(i + 15, '행 입력중입니다.', sep='')
+            print(i + 15, "행 입력중입니다.", sep="")
 
             # 정기 체크
-            if target_data[i][1] is not None and target_data[i][1] != '' and target_data[i][1] != '_':
+            if (
+                target_data[i][1] is not None
+                and target_data[i][1] != ""
+                and target_data[i][1] != "_"
+            ):
                 isMonthly = True
-                if target_data[i][2] != '' and target_data[i][2] != '_':
+                if target_data[i][2] != "" and target_data[i][2] != "_":
                     target_data[i][18] = str(target_data[i][18])
                     target_data[i][2] = str(target_data[i][2])
-                    target_data[i][18] = monthly_textReplace(target_data[i][18], target_data[i][2])
+                    target_data[i][18] = monthly_textReplace(
+                        target_data[i][18], target_data[i][2]
+                    )
 
-                    if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
-                        target_data[i][3] = monthly_textReplace(str(target_data[i][3]), target_data[i][2])
-
+                    if (
+                        target_data[i][3] is not None
+                        and target_data[i][3] != ""
+                        and target_data[i][3] != "_"
+                    ):
+                        target_data[i][3] = monthly_textReplace(
+                            str(target_data[i][3]), target_data[i][2]
+                        )
 
             time.sleep(0.5)
-            if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
+            if (
+                target_data[i][4] is not None
+                and target_data[i][4] != ""
+                and target_data[i][4] != "_"
+            ):
                 target_data[i][4] = str(target_data[i][4])[:10]
-            
+
             time.sleep(0.2)
             try:
                 select = Select(driver.find_element_by_xpath(회계구분_작성))
-                if target_data[i][5] is not None and target_data[i][5] != '' and target_data[i][5] != '_':
-                    if target_data[i][5] == '등록금':
+                if (
+                    target_data[i][5] is not None
+                    and target_data[i][5] != ""
+                    and target_data[i][5] != "_"
+                ):
+                    if target_data[i][5] == "등록금":
                         select.select_by_index(0)
-                    elif target_data[i][5] == '비등록금' or target_data[i][5] == '(서울)기숙사':
+                    elif target_data[i][5] == "비등록금" or target_data[i][5] == "(서울)기숙사":
                         select.select_by_index(1)
                     time.sleep(0.2)
                 print("회계 구분 입력 완료")
@@ -238,74 +265,95 @@ def write(driver):
                 input("* 회계 구분 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             try:
-                if target_data[i][4] is not None and target_data[i][4] != '' and target_data[i][4] != '_':
-                    fpath(driver,결의일자_번호,target_data[i][4])
-                select = Select(driver.find_element_by_id('ddlResolutionDiv'))
+                if (
+                    target_data[i][4] is not None
+                    and target_data[i][4] != ""
+                    and target_data[i][4] != "_"
+                ):
+                    fpath(driver, 결의일자_번호, target_data[i][4])
+                select = Select(driver.find_element_by_id("ddlResolutionDiv"))
                 print("결의일자 번호 입력 완료")
             except:
                 input("* 결의일자 번호 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
-
             try:
-                if target_data[i][6] is not None and target_data[i][6] != '' and target_data[i][6] != '_':
-                    test3 = {"수입" : 0, "지출" : 1, "대체" : 2}
+                if (
+                    target_data[i][6] is not None
+                    and target_data[i][6] != ""
+                    and target_data[i][6] != "_"
+                ):
+                    test3 = {"수입": 0, "지출": 1, "대체": 2}
                     select.select_by_index(test3[target_data[i][6]])
 
-                    fpath(driver,사업코드,target_data[i][5])
-                    epath(driver,사업코드)
-                    driver.switch_to.frame('frmPopup')
-                    epath(driver,사업팝업)
+                    fpath(driver, 사업코드, target_data[i][5])
+                    epath(driver, 사업코드)
+                    driver.switch_to.frame("frmPopup")
+                    epath(driver, 사업팝업)
                     driver.switch_to.default_content()
-                    driver.switch_to.frame('ifr_d4_AHG020P')
+                    driver.switch_to.frame("ifr_d4_AHG020P")
                 print("사업코드 입력 완료")
             except:
                 input("* 사업코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             try:
-                if target_data[i][3] is not None and target_data[i][3] != '' and target_data[i][3] != '_':
-                    fpath(driver,결의서_제목,target_data[i][3])
+                if (
+                    target_data[i][3] is not None
+                    and target_data[i][3] != ""
+                    and target_data[i][3] != "_"
+                ):
+                    fpath(driver, 결의서_제목, target_data[i][3])
                     title = target_data[i][3]
-                fpath(driver,계정과목,target_data[i][8])
-                epath(driver,계정과목)
+                fpath(driver, 계정과목, target_data[i][8])
+                epath(driver, 계정과목)
                 print("계정과목 입력 완료")
-            except : 
+            except:
                 input("* 계정과목 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             try:
-                if target_data[i][9] is not None and target_data[i][9] != '' and target_data[i][9] != '_':
+                if (
+                    target_data[i][9] is not None
+                    and target_data[i][9] != ""
+                    and target_data[i][9] != "_"
+                ):
                     time.sleep(0.1)
-                    fpath(driver,관리코드,target_data[i][9])
+                    fpath(driver, 관리코드, target_data[i][9])
                     time.sleep(0.1)
-                    epath(driver,관리코드)
+                    epath(driver, 관리코드)
                     time.sleep(0.2)
                     try:
                         print(target_data[i][9])
                         driver.switch_to.alert.accept()
                     except:
-                        driver.switch_to.frame('frmPopup')
-                        epath(driver,관리팝업) # 입력이 바로 될 경우
+                        driver.switch_to.frame("frmPopup")
+                        epath(driver, 관리팝업)  # 입력이 바로 될 경우
 
                         # 테이블 더블 클릭
                         actions = ActionChains(driver)
-                        table_td_1 = driver.find_element_by_xpath("/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]")
+                        table_td_1 = driver.find_element_by_xpath(
+                            "/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]"
+                        )
                         actions.double_click(table_td_1).perform()
 
                         time.sleep(0.2)
                         driver.switch_to.default_content()
-                        driver.switch_to.frame('ifr_d4_AHG020P')
+                        driver.switch_to.frame("ifr_d4_AHG020P")
                     print("관리코드 입력 완료")
-            except : 
+            except:
                 input("* 관리코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
-            
+
             try:
-                if target_data[i][11] is not None and target_data[i][11] != '' and target_data[i][11] != '_':
-                    if target_data[i][11] == '기숙사':
+                if (
+                    target_data[i][11] is not None
+                    and target_data[i][11] != ""
+                    and target_data[i][11] != "_"
+                ):
+                    if target_data[i][11] == "기숙사":
                         dorm(driver, 귀속부서, 귀속부서팝업)
                     else:
                         fpath(driver, 귀속부서, target_data[i][11])
                         epath(driver, 귀속부서)
                 print("귀속부서 입력 완료")
-            except : 
+            except:
                 input("* 귀속부서 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             # if target_data[i][12] is not None and target_data[i][12] != '' and target_data[i][12] != '_':
@@ -316,32 +364,44 @@ def write(driver):
             #         epath(driver, 예산부서)
 
             try:
-                select = Select(driver.find_element_by_id('ddlDetailEvidenceGb'))
+                select = Select(driver.find_element_by_id("ddlDetailEvidenceGb"))
 
-                test2 = {"없음" : 0, "세금" : 1, "기타" : 2, "현금" : 3}
+                test2 = {"없음": 0, "세금": 1, "기타": 2, "현금": 3}
                 select.select_by_index(test2[target_data[i][13]])
 
-                if target_data[i][16] is not None and target_data[i][16] != '' and target_data[i][16] != '_':
-                    fpath(driver,지출,target_data[i][16])
-                if target_data[i][17] is not None and target_data[i][17] != '' and target_data[i][17] != '_':
-                    fpath(driver,수입,target_data[i][17])
-                if target_data[i][18] is not None and target_data[i][18] != '' and target_data[i][18] != '_':
-                    fpath(driver,적요,target_data[i][18])
-                print("금액 입력 완료")   
+                if (
+                    target_data[i][16] is not None
+                    and target_data[i][16] != ""
+                    and target_data[i][16] != "_"
+                ):
+                    fpath(driver, 지출, target_data[i][16])
+                if (
+                    target_data[i][17] is not None
+                    and target_data[i][17] != ""
+                    and target_data[i][17] != "_"
+                ):
+                    fpath(driver, 수입, target_data[i][17])
+                if (
+                    target_data[i][18] is not None
+                    and target_data[i][18] != ""
+                    and target_data[i][18] != "_"
+                ):
+                    fpath(driver, 적요, target_data[i][18])
+                print("금액 입력 완료")
             except:
                 input("* 금액(적요) 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             # time.sleep(0.2)
-            cpath(driver,결의내역_제출)
+            cpath(driver, 결의내역_제출)
             time.sleep(0.3)
 
-            if target_data[i][13] == '세금':
+            if target_data[i][13] == "세금":
                 tax = 1
                 dismissAlert(driver)
 
         prev = target_data[i][0]
 
-        if i == len(target_data)-1 and w == 1:
+        if i == len(target_data) - 1 and w == 1:
             if tax == 1:
                 file = taxWrite(driver, prev, file, isMonthly, row)
                 tax = 0
@@ -353,25 +413,34 @@ def write(driver):
             print("구분번호 미변경시 중복 입력될 수 있으니 확인 부탁드립니다.")
 
 
-
-
 def taxWrite(driver, num, file, isMonthly, row):
     try:
         time.sleep(0.3)
         cpath(driver, 세금계산_탭)
-        tax_data = xlsxFileController.all_data_fetch(file, '결의내역', 'AB' + str(row), 'AJ' + str(row))
+        tax_data = xlsxFileController.all_data_fetch(
+            file, "결의내역", "AB" + str(row), "AJ" + str(row)
+        )
         for j in range(len(tax_data)):
             if tax_data[j][0] == num:
-                test = {"매입세금-불" : 1, "매입세금" : 2, "매입계산" : 3, "매출세금" : 4, "매출계산" : 5,
-                        "매출세금-불" : 6, "수입세금" : 7, "수입계산" : 8, "매입세금-간" : 9}
+                test = {
+                    "매입세금-불": 1,
+                    "매입세금": 2,
+                    "매입계산": 3,
+                    "매출세금": 4,
+                    "매출계산": 5,
+                    "매출세금-불": 6,
+                    "수입세금": 7,
+                    "수입계산": 8,
+                    "매입세금-간": 9,
+                }
                 select = Select(driver.find_element_by_xpath(과세구분))
                 select.select_by_index(test[tax_data[j][1]])
                 fpath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
                 epath(driver, 발행일자)
-                fpath(driver, 거래처, '')
+                fpath(driver, 거래처, "")
                 epath(driver, 거래처)
                 time.sleep(0.5)  # 없어도 돌아가긴 함
-                driver.switch_to.frame('frmPopup')
+                driver.switch_to.frame("frmPopup")
                 if 48 <= ord(str(tax_data[j][3])[0]) <= 57:
                     fpath(driver, 사업자번호, tax_data[j][3])
                     epath(driver, 사업자번호)
@@ -379,13 +448,17 @@ def taxWrite(driver, num, file, isMonthly, row):
                     fpath(driver, 거래처명, tax_data[j][3])
                     epath(driver, 거래처명)
                 driver.switch_to.default_content()
-                driver.switch_to.frame('ifr_d4_AHG020P')
-                if tax_data[j][4] is not None and tax_data[j][4] != '' and tax_data[j][4] != '_':
+                driver.switch_to.frame("ifr_d4_AHG020P")
+                if (
+                    tax_data[j][4] is not None
+                    and tax_data[j][4] != ""
+                    and tax_data[j][4] != "_"
+                ):
                     fpath(driver, 공급가액, tax_data[j][4])
                     fpath(driver, 세액, tax_data[j][5])
 
-                select = Select(driver.find_element_by_id('ddlBillDiv'))
-                test1 = {"일반" : 1, "전자" : 2, "현금" : 3}
+                select = Select(driver.find_element_by_id("ddlBillDiv"))
+                test1 = {"일반": 1, "전자": 2, "현금": 3}
                 select.select_by_index(test1[tax_data[j][6]])
                 cpath(driver, 세금계산_제출)
                 time.sleep(0.5)
@@ -398,17 +471,18 @@ def taxWrite(driver, num, file, isMonthly, row):
         cpath(driver, 결의내역_탭)
         print("세금처리가 완료되었습니다.")
     except:
-        print('오류')
+        print("오류")
         return
     return file
 
+
 def upload(driver, title):
-    path = ''
-    for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
-        checkFolder = "".join(inFolder.split('#')[:-1])
-        if checkFolder.replace('$','/').strip() == title.strip():
-            path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
-            dpath = 링크[3] + '기안 필요/' + inFolder + '/'
+    path = ""
+    for inFolder in os.listdir(링크[3] + "결의서 작성 필요/"):
+        checkFolder = "".join(inFolder.split("#")[:-1])
+        if checkFolder.replace("$", "/").strip() == title.strip():
+            path = 링크[3] + "결의서 작성 필요/" + inFolder + "/"
+            dpath = 링크[3] + "기안 필요/" + inFolder + "/"
             break
 
     if path:
@@ -430,27 +504,30 @@ def upload(driver, title):
         driver.switch_to.frame(작성_프레임)
         save(driver)
 
+
 def save(driver):
     while True:
         # print("저장하시겠습니까? 1(예)/ 2(아니오)")
         # sv = input()
-        sv = '1'
-        if sv == '1':
+        sv = "1"
+        if sv == "1":
             break
         else:
             time.sleep(3)
-    cpath(driver,저장)
+    cpath(driver, 저장)
     time.sleep(0.3)
     acceptAlert(driver)
+
 
 def delete(file):
     print("입력된 데이터를 전부 삭제하겠습니까? 1(예)/2(아니오)")
     d = input().strip()
-    if d == '1':
-        xlsxFileController.delete_completed_row(file, '결의내역', 'E', 'Y', 15)
-        xlsxFileController.delete_completed_row(file, '세금계산', 'E', 'L', 20)
+    if d == "1":
+        xlsxFileController.delete_completed_row(file, "결의내역", "E", "Y", 15)
+        xlsxFileController.delete_completed_row(file, "세금계산", "E", "L", 20)
         # xlsxFileController.save_xls(file)
         print("삭제가 완료되었습니다.")
+
 
 def modify(driver, isDraft):
     global sema
@@ -464,13 +541,12 @@ def modify(driver, isDraft):
         cpath(driver, 결의서_조회)
 
     while True:
-
         if not isDraft:
             modify_input()
 
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
-        driver.switch_to.frame('frmPopup')
+        driver.switch_to.frame("frmPopup")
 
         # 결의서 제목 및 날짜 저장
         title = []
@@ -517,7 +593,6 @@ def modify(driver, isDraft):
         res_date = driver.find_element_by_xpath(결의일자_번호)
         title[0] = res_date.get_attribute("value")
 
-
         # 내부 데이터 수집 (결의항목)
         table = driver.find_element_by_xpath(결의서_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
@@ -546,7 +621,7 @@ def modify(driver, isDraft):
         title[1] = monthly_check(title[1]).strip()
         for i in range(len(res)):
             res[i] = monthly_check(res[i])
-        print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep='\n')
+        print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
 
         # 날짜 및 제목 입력
         # time.sleep(0.5)
@@ -556,31 +631,33 @@ def modify(driver, isDraft):
         # fpath(driver, 지급예정일, title[0])
         # epath(driver, 지급예정일)
         # acceptAlert(driver)
-        fpath(driver,결의서_제목, title[1])
+        fpath(driver, 결의서_제목, title[1])
         driver.find_element_by_xpath(세부사항).clear()
 
         # 결의서 작성
         for i in range(len(res)):
-            cpath(driver, 결의서_링크 + '['+str(i+2)+']')
+            cpath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
             fpath(driver, 적요, res[i])
             cpath(driver, 결의내역_제출)
             time.sleep(0.1)
 
         # 세금 작성
-        if tax_date and tax_date[0] != '':
+        if tax_date and tax_date[0] != "":
             cpath(driver, 세금계산_탭)
 
             try:
                 # dateutil 로 대체
                 for i in range(len(tax_date)):
-                    tax_date[i] = datetime.strptime(tax_date[i], "%Y-%m-%d") + relativedelta(months=1)
+                    tax_date[i] = datetime.strptime(
+                        tax_date[i], "%Y-%m-%d"
+                    ) + relativedelta(months=1)
                     tax_date[i] = datetime.strftime(tax_date[i], "%Y-%m-%d")
 
-                print("세금 날짜", *tax_date, "", sep='\n')
+                print("세금 날짜", *tax_date, "", sep="\n")
 
                 # 세금 작성
                 for i in range(len(tax_date)):
-                    cpath(driver, 세금계산_링크 + '['+str(i+2)+']')
+                    cpath(driver, 세금계산_링크 + "[" + str(i + 2) + "]")
                     fpath(driver, 발행일자, tax_date[i])
                     cpath(driver, 세금계산_제출)
                     time.sleep(0.1)
@@ -594,18 +671,20 @@ def modify(driver, isDraft):
         mkdir_if_not_exist()
 
         modify_draft(title[1])
-        path = ''
-        depth = ''
+        path = ""
+        depth = ""
         try:
-            for inFolder in os.listdir(링크[3] + '결의서 작성 필요/'):
-                checkFolder = "".join(inFolder.split('#')[:-1])
-                if checkFolder.replace('$', '/').strip() == title[1].strip():
-                    path = 링크[3] + '결의서 작성 필요/' + inFolder + '/'
-                    dpath = 링크[3] + '기안 필요/' + inFolder + '/'
+            for inFolder in os.listdir(링크[3] + "결의서 작성 필요/"):
+                checkFolder = "".join(inFolder.split("#")[:-1])
+                if checkFolder.replace("$", "/").strip() == title[1].strip():
+                    path = 링크[3] + "결의서 작성 필요/" + inFolder + "/"
+                    dpath = 링크[3] + "기안 필요/" + inFolder + "/"
                     break
         except:
             print("경로 설정 오류 - 파일 저장에 실패했습니다")
             pass
+
+        print("path:", path)
 
         if path:
             cpath(driver, 첨부파일)
@@ -630,7 +709,7 @@ def modify(driver, isDraft):
             driver.switch_to.frame(조회_프레임)
 
             # 해야함
-            driver.switch_to.frame('frmPopup')
+            driver.switch_to.frame("frmPopup")
             save(driver)
         else:
             print("파일을 찾을 수 없습니다")
@@ -666,10 +745,10 @@ def modify(driver, isDraft):
 
 
 def mkdir_if_not_exist():
-    target_dir = './완료'
-    need_dir = './결의서 작성 필요'
-    draft_dir = './기안 필요'
-    input_dir = './in'
+    target_dir = "./완료"
+    need_dir = "./결의서 작성 필요"
+    draft_dir = "./기안 필요"
+    input_dir = "./in"
 
     if not os.path.exists(target_dir):
         os.mkdir(target_dir)
@@ -680,33 +759,42 @@ def mkdir_if_not_exist():
     if not os.path.exists(input_dir):
         os.mkdir(input_dir)
 
+
+# in에 있는거를 결의서 작성필요로
 def modify_draft(title):
-    target_dir = './완료'
-    need_dir = './결의서 작성 필요'
-    draft_dir = './기안 필요'
-    input_dir = './in'
+    target_dir = "./완료"
+    need_dir = "./결의서 작성 필요"
+    draft_dir = "./기안 필요"
+    input_dir = "./in"
 
     find_modify_list = []
     find_draft_list = []
+
+    print("target_dir", os.listdir(target_dir))
+    # 완료에서 가져오기
     for modify_folder in os.listdir(target_dir):
-        modify_title = "".join(modify_folder.split('#')[:-1])
-        # 폴더 제목에서 %d월 형식의 숫자 제외하기
-        if delete_month(modify_title) == delete_month(title.replace('/', '$')):
+        modify_title = "".join(modify_folder.split("#")[:-1])
+        # 폴더 제목에서 %d월 형식의 숫자 제외하기 (결의서 제목으로 완료에서 찾아)
+
+        if delete_month(modify_title) == delete_month(title.replace("/", "$")):
             # %d월 형식 제외한 title과 비교하여 일치하면 폴더 진입
             for pdf in os.listdir(target_dir + "/" + modify_folder):
                 # 폴더 내 pdf 파일의 %d월 형식 제외
                 find_modify_list.append(delete_month(pdf))
             break
 
-    # in 폴더에서 %월 제외한 pdf 파일과 일치하는 pdf 파일 찾기
+    # 결의서 제목으로 완료에 있는 파일 찾고.. 똑같은 이름인거 in에서 가져오기
     for pdf in os.listdir(input_dir):
+        print("findmodifylist, pdf : ", find_modify_list, pdf)
+
         if delete_month(pdf) in find_modify_list:
             find_draft_list.append(pdf)
-    draft_folder = need_dir + '/' + title.replace('/', '$') + '#_/'
-    if title.replace('/', '$') + '#_' not in os.listdir(need_dir):
+    draft_folder = need_dir + "/" + title.replace("/", "$") + "#_/"
+
+    if title.replace("/", "$") + "#_" not in os.listdir(need_dir):
         os.mkdir(draft_folder)
     for draft_file in find_draft_list:
-        os.replace(input_dir + '/' + draft_file, draft_folder + draft_file)
+        os.replace(input_dir + "/" + draft_file, draft_folder + draft_file)
 
     # 일치하는 pdf 파일을 modify 할 때 업로드 후 기안 필요 폴더에 넣기
 
@@ -716,21 +804,25 @@ def delete_month(name):
     name = re.sub(flag, "월", name)
     return name
 
+
 # TODO
 #   /d/d? 꼴로 바꾸기
 def monthly_textReplace(prev, month):
-    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
+    r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
     text_list = prev.split()
     result_string = ""
 
     for p in text_list:
         m = r.match(p)
         if m:
-            result_string += re.sub('(\D*)([\d,]*\d+)(월)(\D*)', '\g<1>' + month + '\g<3>\g<4> ', p)
+            result_string += re.sub(
+                "(\D*)([\d,]*\d+)(월)(\D*)", "\g<1>" + month + "\g<3>\g<4> ", p
+            )
         else:
             result_string += p + " "
 
     return result_string
+
 
 def modify_input():
     print("변경하실 페이지를 띄우신 후 엔터를 눌러주세요")
@@ -738,32 +830,34 @@ def modify_input():
 
     # global mod_month
     # while True:
-        # print("변경하실 페이지를 띄우신 후 변경하실 월을 입력해주세요")
-        # print("변경하실 월을 입력해주세요")
-        # month = input()
-        # if re.fullmatch(r'(\D*)([\d,]*\d+)', month):
-        #     break
-        # print("잘못된 입력입니다.")
+    # print("변경하실 페이지를 띄우신 후 변경하실 월을 입력해주세요")
+    # print("변경하실 월을 입력해주세요")
+    # month = input()
+    # if re.fullmatch(r'(\D*)([\d,]*\d+)', month):
+    #     break
+    # print("잘못된 입력입니다.")
     # mod_month = month
     # return month
+
 
 def month_inc(month, val):
     ret = []
     for m in month:
-        nm = int(m)+val
+        nm = int(m) + val
         if nm > 12:
             y = int(nm / 12)
             nm %= 12
-            nm = y*100 + nm
+            nm = y * 100 + nm
         ret.append(str(nm))
     return ret
 
+
 def ymonth_inc(ymonth, val):
     ret = []
-    print(" : ",ymonth)
+    print(" : ", ymonth)
     t = ymonth[0]
     for m in ymonth[0][1]:
-        nm = m+val
+        nm = m + val
         if nm > 12:
             nm %= 12
             t = ymonth[0][0] + 1
@@ -774,13 +868,13 @@ def ymonth_inc(ymonth, val):
 
 
 def delete_year_str(string):
-    y_space = re.compile('(\d*)( 년)')
-    ydo_back = re.compile('(\d*)(년도 )')
-    ydo_space = re.compile('(\d*)( 년도)')
-    ydo = re.compile('(\d*)(년도)')
-    y_back = re.compile('(\d*)(년 )')
-    y = re.compile('(\d*)(년)')
-    y_ = re.compile('(\d+)(년)(분*)')
+    y_space = re.compile("(\d*)( 년)")
+    ydo_back = re.compile("(\d*)(년도 )")
+    ydo_space = re.compile("(\d*)( 년도)")
+    ydo = re.compile("(\d*)(년도)")
+    y_back = re.compile("(\d*)(년 )")
+    y = re.compile("(\d*)(년)")
+    y_ = re.compile("(\d+)(년)(분*)")
 
     ret = string
     ret = re.sub(ydo_back, "", ret)
@@ -795,11 +889,11 @@ def delete_year_str(string):
 
 
 def monthly_check(prev):
-    r = re.compile('(\D*)([\d,]*\d+)(월)(\D*)')
-    q2 = re.compile('(\D*)([\d~]*\d+)(월)(\D*)')
-    n = re.compile(('\d[ , ]+\d'))
-    q = re.compile(('~'))
-    y = re.compile('(\d*)(년)')
+    r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
+    q2 = re.compile("(\D*)([\d~]*\d+)(월)(\D*)")
+    n = re.compile(("\d[ , ]+\d"))
+    q = re.compile(("~"))
+    y = re.compile("(\d*)(년)")
     # yy = re.compile('(\d*)( 년)')
     # yyy = re.compile('(\d*)(년 )')
     # only_y = re.compile('(\d+)(년)(분*)')
@@ -828,19 +922,29 @@ def monthly_check(prev):
                 date1 = datetime.datetime(int(f[0][0]), int(f[0][1]), int(f[0][2]))
                 date2 = datetime.datetime(int(f[1][0]), int(f[1][1]), int(f[1][2]))
                 if dateController.date2dateByDays(date1, date2) > 300:
-                    #1년 단위 차이라고 가정
+                    # 1년 단위 차이라고 가정
                     # year_gap = dateController.date2dateByYears(date1,date2)
                     year_gap = round(dateController.date2dateByDays(date1, date2) / 365)
-                    t = re.sub("[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
-                               dateController.jumpDateByYear(date1, year_gap) + "~" + dateController.jumpDateByYear(date2, year_gap), p)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByYear(date1, year_gap)
+                        + "~"
+                        + dateController.jumpDateByYear(date2, year_gap),
+                        p,
+                    )
                     result += t + " "
                     # result += dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap)
-                elif dateController.date2dateByDays(date1, date2)>31:
+                elif dateController.date2dateByDays(date1, date2) > 31:
                     month_gap = round(dateController.date2dateByDays(date1, date2) / 31)
-                    t = re.sub("[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
-                               dateController.jumpDateByMonth(date1, month_gap) + "~" + dateController.jumpDateByMonth(date2, month_gap), p)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByMonth(date1, month_gap)
+                        + "~"
+                        + dateController.jumpDateByMonth(date2, month_gap),
+                        p,
+                    )
                     result += t + " "
-            elif len(f)==1:
+            elif len(f) == 1:
                 result += p + " "
         else:
             check = False
@@ -851,9 +955,9 @@ def monthly_check(prev):
                 m = l
                 x = []
                 while m < l + len(p):
-                    if '0' <= prev[m] <= '9':
+                    if "0" <= prev[m] <= "9":
                         s = prev[m]
-                        if '0' <= prev[m + 1] <= '9':
+                        if "0" <= prev[m + 1] <= "9":
                             s += prev[m + 1]
                             m += 1
                         x.append(int(s))
@@ -862,23 +966,23 @@ def monthly_check(prev):
                     x.append(int(s))
                 ret_y.append([int(pprev[:-1]), x])
                 # year_part = pprev
-                #연도 붙이기
+                # 연도 붙이기
                 # print("ret_y = " + str(ret_y))
             # 년도가 등장하는 부분 종료
             elif r.match(p) or q2.match(p):
                 temp = []
                 m = l
                 while m < l + len(p):
-                    if '0' <= prev[m] <= '9':
+                    if "0" <= prev[m] <= "9":
                         s = prev[m]
-                        if '0' <= prev[m+1] <= '9':
-                            s += prev[m+1]
+                        if "0" <= prev[m + 1] <= "9":
+                            s += prev[m + 1]
                             m += 1
                         temp.append(s)
                     m += 1
                 ret.append(temp)
 
-            l += len(p)+1
+            l += len(p) + 1
             pprev = p
             # print(pprev)
 
@@ -889,6 +993,7 @@ def monthly_check(prev):
 
     result = delete_year_str(result)
     return result
+
 
 def monthly_next(prev, month, val, ymonth):
     cmonth = deepcopy(month)
@@ -924,22 +1029,22 @@ def monthly_next(prev, month, val, ymonth):
             if last < first:
                 value += 12
             next_month = month_inc(cmonth, value)
-            next_month = ",".join(next_month)+"월"
-            cmonth = ",".join(cmonth)+"월"
-            prev = re.sub(cmonth,next_month,prev)
+            next_month = ",".join(next_month) + "월"
+            cmonth = ",".join(cmonth) + "월"
+            prev = re.sub(cmonth, next_month, prev)
 
         # 분기 || 연단위
         if val == 2:
             # %d월~%d월 확인 + %d~%d월 ?
             last = int(cmonth[1])
             first = int(cmonth[0])
-            value = last - first%12
-            next_month = month_inc(cmonth,value+1)
+            value = last - first % 12
+            next_month = month_inc(cmonth, value + 1)
             for i in range(2):
                 cmonth[i] += "월"
                 next_month[i] += "월"
 
-            for i in range(1,-1,-1):
+            for i in range(1, -1, -1):
                 if re.search(cmonth[i], prev):
                     prev = re.sub(cmonth[i], next_month[i], prev)
 
@@ -954,8 +1059,8 @@ def monthly_next(prev, month, val, ymonth):
             cymonth[1].sort(reverse=True)
             next_month.sort(reverse=True)
             for i in range(len(cymonth[1])):
-                if re.search(cymonth[0] + ' ' + cymonth[1][i], prev):
-                    prev = re.sub(cymonth[0] + ' ' + cymonth[1][i], next_month[i], prev)
+                if re.search(cymonth[0] + " " + cymonth[1][i], prev):
+                    prev = re.sub(cymonth[0] + " " + cymonth[1][i], next_month[i], prev)
 
         if val == 1:
             # %d,%d월 확인 + %d월,%d월?
@@ -986,11 +1091,12 @@ def monthly_next(prev, month, val, ymonth):
 
         return prev
 
+
 def new_monthly_next(prev, month, val, ymonth):
     cmonth = deepcopy(month)
-    cmonth.sort(key=lambda x:int(x[0]))
+    cmonth.sort(key=lambda x: int(x[0]))
     cymonth = deepcopy(ymonth)
-    cymonth.sort(key=lambda x:int(x[0]))
+    cymonth.sort(key=lambda x: int(x[0]))
 
     # 1. 그냥 개별 월 ex) 3월, 4월 -> 5월, 6월
     #                   3,4월 -> 5,6월
@@ -1002,86 +1108,245 @@ def new_monthly_next(prev, month, val, ymonth):
     # 1번 연도가 개입하는 경우 -> ex) 2021년 11월, 12월 -> 2022년 1월, 2월
     # 2번 연도가 개입하는 경우 -> ex) 2021년 10월 ~ 12월 -> 2022년 1월 ~ 3월
 
-    #연도가 없음
+    # 연도가 없음
     if len(cymonth) == 0:
-        for xi in range(len(cmonth)-1,-1,-1):
+        for xi in range(len(cmonth) - 1, -1, -1):
             x = cmonth[xi]
-            interval = int(x[-1])-int(x[0])+1
+            interval = int(x[-1]) - int(x[0]) + 1
             if interval < 0:
                 interval += 12
-            next_months = month_inc(x,interval)
+            next_months = month_inc(x, interval)
 
-            for i in range(len(x)-1,-1,-1):
+            for i in range(len(x) - 1, -1, -1):
                 if re.search(str(x[i]), prev):
-                    if int(next_months[i])<100:
-                        prev = re.sub("\A"+str(x[i])+"월", ""+next_months[i]+"월", prev)
-                        prev = re.sub("~"+str(x[i])+"월", "~"+next_months[i]+"월", prev)
-                        prev = re.sub("\("+str(x[i])+"월", "("+next_months[i]+"월", prev)
-                        prev = re.sub("\("+str(x[i])+",", "("+next_months[i]+",", prev)
-                        prev = re.sub("\A"+str(x[i])+"월", ""+next_months[i]+"월", prev)
-                        prev = re.sub("\A"+str(x[i])+",", ""+next_months[i]+",", prev)
-                        prev = re.sub(","+str(x[i])+"월", ","+next_months[i]+"월", prev)
-                        prev = re.sub(","+str(x[i])+",", ","+next_months[i]+",", prev)
+                    if int(next_months[i]) < 100:
+                        prev = re.sub(
+                            "\A" + str(x[i]) + "월", "" + next_months[i] + "월", prev
+                        )
+                        prev = re.sub(
+                            "~" + str(x[i]) + "월", "~" + next_months[i] + "월", prev
+                        )
+                        prev = re.sub(
+                            "\(" + str(x[i]) + "월", "(" + next_months[i] + "월", prev
+                        )
+                        prev = re.sub(
+                            "\(" + str(x[i]) + ",", "(" + next_months[i] + ",", prev
+                        )
+                        prev = re.sub(
+                            "\A" + str(x[i]) + "월", "" + next_months[i] + "월", prev
+                        )
+                        prev = re.sub(
+                            "\A" + str(x[i]) + ",", "" + next_months[i] + ",", prev
+                        )
+                        prev = re.sub(
+                            "," + str(x[i]) + "월", "," + next_months[i] + "월", prev
+                        )
+                        prev = re.sub(
+                            "," + str(x[i]) + ",", "," + next_months[i] + ",", prev
+                        )
                         # prev = re.sub(str(x[i])+",", next_months[i]+",", prev)
                         # prev = re.sub(str(x[i])+"~", next_months[i]+"~", prev)
                     else:
-                        prev = re.sub("\A" + str(x[i]) +"월", "" + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + "월", prev)
-                        prev = re.sub("~" + str(x[i]) +"월", "~" + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + "월", prev)
-                        prev = re.sub("\(" + str(x[i]) +"월", "(" + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + "월", prev)
-                        prev = re.sub("\(" + str(x[i]) +",", "(" + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + ",", prev)
-                        prev = re.sub("\A" + str(x[i]) +"월", "" + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + "월", prev)
-                        prev = re.sub("\A" + str(x[i]) +",", "" + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + ",", prev)
-                        prev = re.sub("," + str(x[i]) +"월", "," + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + "월", prev)
-                        prev = re.sub("," + str(x[i]) +",", "," + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100) + ",", prev)
+                        prev = re.sub(
+                            "\A" + str(x[i]) + "월",
+                            ""
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "~" + str(x[i]) + "월",
+                            "~"
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\(" + str(x[i]) + "월",
+                            "("
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\(" + str(x[i]) + ",",
+                            "("
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + ",",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\A" + str(x[i]) + "월",
+                            ""
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\A" + str(x[i]) + ",",
+                            ""
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + ",",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "," + str(x[i]) + "월",
+                            ","
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "," + str(x[i]) + ",",
+                            ","
+                            + str(dateController.yearToday() + 1)
+                            + "년 "
+                            + str(int(next_months[i]) - 100)
+                            + ",",
+                            prev,
+                        )
                         # prev = re.sub(str(x[i])+",", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+",", prev)
                         # prev = re.sub(str(x[i])+"~", str(dateController.yearToday()+1)+"년 "+str(int(next_months[i])-100)+"~", prev)
 
-    #연도가 있음
+    # 연도가 있음
     else:
         next_months = []
         for x in cymonth:
             year = x[0]
             months = x[1]
-            next_months.append(month_inc(months, months[-1]-months[0]+1))
+            next_months.append(month_inc(months, months[-1] - months[0] + 1))
         # months.sort(reverse=True)
         # next_months.sort(reverse=True)
 
-        for j in range(len(next_months)-1,-1,-1):
+        for j in range(len(next_months) - 1, -1, -1):
             for i in range(len(cymonth[j][1])):
-
                 if re.search(str(cymonth[j][1][i]), prev):
                     # prev = re.sub(str(cymonth[j][1][i]),next_months[j][i],prev)
                     if int(next_months[j][i]) < 100:
-                        prev = re.sub("\A"+str(cymonth[j][1][i])+"월",""+next_months[j][i]+"월",prev)
-                        prev = re.sub("~"+str(cymonth[j][1][i])+"월","~"+next_months[j][i]+"월",prev)
-                        prev = re.sub("\("+str(cymonth[j][1][i])+"월","("+next_months[j][i]+"월",prev)
-                        prev = re.sub(","+str(cymonth[j][1][i])+"월",","+next_months[j][i]+"월",prev)
-                        prev = re.sub("\("+str(cymonth[j][1][i])+",","("+next_months[j][i]+",",prev)
-                        prev = re.sub(","+str(cymonth[j][1][i])+",",","+next_months[j][i]+",",prev)
-                        prev = re.sub("\A"+str(cymonth[j][1][i])+"월",""+next_months[j][i]+"월",prev)
-                        prev = re.sub("\A"+str(cymonth[j][1][i])+",",""+next_months[j][i]+",",prev)
+                        prev = re.sub(
+                            "\A" + str(cymonth[j][1][i]) + "월",
+                            "" + next_months[j][i] + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "~" + str(cymonth[j][1][i]) + "월",
+                            "~" + next_months[j][i] + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\(" + str(cymonth[j][1][i]) + "월",
+                            "(" + next_months[j][i] + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "," + str(cymonth[j][1][i]) + "월",
+                            "," + next_months[j][i] + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\(" + str(cymonth[j][1][i]) + ",",
+                            "(" + next_months[j][i] + ",",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "," + str(cymonth[j][1][i]) + ",",
+                            "," + next_months[j][i] + ",",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\A" + str(cymonth[j][1][i]) + "월",
+                            "" + next_months[j][i] + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\A" + str(cymonth[j][1][i]) + ",",
+                            "" + next_months[j][i] + ",",
+                            prev,
+                        )
                         # prev = re.sub(str(cymonth[j][1][i])+",",next_months[j][i]+",",prev)
                         # prev = re.sub(str(cymonth[j][1][i])+"~",next_months[j][i]+"~",prev)
                     else:
                         # prev = re.sub(str(cymonth[j][0])+"년 ", "",prev)
-                        prev = re.sub(" "+str(cymonth[j][1][i])+"월", " " + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
-                        prev = re.sub("~"+str(cymonth[j][1][i])+"월", "~" + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
-                        prev = re.sub("\("+str(cymonth[j][1][i])+"월", "(" + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
-                        prev = re.sub(","+str(cymonth[j][1][i])+"월", "," + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"월", prev)
-                        prev = re.sub("\("+str(cymonth[j][1][i])+",", "(" + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+",", prev)
-                        prev = re.sub(","+str(cymonth[j][1][i])+",", "," + str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+",", prev)
+                        prev = re.sub(
+                            " " + str(cymonth[j][1][i]) + "월",
+                            " "
+                            + str(cymonth[j][0] + int(int(next_months[j][i]) / 100))
+                            + "년 "
+                            + str(int(next_months[j][i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "~" + str(cymonth[j][1][i]) + "월",
+                            "~"
+                            + str(cymonth[j][0] + int(int(next_months[j][i]) / 100))
+                            + "년 "
+                            + str(int(next_months[j][i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\(" + str(cymonth[j][1][i]) + "월",
+                            "("
+                            + str(cymonth[j][0] + int(int(next_months[j][i]) / 100))
+                            + "년 "
+                            + str(int(next_months[j][i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "," + str(cymonth[j][1][i]) + "월",
+                            ","
+                            + str(cymonth[j][0] + int(int(next_months[j][i]) / 100))
+                            + "년 "
+                            + str(int(next_months[j][i]) - 100)
+                            + "월",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "\(" + str(cymonth[j][1][i]) + ",",
+                            "("
+                            + str(cymonth[j][0] + int(int(next_months[j][i]) / 100))
+                            + "년 "
+                            + str(int(next_months[j][i]) - 100)
+                            + ",",
+                            prev,
+                        )
+                        prev = re.sub(
+                            "," + str(cymonth[j][1][i]) + ",",
+                            ","
+                            + str(cymonth[j][0] + int(int(next_months[j][i]) / 100))
+                            + "년 "
+                            + str(int(next_months[j][i]) - 100)
+                            + ",",
+                            prev,
+                        )
                         # prev = re.sub(str(cymonth[j][1][i])+",", str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+",", prev)
                         # prev = re.sub(str(cymonth[j][1][i])+"~", str(cymonth[j][0]+int(int(next_months[j][i]) / 100)) + "년 " + str(int(next_months[j][i]) - 100)+"~", prev)
                         # prev = re.sub(str(cmonth[i])," " + str(dateController.yearToday() + 1) + "년 " + str(int(next_months[i]) - 100),prev)
-            # prev = re.sub(cymonth, next_months, prev)
+                # prev = re.sub(cymonth, next_months, prev)
 
                 if int(next_months[j][0]) >= 100:
-                    prev = re.sub(str(cymonth[j][0])+"년 ", "",prev)
+                    prev = re.sub(str(cymonth[j][0]) + "년 ", "", prev)
 
     return prev
 
-if __name__ == '__main__':
 
+if __name__ == "__main__":
     test_text = "테스트용(실습 2022년 12월) 지급"
     test2 = "12월"
     test3 = "2021 21년"
@@ -1093,7 +1358,6 @@ if __name__ == '__main__':
     # title[1] = monthly_check(title[1]).strip()
     # for i in range(len(res)):
     #     res[i] = monthly_check(res[i])
-
 
     print(monthly_check(test_text))
     # print(monthly_check(test2))
