@@ -770,7 +770,6 @@ def modify_draft(title):
     find_modify_list = []
     find_draft_list = []
 
-    print("target_dir", os.listdir(target_dir))
     # 완료에서 가져오기
     for modify_folder in os.listdir(target_dir):
         modify_title = "".join(modify_folder.split("#")[:-1])
@@ -780,13 +779,13 @@ def modify_draft(title):
             # %d월 형식 제외한 title과 비교하여 일치하면 폴더 진입
             for pdf in os.listdir(target_dir + "/" + modify_folder):
                 # 폴더 내 pdf 파일의 %d월 형식 제외
+                print("완료 파일 match : [", delete_month(pdf), "]")
                 find_modify_list.append(delete_month(pdf))
             break
 
     # 결의서 제목으로 완료에 있는 파일 찾고.. 똑같은 이름인거 in에서 가져오기
     for pdf in os.listdir(input_dir):
-        print("findmodifylist, pdf : ", find_modify_list, pdf)
-
+        # print("findmodifylist, pdf : ", find_modify_list, pdf, delete_month(pdf))
         if delete_month(pdf) in find_modify_list:
             find_draft_list.append(pdf)
     draft_folder = need_dir + "/" + title.replace("/", "$") + "#_/"
