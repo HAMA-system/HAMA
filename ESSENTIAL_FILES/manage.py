@@ -684,8 +684,6 @@ def modify(driver, isDraft):
             print("경로 설정 오류 - 파일 저장에 실패했습니다")
             pass
 
-        print("path:", path)
-
         if path:
             cpath(driver, 첨부파일)
             driver.switch_to.window(driver.window_handles[1])
