@@ -370,14 +370,26 @@ def write(driver):
                 select.select_by_index(test2[target_data[i][13]])
 
 
-                지출차변금액 = "{:.0f}".format(float(target_data[i][16]))
-                수입대변금액 = "{:.0f}".format(float(target_data[i][17]))
-                적요사항 = "{:.0f}".format(float(target_data[i][18]))
-                if (지출차변금액 is not None and 지출차변금액 != "" and 지출차변금액 != "_"):
-                    fillByXPath(driver, 지출, target_data[i][16])
-                if (수입대변금액 is not None and 수입대변금액 != "" and 수입대변금액 != "_"):
-                    fillByXPath(driver, 수입, target_data[i][17])
-                if (적요사항 is not None and 적요사항 != "" and 적요사항 != "_"):
+                지출차변금액 = target_data[i][16]
+                수입대변금액 = target_data[i][17]
+                적요사항 = target_data[i][18]
+                integer_value = None
+                if 지출차변금액 is not None and 지출차변금액 != "" and 지출차변금액 != "_":
+                    if isinstance(지출차변금액, int):
+                        integer_value = 지출차변금액
+                    elif isinstance(지출차변금액, float):
+                        rounded_value = round(지출차변금액)
+                        integer_value = int(rounded_value)
+                    fillByXPath(driver, 지출, integer_value)
+                if 수입대변금액 is not None and 수입대변금액 != "" and 수입대변금액 != "_":
+                    integer_value = None
+                    if isinstance(수입대변금액, int):
+                        integer_value = 수입대변금액
+                    elif isinstance(수입대변금액, float):
+                        rounded_value = round(수입대변금액)
+                        integer_value = int(rounded_value)
+                    fillByXPath(driver, 수입, str(integer_value))
+                if 적요사항 is not None and 적요사항 != "" and 적요사항 != "_":
                     fillByXPath(driver, 적요, target_data[i][18])
                 print("금액 입력 완료")
             except Exception as e:
