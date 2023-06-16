@@ -24,12 +24,12 @@ def set_chromedriver():
 # manage.write(driver)
 
 if __name__ == '__main__':
-    f1 = float(6365000)
-    f2 = float(636500)
+    f1 = str(6364999.9999999)
+    f2 = str(636500)
     f3 = float(6365)
 
-    print("{:.0f}".format(float(6365000)))
-    print("{:.0f}".format(float("6365000")))
+    print("{:.0f}".format(float(f1)))
+    print("{:.0f}".format(float(f2)))
     print(str(f2))
     print(f3)
 

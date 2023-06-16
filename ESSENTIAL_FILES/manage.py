@@ -370,9 +370,9 @@ def write(driver):
                 select.select_by_index(test2[target_data[i][13]])
 
 
-                지출차변금액 = "{:.0f}".format(target_data[i][16])
-                수입대변금액 = "{:.0f}".format(target_data[i][17])
-                적요사항 = "{:.0f}".format(target_data[i][18])
+                지출차변금액 = "{:.0f}".format(float(target_data[i][16]))
+                수입대변금액 = "{:.0f}".format(float(target_data[i][17]))
+                적요사항 = "{:.0f}".format(float(target_data[i][18]))
                 if (지출차변금액 is not None and 지출차변금액 != "" and 지출차변금액 != "_"):
                     fillByXPath(driver, 지출, target_data[i][16])
                 if (수입대변금액 is not None and 수입대변금액 != "" and 수입대변금액 != "_"):
