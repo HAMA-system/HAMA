@@ -17,8 +17,19 @@ def set_chromedriver():
     return driver
 
 
-driver = set_chromedriver()
-driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
-driver = autoLogin.login(driver)
+# driver = set_chromedriver()
+# driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
+# driver = autoLogin.login(driver)
+#
+# manage.write(driver)
 
-manage.write(driver)
+if __name__ == '__main__':
+    f1 = float(6365000)
+    f2 = float(636500)
+    f3 = float(6365)
+
+    print("{:.0f}".format(float(6365000)))
+    print("{:.0f}".format(float("6365000")))
+    print(str(f2))
+    print(f3)
+

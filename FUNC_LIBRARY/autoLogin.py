@@ -8,23 +8,25 @@ from HIDDEN_FILES.linkData import *
 import time
 from . import xlsxFileController
 
-def fname(driver,name,value):
-    # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
+
+def fillByName(driver, name, value):
     time.sleep(0.1)
     driver.find_element_by_name(name).clear()
-    # element.clear()
     time.sleep(0.2)
     driver.find_element_by_name(name).send_keys(value)
-    # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
-    # element.send_keys(value)
-def cname(driver,name):
+
+
+def clickByName(driver, name):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
     element.click()
-def ename(driver,name):
+
+
+def enterByName(driver, name):
     element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.NAME, name)))
     element.send_keys(Keys.ENTER)
-def fpath(driver,path,value):
-    # time.sleep(0.35) # 0.5
+
+
+def fillByXPath(driver, path, value):
     time.sleep(0.1)
     while True:
         try:
@@ -32,7 +34,6 @@ def fpath(driver,path,value):
             break
         except:
             pass
-    # time.sleep(0.25) # 0.4
     time.sleep(0.2)
     while True:
         try:
@@ -40,11 +41,9 @@ def fpath(driver,path,value):
             break
         except:
             pass
-    # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
-    # element.clear()
-    # time.sleep(1)
-    # element.send_keys(value)
-def cpath(driver,path):
+
+
+def clickByXPath(driver, path):
     time.sleep(0.1)
     while True:
         try:
@@ -59,7 +58,8 @@ def cpath(driver,path):
         except:
             pass
 
-def epath(driver,path):
+
+def enterByXPath(driver, path):
     time.sleep(0.2)
     while True:
         try:
@@ -67,10 +67,9 @@ def epath(driver,path):
             break
         except:
             pass
-    # element = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, path)))
-    # element.send_keys(Keys.ENTER)
 
-def fid(driver,id,value):
+
+def fillById(driver, id, value):
     time.sleep(0.1)
     while True:
         try:
@@ -78,7 +77,6 @@ def fid(driver,id,value):
             break
         except:
             pass
-    # time.sleep(0.25) # 0.4
     time.sleep(0.2)
     while True:
         try:
@@ -87,7 +85,8 @@ def fid(driver,id,value):
         except:
             pass
 
-def cid(driver,id):
+
+def clickById(driver, id):
     time.sleep(0.1)
     while True:
         try:
@@ -101,12 +100,14 @@ def cid(driver,id):
             break
         except:
             pass
+
+
 def login(driver):
     login_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls(링크[1]), '로그인', 'B60', 'C60')
 
-    fname(driver,'USER_ID',login_data[0])
-    fname(driver,'PASSWD',login_data[1])
-    ename(driver,'PASSWD')
+    fillByName(driver, 'USER_ID', login_data[0])
+    fillByName(driver, 'PASSWD', login_data[1])
+    enterByName(driver, 'PASSWD')
     # time.sleep(1)
     try:
         driver.switch_to.alert.accept()
@@ -116,20 +117,19 @@ def login(driver):
     # return afterLogin(driver)
     # return checkWork(driver)
 
+
 def afterLogin(driver):
     driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
-    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/a')
-    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/a')
-    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/a')
-    cpath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/a')
+    clickByXPath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/a')
+    clickByXPath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/a')
+    clickByXPath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/a')
+    clickByXPath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/a')
     return driver
 
 
 def checkWork(driver):
     driver.get('https://hrm.hongik.ac.kr/new/')
-    cpath(driver, 출근버튼)
-    # cpath(driver, 출근버튼a)
-    # cpath(driver, 출근버튼b)
+    clickByXPath(driver, 출근버튼)
     time.sleep(10000)
 
 

@@ -35,7 +35,7 @@ def timeError():
 
 
 def refresh():
-    cpath(d, 조회)
+    clickByXPath(d, 조회)
 
 
 def expand_shadow_element(driver, element):
@@ -56,11 +56,11 @@ def draft(driver):
     te.start()
     driver.switch_to.default_content()
     driver.switch_to.frame(기안_프레임1)
-    cpath(driver, 결재문서)
+    clickByXPath(driver, 결재문서)
     time.sleep(3)
     driver.switch_to.default_content()
     driver.switch_to.frame(기안_프레임2)
-    cpath(driver, 완료문서)
+    clickByXPath(driver, 완료문서)
     time.sleep(1)
     first = True
     while True:
@@ -89,7 +89,7 @@ def draft(driver):
                 try:
                     inp = int(inp[0])
                     page = 페이지_변경[:29] + str(inp + 2) + 페이지_변경[30:]
-                    cpath(driver, page)
+                    clickByXPath(driver, page)
                     time.sleep(1)
                 except:
                     driver.find_element_by_id("txt_keyword").clear()
@@ -106,7 +106,7 @@ def draft(driver):
                 num = 문서번호2[:67] + str(i) + 문서번호2[68:]
             print(i, "번 문서 인쇄중...", sep="")
 
-            cpath(driver, num)
+            clickByXPath(driver, num)
             time.sleep(3)
 
             # 다운로드 폴더에서 pdf 파일 이름 비교 후 프린트
@@ -122,10 +122,10 @@ def draft(driver):
             # for li in test.find_elements(by=By.TAG_NAME, value="li")[1:]:
             #     print(li.get_attribute("innerText"))
 
-            cpath(driver, 인쇄)
+            clickByXPath(driver, 인쇄)
             time.sleep(1)
             driver.switch_to.frame(메인_프레임)
-            cpath(driver, 문서인쇄)
+            clickByXPath(driver, 문서인쇄)
             t = -5
             time.sleep(5)
             while True:
@@ -175,13 +175,13 @@ def draft(driver):
             driver.switch_to.default_content()
             driver.switch_to.frame(기안_프레임2)
             driver.switch_to.frame(메인_프레임)
-            cpath(driver, 인쇄_창닫기)
+            clickByXPath(driver, 인쇄_창닫기)
             driver.switch_to.parent_frame()
 
             # 첨부파일 프린트
             try:
                 print("첨부 파일 다운로드를 시작합니다")
-                cid(driver, "tabAttachInfoDT")
+                clickById(driver, "tabAttachInfoDT")
                 pdf_num = 1
                 print_path = download_path
                 while True:
@@ -238,7 +238,7 @@ def draft_write(driver):
     ig.daemon = True
     ignoreAutoLogout.timer = 0
     ig.start()
-    cpath(driver, 결의서_조회)
+    clickByXPath(driver, 결의서_조회)
     first = True
     while True:
         # Alert 오류 제어
@@ -291,7 +291,7 @@ def draft_write(driver):
             # 선택지 loop end
 
             try:
-                cid(driver, 기안)
+                clickById(driver, 기안)
             except:
                 print("기안할 수 없습니다. 다시 확인하고 시도해주세요.")
                 break
@@ -341,14 +341,14 @@ def draft_write(driver):
 
         # 결재
         driver.switch_to.default_content()
-        cid(driver, 결재정보)
+        clickById(driver, 결재정보)
         driver.switch_to.frame(메인_프레임)
-        cid(driver, 즐겨찾기)
-        cid(driver, 결재)
-        cpath(driver, 적용)
-        cid(driver, 기록물철)
-        cid(driver, 기록물)
-        cpath(driver, 기안_확인)
+        clickById(driver, 즐겨찾기)
+        clickById(driver, 결재)
+        clickByXPath(driver, 적용)
+        clickById(driver, 기록물철)
+        clickById(driver, 기록물)
+        clickByXPath(driver, 기안_확인)
 
         # 기안 업로드
         draft_upload(driver, title, True)
@@ -375,7 +375,7 @@ def draft_upload(driver, title, isFile):
     uploaded = True
 
     driver.switch_to.default_content()
-    cid(driver, 기안_파일버튼)
+    clickById(driver, 기안_파일버튼)
     time.sleep(0.5)
     path = 링크[3] + "기안 필요/"
     driver.switch_to.frame(메인_프레임)
@@ -439,4 +439,4 @@ def draft_upload(driver, title, isFile):
     # driver.switch_to.window(driver.window_handles[0])
     driver.switch_to.default_content()
     driver.switch_to.frame(조회_프레임)
-    cpath(driver, 닫기)
+    clickByXPath(driver, 닫기)

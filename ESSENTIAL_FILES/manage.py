@@ -7,6 +7,7 @@ from datetime import *
 
 import selenium.webdriver
 from dateutil.relativedelta import *
+from selenium.common import StaleElementReferenceException
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver import ActionChains
 
@@ -23,7 +24,7 @@ mod_month = "-1"
 
 
 def refresh():
-    cpath(d, 조회)
+    clickByXPath(d, 조회)
 
 
 def printProgress(i, max):
@@ -52,16 +53,16 @@ def monthly_textReplace(prev, month):
 
 
 def dorm(driver, dep, pop):
-    fpath(driver, dep, "")
-    epath(driver, dep)
+    fillByXPath(driver, dep, "")
+    enterByXPath(driver, dep)
 
     try:
         driver.switch_to.alert.accept()
     except:
         driver.switch_to.frame("frmPopup")
-        epath(driver, pop)
-        fpath(driver, 소속코드, "A33100")
-        epath(driver, 소속코드)
+        enterByXPath(driver, pop)
+        fillByXPath(driver, 소속코드, "A33100")
+        enterByXPath(driver, 소속코드)
         time.sleep(0.3)
         actions = ActionChains(driver)
         doubleClick = driver.find_element_by_xpath(소속테이블)
@@ -106,9 +107,9 @@ def search(driver):
     srch = input().strip()
 
     if len(month) == 4:
-        fname(driver, "txtSAcctYear", month)
+        fillByName(driver, "txtSAcctYear", month)
     else:
-        fname(driver, "txtSAcctYear", "2021")
+        fillByName(driver, "txtSAcctYear", "2021")
     select = Select(driver.find_element_by_xpath(회계구분_조회))
     if acc == "1":
         select.select_by_index(0)
@@ -126,24 +127,24 @@ def search(driver):
         select.select_by_index(3)
 
     if month == "1":
-        fname(driver, "DpFrDt", dateController.date1month())
+        fillByName(driver, "DpFrDt", dateController.date1month())
     elif month == "3":
-        fname(driver, "DpFrDt", dateController.date3month())
+        fillByName(driver, "DpFrDt", dateController.date3month())
     elif month == "6":
-        fname(driver, "DpFrDt", dateController.date6month())
+        fillByName(driver, "DpFrDt", dateController.date6month())
     elif month == "12":
-        fname(driver, "DpFrDt", dateController.date1year())
+        fillByName(driver, "DpFrDt", dateController.date1year())
     elif len(month) == 4:
         # fname(driver, 'DpFrDt', month + '0301') 정책변경 -> 시작년도 2020년 고정
-        fname(driver, "DpFrDt", "20200301")
-        fname(driver, "DpToDt", str(int(month) + 1) + "0228")
+        fillByName(driver, "DpFrDt", "20200301")
+        fillByName(driver, "DpToDt", str(int(month) + 1) + "0228")
 
     else:
         print("잘못된 입력입니다.")
     if len(month) != 4:
-        fname(driver, "DpToDt", dateController.dateToday())
-    fpath(driver, 제목_검색, srch)
-    cname(driver, "CSMenuButton1$List")
+        fillByName(driver, "DpToDt", dateController.dateToday())
+    fillByXPath(driver, 제목_검색, srch)
+    clickByName(driver, "CSMenuButton1$List")
 
 
 def lookup(driver):
@@ -154,7 +155,7 @@ def lookup(driver):
     ig.daemon = True
     ig.start()
     driver.switch_to.default_content()
-    cpath(driver, 결의서_조회)
+    clickByXPath(driver, 결의서_조회)
     driver.switch_to.frame(조회_프레임)
 
     while True:
@@ -167,7 +168,7 @@ def lookup(driver):
 
 def write(driver):
     driver.switch_to.default_content()
-    cpath(driver, 결의서_작성)
+    clickByXPath(driver, 결의서_작성)
     driver.switch_to.frame(작성_프레임)
 
     print("\n\n\n=================================")
@@ -206,12 +207,13 @@ def write(driver):
                         continue
 
                     upload(driver, title)
-                    cpath(driver, 신규)
+                    clickByXPath(driver, 신규)
                     # time.sleep(0.5)
 
                     print("구분번호 :", target_data[i][0])
                     print("사업코드 입력 완료")
-                except:
+                except Exception as e:
+                    print("예외가 발생했습니다:", str(e))
                     input("* 세금 계산 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             print(i + 15, "행 입력중입니다.", sep="")
@@ -261,7 +263,8 @@ def write(driver):
                         select.select_by_index(1)
                     time.sleep(0.2)
                 print("회계 구분 입력 완료")
-            except:
+            except Exception as e:
+                print("예외가 발생했습니다:", str(e))
                 input("* 회계 구분 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             try:
@@ -270,10 +273,11 @@ def write(driver):
                     and target_data[i][4] != ""
                     and target_data[i][4] != "_"
                 ):
-                    fpath(driver, 결의일자_번호, target_data[i][4])
+                    fillByXPath(driver, 결의일자_번호, target_data[i][4])
                 select = Select(driver.find_element_by_id("ddlResolutionDiv"))
                 print("결의일자 번호 입력 완료")
-            except:
+            except Exception as e:
+                print("예외가 발생했습니다:", str(e))
                 input("* 결의일자 번호 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             try:
@@ -285,10 +289,10 @@ def write(driver):
                     test3 = {"수입": 0, "지출": 1, "대체": 2}
                     select.select_by_index(test3[target_data[i][6]])
 
-                    fpath(driver, 사업코드, target_data[i][5])
-                    epath(driver, 사업코드)
+                    fillByXPath(driver, 사업코드, target_data[i][5])
+                    enterByXPath(driver, 사업코드)
                     driver.switch_to.frame("frmPopup")
-                    epath(driver, 사업팝업)
+                    enterByXPath(driver, 사업팝업)
                     driver.switch_to.default_content()
                     driver.switch_to.frame("ifr_d4_AHG020P")
                 print("사업코드 입력 완료")
@@ -301,12 +305,13 @@ def write(driver):
                     and target_data[i][3] != ""
                     and target_data[i][3] != "_"
                 ):
-                    fpath(driver, 결의서_제목, target_data[i][3])
+                    fillByXPath(driver, 결의서_제목, target_data[i][3])
                     title = target_data[i][3]
-                fpath(driver, 계정과목, target_data[i][8])
-                epath(driver, 계정과목)
+                fillByXPath(driver, 계정과목, target_data[i][8])
+                enterByXPath(driver, 계정과목)
                 print("계정과목 입력 완료")
-            except:
+            except Exception as e:
+                print("예외가 발생했습니다:", str(e))
                 input("* 계정과목 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             try:
@@ -316,29 +321,30 @@ def write(driver):
                     and target_data[i][9] != "_"
                 ):
                     time.sleep(0.1)
-                    fpath(driver, 관리코드, target_data[i][9])
+                    fillByXPath(driver, 관리코드, target_data[i][9])
                     time.sleep(0.1)
-                    epath(driver, 관리코드)
+                    enterByXPath(driver, 관리코드)
                     time.sleep(0.2)
                     try:
-                        print(target_data[i][9])
                         driver.switch_to.alert.accept()
                     except:
                         driver.switch_to.frame("frmPopup")
-                        epath(driver, 관리팝업)  # 입력이 바로 될 경우
+                        enterByXPath(driver, 관리팝업)  # 입력이 바로 될 경우
 
                         # 테이블 더블 클릭
                         actions = ActionChains(driver)
-                        table_td_1 = driver.find_element_by_xpath(
-                            "/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]"
-                        )
-                        actions.double_click(table_td_1).perform()
+                        try:
+                            table_td_1 = driver.find_element_by_xpath(
+                                "/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]"
+                            )
+                            actions.double_click(table_td_1).perform()
+                            driver.switch_to.default_content()
+                            driver.switch_to.frame("ifr_d4_AHG020P")
+                        except StaleElementReferenceException: pass
 
-                        time.sleep(0.2)
-                        driver.switch_to.default_content()
-                        driver.switch_to.frame("ifr_d4_AHG020P")
                     print("관리코드 입력 완료")
-            except:
+            except Exception as e:
+                print("예외가 발생했습니다:", str(e))
                 input("* 관리코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             try:
@@ -350,18 +356,12 @@ def write(driver):
                     if target_data[i][11] == "기숙사":
                         dorm(driver, 귀속부서, 귀속부서팝업)
                     else:
-                        fpath(driver, 귀속부서, target_data[i][11])
-                        epath(driver, 귀속부서)
+                        fillByXPath(driver, 귀속부서, target_data[i][11])
+                        enterByXPath(driver, 귀속부서)
                 print("귀속부서 입력 완료")
-            except:
+            except Exception as e:
+                print("예외가 발생했습니다:", str(e))
                 input("* 귀속부서 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
-
-            # if target_data[i][12] is not None and target_data[i][12] != '' and target_data[i][12] != '_':
-            #     if target_data[i][12] == '기숙사':
-            #         dorm(driver, 예산부서, 예산부서팝업)
-            #     else:
-            #         fpath(driver, 예산부서, target_data[i][12])
-            #         epath(driver, 예산부서)
 
             try:
                 select = Select(driver.find_element_by_id("ddlDetailEvidenceGb"))
@@ -369,30 +369,23 @@ def write(driver):
                 test2 = {"없음": 0, "세금": 1, "기타": 2, "현금": 3}
                 select.select_by_index(test2[target_data[i][13]])
 
-                if (
-                    target_data[i][16] is not None
-                    and target_data[i][16] != ""
-                    and target_data[i][16] != "_"
-                ):
-                    fpath(driver, 지출, target_data[i][16])
-                if (
-                    target_data[i][17] is not None
-                    and target_data[i][17] != ""
-                    and target_data[i][17] != "_"
-                ):
-                    fpath(driver, 수입, target_data[i][17])
-                if (
-                    target_data[i][18] is not None
-                    and target_data[i][18] != ""
-                    and target_data[i][18] != "_"
-                ):
-                    fpath(driver, 적요, target_data[i][18])
+
+                지출차변금액 = "{:.0f}".format(target_data[i][16])
+                수입대변금액 = "{:.0f}".format(target_data[i][17])
+                적요사항 = "{:.0f}".format(target_data[i][18])
+                if (지출차변금액 is not None and 지출차변금액 != "" and 지출차변금액 != "_"):
+                    fillByXPath(driver, 지출, target_data[i][16])
+                if (수입대변금액 is not None and 수입대변금액 != "" and 수입대변금액 != "_"):
+                    fillByXPath(driver, 수입, target_data[i][17])
+                if (적요사항 is not None and 적요사항 != "" and 적요사항 != "_"):
+                    fillByXPath(driver, 적요, target_data[i][18])
                 print("금액 입력 완료")
-            except:
+            except Exception as e:
+                print("예외가 발생했습니다:", str(e))
                 input("* 금액(적요) 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
 
             # time.sleep(0.2)
-            cpath(driver, 결의내역_제출)
+            clickByXPath(driver, 결의내역_제출)
             time.sleep(0.3)
 
             if target_data[i][13] == "세금":
@@ -416,7 +409,7 @@ def write(driver):
 def taxWrite(driver, num, file, isMonthly, row):
     try:
         time.sleep(0.3)
-        cpath(driver, 세금계산_탭)
+        clickByXPath(driver, 세금계산_탭)
         tax_data = xlsxFileController.all_data_fetch(
             file, "결의내역", "AB" + str(row), "AJ" + str(row)
         )
@@ -435,18 +428,18 @@ def taxWrite(driver, num, file, isMonthly, row):
                 }
                 select = Select(driver.find_element_by_xpath(과세구분))
                 select.select_by_index(test[tax_data[j][1]])
-                fpath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
-                epath(driver, 발행일자)
-                fpath(driver, 거래처, "")
-                epath(driver, 거래처)
+                fillByXPath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
+                enterByXPath(driver, 발행일자)
+                fillByXPath(driver, 거래처, "")
+                enterByXPath(driver, 거래처)
                 time.sleep(0.5)  # 없어도 돌아가긴 함
                 driver.switch_to.frame("frmPopup")
                 if 48 <= ord(str(tax_data[j][3])[0]) <= 57:
-                    fpath(driver, 사업자번호, tax_data[j][3])
-                    epath(driver, 사업자번호)
+                    fillByXPath(driver, 사업자번호, tax_data[j][3])
+                    enterByXPath(driver, 사업자번호)
                 else:
-                    fpath(driver, 거래처명, tax_data[j][3])
-                    epath(driver, 거래처명)
+                    fillByXPath(driver, 거래처명, tax_data[j][3])
+                    enterByXPath(driver, 거래처명)
                 driver.switch_to.default_content()
                 driver.switch_to.frame("ifr_d4_AHG020P")
                 if (
@@ -454,13 +447,13 @@ def taxWrite(driver, num, file, isMonthly, row):
                     and tax_data[j][4] != ""
                     and tax_data[j][4] != "_"
                 ):
-                    fpath(driver, 공급가액, tax_data[j][4])
-                    fpath(driver, 세액, tax_data[j][5])
+                    fillByXPath(driver, 공급가액, tax_data[j][4])
+                    fillByXPath(driver, 세액, tax_data[j][5])
 
                 select = Select(driver.find_element_by_id("ddlBillDiv"))
                 test1 = {"일반": 1, "전자": 2, "현금": 3}
                 select.select_by_index(test1[tax_data[j][6]])
-                cpath(driver, 세금계산_제출)
+                clickByXPath(driver, 세금계산_제출)
                 time.sleep(0.5)
         # for p in range(len(tax_data)):
         #     if tax_data[p][0] == num:
@@ -468,7 +461,7 @@ def taxWrite(driver, num, file, isMonthly, row):
         #             xlsxFileController.put_cell_data(file, '결의내역', 'AB' + str(p+row), -1)
         #         else:
         #             xlsxFileController.put_cell_data(file, '세금계산', 'E' + str(p+20), -1)
-        cpath(driver, 결의내역_탭)
+        clickByXPath(driver, 결의내역_탭)
         print("세금처리가 완료되었습니다.")
     except:
         print("오류")
@@ -486,13 +479,13 @@ def upload(driver, title):
             break
 
     if path:
-        cpath(driver, 첨부파일)
+        clickByXPath(driver, 첨부파일)
         driver.switch_to.window(driver.window_handles[1])
         for f in os.listdir(path):
             abs_file_path = os.path.abspath(path + f)
             driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
             time.sleep(0.3)
-            cpath(driver, 파일업로드)
+            clickByXPath(driver, 파일업로드)
             print(f, "파일 업로드 완료")
 
         os.replace(path, dpath)
@@ -514,7 +507,7 @@ def save(driver):
             break
         else:
             time.sleep(3)
-    cpath(driver, 저장)
+    clickByXPath(driver, 저장)
     time.sleep(0.3)
     acceptAlert(driver)
 
@@ -538,7 +531,7 @@ def modify(driver, isDraft):
         ig = threading.Thread(target=ignoreAutoLogout.startTimer)
         ig.daemon = True
         ig.start()
-        cpath(driver, 결의서_조회)
+        clickByXPath(driver, 결의서_조회)
 
     while True:
         if not isDraft:
@@ -576,7 +569,7 @@ def modify(driver, isDraft):
         #         title[0] = title[0][:8] + str(30)
 
         # 복사 창 이동
-        cpath(driver, 복사)
+        clickByXPath(driver, 복사)
         # alert = driver.switch_to.alert
         # alert.send_keys(title[0])
 
@@ -625,25 +618,25 @@ def modify(driver, isDraft):
 
         # 날짜 및 제목 입력
         # time.sleep(0.5)
-        fpath(driver, 집행요청일, title[0])
-        epath(driver, 집행요청일)
+        fillByXPath(driver, 집행요청일, title[0])
+        enterByXPath(driver, 집행요청일)
         time.sleep(0.3)
         # fpath(driver, 지급예정일, title[0])
         # epath(driver, 지급예정일)
         # acceptAlert(driver)
-        fpath(driver, 결의서_제목, title[1])
+        fillByXPath(driver, 결의서_제목, title[1])
         driver.find_element_by_xpath(세부사항).clear()
 
         # 결의서 작성
         for i in range(len(res)):
-            cpath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
-            fpath(driver, 적요, res[i])
-            cpath(driver, 결의내역_제출)
+            clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
+            fillByXPath(driver, 적요, res[i])
+            clickByXPath(driver, 결의내역_제출)
             time.sleep(0.1)
 
         # 세금 작성
         if tax_date and tax_date[0] != "":
-            cpath(driver, 세금계산_탭)
+            clickByXPath(driver, 세금계산_탭)
 
             try:
                 # dateutil 로 대체
@@ -657,13 +650,13 @@ def modify(driver, isDraft):
 
                 # 세금 작성
                 for i in range(len(tax_date)):
-                    cpath(driver, 세금계산_링크 + "[" + str(i + 2) + "]")
-                    fpath(driver, 발행일자, tax_date[i])
-                    cpath(driver, 세금계산_제출)
+                    clickByXPath(driver, 세금계산_링크 + "[" + str(i + 2) + "]")
+                    fillByXPath(driver, 발행일자, tax_date[i])
+                    clickByXPath(driver, 세금계산_제출)
                     time.sleep(0.1)
             except:
                 print("세금 날짜 작성에 실패하였습니다")
-            cpath(driver, 결의내역_탭)
+            clickByXPath(driver, 결의내역_탭)
 
         save(driver)
         print("저장이 완료되었습니다.")
@@ -687,13 +680,13 @@ def modify(driver, isDraft):
         print("path:", path)
 
         if path:
-            cpath(driver, 첨부파일)
+            clickByXPath(driver, 첨부파일)
             driver.switch_to.window(driver.window_handles[1])
             for f in os.listdir(path):
                 abs_file_path = os.path.abspath(path + f)
                 driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
                 time.sleep(0.3)
-                cpath(driver, 파일업로드)
+                clickByXPath(driver, 파일업로드)
                 print(f, "파일 업로드 완료")
 
             try:
@@ -738,7 +731,7 @@ def modify(driver, isDraft):
             return
         driver.switch_to.default_content()
         driver.switch_to.frame(조회_프레임)
-        cpath(driver, 닫기)
+        clickByXPath(driver, 닫기)
         time.sleep(1)
 
         print("\n=====================================================")
