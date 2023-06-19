@@ -52,27 +52,6 @@ def monthly_textReplace(prev, month):
     return result_string
 
 
-def dorm(driver, dep, pop):
-    fillByXPath(driver, dep, "")
-    enterByXPath(driver, dep)
-
-    try:
-        driver.switch_to.alert.accept()
-    except:
-        driver.switch_to.frame("frmPopup")
-        enterByXPath(driver, pop)
-        fillByXPath(driver, 소속코드, "A33100")
-        enterByXPath(driver, 소속코드)
-        time.sleep(0.3)
-        actions = ActionChains(driver)
-        doubleClick = driver.find_element_by_xpath(소속테이블)
-        actions.move_to_element(doubleClick)
-        actions.double_click(doubleClick)
-        actions.perform()
-        driver.switch_to.default_content()
-        driver.switch_to.frame("ifr_d4_AHG020P")
-
-
 def search(driver):
     global sema
     while True:
@@ -168,10 +147,9 @@ def lookup(driver):
 
 def write(driver):
     driver.switch_to.default_content()
-    clickByXPath(driver, 결의서_작성)
     driver.switch_to.frame(작성_프레임)
 
-    print("\n\n\n=================================")
+    print("\n=================================")
     while True:
         print("결의서를 작성하시겠습니까? 1(예)/2(아니오)")
         yes = input()
@@ -215,6 +193,7 @@ def write(driver):
                 except Exception as e:
                     print("예외가 발생했습니다:", str(e))
                     input("* 세금 계산 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                    sys.stdin.flush()
 
             print(i + 15, "행 입력중입니다.", sep="")
 
@@ -266,6 +245,7 @@ def write(driver):
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
                 input("* 회계 구분 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                sys.stdin.flush()
 
             try:
                 if (
@@ -279,6 +259,7 @@ def write(driver):
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
                 input("* 결의일자 번호 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                sys.stdin.flush()
 
             try:
                 if (
@@ -298,6 +279,7 @@ def write(driver):
                 print("사업코드 입력 완료")
             except:
                 input("* 사업코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                sys.stdin.flush()
 
             try:
                 if (
@@ -313,6 +295,7 @@ def write(driver):
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
                 input("* 계정과목 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                sys.stdin.flush()
 
             try:
                 if (
@@ -320,9 +303,7 @@ def write(driver):
                     and target_data[i][9] != ""
                     and target_data[i][9] != "_"
                 ):
-                    time.sleep(0.1)
                     fillByXPath(driver, 관리코드, target_data[i][9])
-                    time.sleep(0.1)
                     enterByXPath(driver, 관리코드)
                     time.sleep(0.2)
                     try:
@@ -330,45 +311,46 @@ def write(driver):
                     except:
                         driver.switch_to.frame("frmPopup")
                         enterByXPath(driver, 관리팝업)  # 입력이 바로 될 경우
+                    driver.switch_to.default_content()
+                    driver.switch_to.frame("ifr_d4_AHG020P")
 
-                        # 테이블 더블 클릭
-                        actions = ActionChains(driver)
-                        try:
-                            table_td_1 = driver.find_element_by_xpath(
-                                "/html/body/form/div[3]/div[3]/div/div/div/div[1]/div[2]/table/tbody/tr[1]"
-                            )
-                            actions.double_click(table_td_1).perform()
-                            driver.switch_to.default_content()
-                            driver.switch_to.frame("ifr_d4_AHG020P")
-                        except StaleElementReferenceException: pass
+                    time.sleep(1)
+                    관리코드값 = driver.find_element(By.NAME, "txtDetailMngrCode").get_attribute("value")
+                    if not 관리코드값:
+                        raise ValueError("관리코드가 비어있음")
 
                     print("관리코드 입력 완료")
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
                 input("* 관리코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                sys.stdin.flush()
 
             try:
-                if (
-                    target_data[i][11] is not None
-                    and target_data[i][11] != ""
-                    and target_data[i][11] != "_"
-                ):
-                    if target_data[i][11] == "기숙사":
-                        dorm(driver, 귀속부서, 귀속부서팝업)
-                    else:
-                        fillByXPath(driver, 귀속부서, target_data[i][11])
-                        enterByXPath(driver, 귀속부서)
+                if target_data[i][11] is not None and target_data[i][11] != "" and target_data[i][11] != "_":
+                    fillByXPath(driver, 귀속부서, target_data[i][11])
+                    enterByXPath(driver, 귀속부서)
+                    time.sleep(0.2)
+                    try:
+                        driver.switch_to.alert.accept()
+                    except:
+                        pass
+                    driver.switch_to.default_content()
+                    driver.switch_to.frame("ifr_d4_AHG020P")
+
+                귀속부서값 = driver.find_element(By.NAME, "txtDetailSosogCd").get_attribute("value")
+                if not 귀속부서값:
+                    raise ValueError("귀속부서가 비어있음")
+
                 print("귀속부서 입력 완료")
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
                 input("* 귀속부서 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                sys.stdin.flush()
 
             try:
                 select = Select(driver.find_element_by_id("ddlDetailEvidenceGb"))
-
                 test2 = {"없음": 0, "세금": 1, "기타": 2, "현금": 3}
                 select.select_by_index(test2[target_data[i][13]])
-
 
                 지출차변금액 = target_data[i][16]
                 수입대변금액 = target_data[i][17]
@@ -390,11 +372,12 @@ def write(driver):
                         integer_value = int(rounded_value)
                     fillByXPath(driver, 수입, str(integer_value))
                 if 적요사항 is not None and 적요사항 != "" and 적요사항 != "_":
-                    fillByXPath(driver, 적요, target_data[i][18])
+                    fillByXPath(driver, 적요, 적요사항)
                 print("금액 입력 완료")
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
                 input("* 금액(적요) 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
+                sys.stdin.flush()
 
             # time.sleep(0.2)
             clickByXPath(driver, 결의내역_제출)

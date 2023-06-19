@@ -1,5 +1,8 @@
 import sys
 import os
+
+from selenium.webdriver.common.by import By
+
 sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from FUNC_LIBRARY import autoLogin
 from ESSENTIAL_FILES import manage
@@ -49,7 +52,7 @@ def set_chromedriver():
 if __name__ == '__main__':
     # start = time.time()
     driver = set_chromedriver()
-    driver.implicitly_wait(time_to_wait=10)
+    driver.implicitly_wait(time_to_wait=5)
     # print(time.time()-start)
     driver.get("https://www.hongik.ac.kr/login.do?Refer=https://ngw.hongik.ac.kr/login_hongik.aspx")
     driver = autoLogin.login(driver)
@@ -61,8 +64,6 @@ if __name__ == '__main__':
     if dr:
         while True:
             RUN_DRAFT.draft(driver)
-    else:
-        driver = autoLogin.afterLogin(driver)
     while True:
         # select = '조회'
         select = '작성'
@@ -70,14 +71,18 @@ if __name__ == '__main__':
         # select = '기안'
         if select == '조회':
             manage.lookup(driver)
+            driver = autoLogin.afterLogin(driver)
         elif select == '작성':
-            # rep = threading.Thread(target=RUN_REPLACE.replace())
-            # rep.start()
+            driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
+            driver.execute_script("fclick(arguments[0])",
+                                  driver.find_element(By.ID, "d4_AHG020P").find_element(By.TAG_NAME, "span"))
             manage.write(driver)
         elif select == '수정':
             manage.modify(driver, False)
+            driver = autoLogin.afterLogin(driver)
         elif select == '기안':
             RUN_DRAFT.draft_write(driver)
+            driver = autoLogin.afterLogin(driver)
         elif select == '종료':
             break
         # else:
