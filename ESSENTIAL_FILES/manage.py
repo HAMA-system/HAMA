@@ -5,11 +5,8 @@ import sys
 
 from datetime import *
 
-import selenium.webdriver
 from dateutil.relativedelta import *
-from selenium.common import StaleElementReferenceException
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver import ActionChains
 
 from FUNC_LIBRARY.autoLogin import *
 from HIDDEN_FILES.linkData import *
@@ -195,7 +192,7 @@ def write(driver):
                     input("* 세금 계산 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
                     sys.stdin.flush()
 
-            print(i + 15, "행 입력중입니다.", sep="")
+            print("-------- ", i + 15, "행 입력중입니다 --------", sep="")
 
             # 정기 체크
             if (
@@ -307,18 +304,17 @@ def write(driver):
                     enterByXPath(driver, 관리코드)
                     time.sleep(0.2)
                     try:
-                        driver.switch_to.alert.accept()
+                        driver.switch_to.alert.accept() # 관리코드 입력이 필요없는 경우
+                        print("관리코드가 필요없는 자료")
                     except:
                         driver.switch_to.frame("frmPopup")
                         enterByXPath(driver, 관리팝업)  # 입력이 바로 될 경우
-                    driver.switch_to.default_content()
-                    driver.switch_to.frame("ifr_d4_AHG020P")
-
-                    time.sleep(1)
-                    관리코드값 = driver.find_element(By.NAME, "txtDetailMngrCode").get_attribute("value")
-                    if not 관리코드값:
-                        raise ValueError("관리코드가 비어있음")
-
+                        time.sleep(1)
+                        driver.switch_to.default_content()
+                        driver.switch_to.frame("ifr_d4_AHG020P")
+                        관리코드값 = driver.find_element(By.NAME, "txtDetailMngrCode").get_attribute("value")
+                        if not 관리코드값:
+                            raise ValueError("관리코드가 비어있음")
                     print("관리코드 입력 완료")
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
