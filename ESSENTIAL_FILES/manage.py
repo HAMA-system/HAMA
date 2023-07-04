@@ -6,6 +6,7 @@ import sys
 from datetime import *
 
 from dateutil.relativedelta import *
+from selenium.webdriver import ActionChains
 from selenium.webdriver.support.ui import Select
 
 from FUNC_LIBRARY.autoLogin import *
@@ -315,7 +316,12 @@ def write(driver):
                         관리코드값 = driver.find_element(By.NAME, "txtDetailMngrCode").get_attribute("value")
                         if not 관리코드값:
                             raise ValueError("관리코드가 비어있음")
+
+                    if not driver.find_element(By.NAME, "txtDetailMngrName").get_attribute("value"):
+                        raise ValueError("관리코드 텍스트이 비어있음")
                     print("관리코드 입력 완료")
+                else:
+                    raise ValueError("엑셀: [%d 행]의 관리코드가 비어있음" % (i + 15))
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
                 input("* 관리코드 입력에 실패했습니다. 수동으로 입력 후 [Enter] 키를 입력해주세요")
@@ -323,13 +329,28 @@ def write(driver):
 
             try:
                 if target_data[i][11] is not None and target_data[i][11] != "" and target_data[i][11] != "_":
-                    fillByXPath(driver, 귀속부서, target_data[i][11])
-                    enterByXPath(driver, 귀속부서)
-                    time.sleep(0.2)
-                    try:
-                        driver.switch_to.alert.accept()
-                    except:
-                        pass
+                    # 귀속부서가 기숙사일 경우 2개의 결과가 있어 직접 코드를 입력해야 한다
+                    if target_data[i][11] == "기숙사":
+                        fillByXPath(driver, 귀속부서, "")
+                        enterByXPath(driver, 귀속부서)
+                        try:
+                            driver.switch_to.alert.accept()
+                        except:
+                            driver.switch_to.frame("frmPopup")
+                            enterByXPath(driver, 귀속부서팝업)
+                            fillByXPath(driver, 소속코드, "A33100")
+                            enterByXPath(driver, 소속코드)
+                            time.sleep(0.3)
+                            actions = ActionChains(driver)
+                            doubleClick = driver.find_element_by_xpath(소속테이블)
+                            actions.move_to_element(doubleClick)
+                            actions.double_click(doubleClick)
+                            actions.perform()
+
+                    else:
+                        fillByXPath(driver, 귀속부서, target_data[i][11])
+                        enterByXPath(driver, 귀속부서)
+
                     driver.switch_to.default_content()
                     driver.switch_to.frame("ifr_d4_AHG020P")
 
