@@ -41,6 +41,7 @@ def is_관리비_or_위탁료(적요):
 
 def parse_month_part(data, total, current, view_data):
     month_parts = re.findall(r"\(([^()]*?월[^()]*?)\)", data)
+
     month_list = []
     try:
         for month_part in month_parts:
@@ -53,6 +54,10 @@ def parse_month_part(data, total, current, view_data):
                             start, end = range_part.group(1), range_part.group(2)
                             month_list.extend(range(int(start), int(end) + 1))
                     elif "," in month_part:
+                        for word in month_part.split(" "):
+                            if "월" in word:
+                                month_list.extend(map(int, re.findall(r"\d+", word)))
+                    elif "년" in month_part:
                         for word in month_part.split(" "):
                             if "월" in word:
                                 month_list.extend(map(int, re.findall(r"\d+", word)))

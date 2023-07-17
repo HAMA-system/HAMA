@@ -45,6 +45,7 @@ def is_관리비_or_위탁료(적요):
 def read_계정별원장자료():
     COLUMNS, FILE_NAME, SHEET_NAME, FIRST_ROW = 계정별원장자료.values()
     fileName = HIDDENFILE_PATH + FILE_NAME
+    print("계정별원장자료 파일 로드 중...")
     data = excel.read_column_data(fileName, SHEET_NAME, COLUMNS, FIRST_ROW)
     data = excel.remove_none_rows(data)
 
@@ -76,7 +77,7 @@ def read_계정별원장자료():
 
 
 def write_위탁업체_납부현황(parsed_data):
-    월_행 = [0, "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV"]
+    월_행 = [0, "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R"]
     COLUMNS, FILE_NAME, SHEET_NAME, FIRST_ROW = 위탁업체_납부현황_최종.values()
     fileName = HIDDENFILE_PATH + FILE_NAME
     print("위탁업체 납부현황 파일 로드 중...")
@@ -115,16 +116,18 @@ def write_위탁업체_납부현황(parsed_data):
     for row in sorted_marched_data:
         month = row[1][4]
 
-        if len(month) > 1:
-            excel.merge_cells_and_input_data(
-                sheet,
-                f"{월_행[month[0]]}{row[0]}",
-                f"{월_행[month[-1]]}{row[0]}",
-                row[1][0],
-            )
-        elif len(month) == 1:
-            excel.input_data_to_cell(sheet, f"{월_행[month[0]]}{row[0]}", row[1][0])
-
+        try:
+            if len(month) > 1:
+                excel.merge_cells_and_input_data(
+                    sheet,
+                    f"{월_행[month[0]]}{row[0]}",
+                    f"{월_행[month[-1]]}{row[0]}",
+                    row[1][0],
+                )
+            elif len(month) == 1:
+                excel.input_data_to_cell(sheet, f"{월_행[month[0]]}{row[0]}", row[1][0])
+        except:
+            pprint.pprint(["오류", row[1]])
     workbook.save(fileName)
     print("저장 완료")
 
@@ -133,7 +136,8 @@ def run():
     result = read_계정별원장자료()
     write_위탁업체_납부현황(result)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     run()
 """
     read_계정별원장자료() : '계정별원장자료' 파일에서 데이터를 가져와 가공
