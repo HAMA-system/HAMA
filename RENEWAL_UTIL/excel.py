@@ -1,4 +1,7 @@
 import openpyxl
+from openpyxl.styles import Alignment
+from openpyxl import load_workbook
+from openpyxl.worksheet.worksheet import Worksheet
 
 
 def read_column_data(filename, sheet_name, columns, first_row):
@@ -41,3 +44,24 @@ def remove_none_rows(data):
         list: NoneType인 값이 없는 배열로 이루어진 이중배열을 반환합니다.
     """
     return [row for row in data if all(item is not None for item in row)]
+
+
+def merge_cells_and_input_data(
+    sheet: Worksheet, startCellLocation, endCellLocation, data
+):
+    # 셀 병합
+    startCell = sheet[startCellLocation]  # 병합을 시작할 셀
+    endCell = sheet[endCellLocation]  # 병합을 종료할 셀
+
+    merged_cell_range = f"{startCellLocation}:{endCellLocation}"
+    sheet.merge_cells(merged_cell_range)
+
+    # 병합된 셀에 데이터 입력
+    startCell.value = data + "입"
+    startCell.alignment = Alignment(horizontal="left", vertical="center")
+
+
+def input_data_to_cell(sheet: Worksheet, cellLocation, data):
+    cell = sheet[cellLocation]
+    cell.value = data + "입"
+    cell.alignment = Alignment(horizontal="left", vertical="center")
