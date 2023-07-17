@@ -9,25 +9,25 @@ from RENEWAL_UTIL import excel, date
 
 HIDDENFILE_PATH = 링크[4]
 
-위탁업체_list = {
-    "COLUMNS": ["E", "I", "J", "N", "R"],  # 가져올 열(알파벳)
-    # 업체명, 시작, 종료, 위탁료(월), 관리비(월)
-    "FILE_NAME": "위탁업체/20220407 위탁업체 list.xlsm",  # 파일명
-    "SHEET_NAME": "21년 서울캠",  # 시트명
-    "FIRST_ROW": 5,  # 시작 행(숫자)
-}
+# 위탁업체_list = {
+#     "COLUMNS": ["E", "I", "J", "N", "R"],  # 가져올 열(알파벳)
+#     # 업체명, 시작, 종료, 위탁료(월), 관리비(월)
+#     "FILE_NAME": "위탁업체/20220407 위탁업체 list.xlsm",  # 파일명
+#     "SHEET_NAME": "21년 서울캠",  # 시트명
+#     "FIRST_ROW": 5,  # 시작 행(숫자)
+# }
 
 계정별원장자료 = {
     "COLUMNS": ["C", "I", "Q", "T", "R"],  # 가져올 열(알파벳)
     # 전표일자, 대변, 계정과목명, 관리코드명, 적요
-    "FILE_NAME": "위탁업체/계정별원장자료_2023-06-29.xlsx",  # 파일명 (xlsx 파일로 변환 필요!!)
-    "SHEET_NAME": "계정별원장자료_2023-06-29",  # 시트명
+    "FILE_NAME": "vendor/계정별원장자료.xlsx",  # 파일명 (xlsx 파일로 변환 필요!!)
+    "SHEET_NAME": "1",  # 시트명
     "FIRST_ROW": 2,  # 시작 행(숫자)
 }
 
 위탁업체_납부현황_최종 = {
     "COLUMNS": ["B", "D", "E"],
-    "FILE_NAME": "위탁업체/230706 위탁운영업체 납부현황(최종)현재_NEW.xlsx",
+    "FILE_NAME": "vendor/위탁운영업체 납부현황.xlsx",
     "SHEET_NAME": "서울캠",
     "FIRST_ROW": 2,
 }
@@ -44,7 +44,7 @@ def is_관리비_or_위탁료(적요):
 
 def read_계정별원장자료():
     COLUMNS, FILE_NAME, SHEET_NAME, FIRST_ROW = 계정별원장자료.values()
-    fileName = HIDDENFILE_PATH + "/" + FILE_NAME
+    fileName = HIDDENFILE_PATH + FILE_NAME
     data = excel.read_column_data(fileName, SHEET_NAME, COLUMNS, FIRST_ROW)
     data = excel.remove_none_rows(data)
 
@@ -78,7 +78,7 @@ def read_계정별원장자료():
 def write_위탁업체_납부현황(parsed_data):
     월_행 = [0, "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV"]
     COLUMNS, FILE_NAME, SHEET_NAME, FIRST_ROW = 위탁업체_납부현황_최종.values()
-    fileName = HIDDENFILE_PATH + "/" + FILE_NAME
+    fileName = HIDDENFILE_PATH + FILE_NAME
     print("위탁업체 납부현황 파일 로드 중...")
     workbook = load_workbook(fileName)
     sheet = workbook[SHEET_NAME]
@@ -133,8 +133,8 @@ def run():
     result = read_계정별원장자료()
     write_위탁업체_납부현황(result)
 
-
-run()
+if __name__ == '__main__':
+    run()
 """
     read_계정별원장자료() : '계정별원장자료' 파일에서 데이터를 가져와 가공
     write_위탁업체_납부현황() : '위탁업체 납부현황' 파일에 가공한 데이터를 작성
