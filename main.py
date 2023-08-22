@@ -48,9 +48,10 @@ if __name__ == '__main__':
             RUN_DRAFT.draft(driver)
     while True:
         # select = '조회'
-        select = '작성'
+        # select = '작성'
         # select = '수정'
         # select = '기안'
+        select = '출근'
         if select == '조회':
             manage.lookup(driver)
             driver = autoLogin.afterLogin(driver)
@@ -65,6 +66,8 @@ if __name__ == '__main__':
         elif select == '기안':
             RUN_DRAFT.draft_write(driver)
             driver = autoLogin.afterLogin(driver)
+        elif select == '출근':
+            driver = autoLogin.checkWork(driver)
         elif select == '종료':
             break
         # else:
