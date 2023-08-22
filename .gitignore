@@ -28,3 +28,4 @@ bank.xlsx
 HIDDEN_FILES/**
 HIDDEN_FILES.**
 requirement.txt
+chromedriver

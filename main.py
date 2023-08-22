@@ -14,40 +14,22 @@ from webdriver_manager.chrome import ChromeDriverManager
 from EXECUTION_FILE import RUN_DRAFT
 
 def set_chromedriver():
-    while True:
+    options = webdriver.ChromeOptions()  # 크롬 옵션 객체 생성
+    options.add_argument("disable-gpu")
+    try:
+        # 로컬 크롬 드라이버 확인
+        chrome_driver_root_path = os.path.abspath("./chromedriver")
+        return webdriver.Chrome(executable_path=chrome_driver_root_path, options=options)
+    except Exception as e:
+        print("예외가 발생했습니다:", str(e))
+        print("크롬드라이버 실행에 실패했습니다. 외부 크롬드라이버를 다운로드 합니다.")
         try:
-            options = webdriver.ChromeOptions()  # 크롬 옵션 객체 생성
-            # options.add_argument('headless')  # headless 모드 설정
-            # options.add_argument("window-size=1920x1080")  # 화면크기(전체화면)
-            options.add_argument("disable-gpu")
-            # options.add_argument("disable-infobars")
-            # options.add_argument("--disable-extensions")
-
-            # prefs = {'profile.default_content_setting_values': {'cookies': 2, 'images': 2, 'plugins': 2, 'popups': 2,
-            #                                                     'geolocation': 2, 'notifications': 2,
-            #                                                     'auto_select_certificate': 2, 'fullscreen': 2,
-            #                                                     'mouselock': 2, 'mixed_script': 2, 'media_stream': 2,
-            #                                                     'media_stream_mic': 2, 'media_stream_camera': 2,
-            #                                                     'protocol_handlers': 2, 'ppapi_broker': 2,
-            #                                                     'automatic_downloads': 2, 'midi_sysex': 2,
-            #                                                     'push_messaging': 2, 'ssl_cert_decisions': 2,
-            #                                                     'metro_switch_to_desktop': 2,
-            #                                                     'protected_media_identifier': 2, 'app_banner': 2,
-            #                                                     'site_engagement': 2, 'durable_storage': 2}}
-            # options.add_experimental_option('prefs', prefs)
-            driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-            # driver = webdriver.Chrome(executable_path=링크[0],options=options)
-
-            # driver = webdriver.Chrome(링크[0])
-
-            break
-            # driver = webdriver.Chrome("/Users/han/hans/workspace/kwanjae/chromedriver")
-            # driver = webdriver.Chrome("/Users/MS/PycharmProjects/HAMA/chromedriver")
-
-        except:
-            pass
-            # errorController.errorMsg(0)
-    return driver
+            # 없으면 인스톨
+            return webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        except Exception as e2:
+            print("예외가 발생했습니다:", str(e2))
+            print("외부 크롬드라이버 다운로드에 실패했습니다. 프로그램을 종료합니다.")
+            raise e2
 
 if __name__ == '__main__':
     # start = time.time()
