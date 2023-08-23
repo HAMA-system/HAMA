@@ -60,7 +60,7 @@ def draft(driver):
     time.sleep(3)
     driver.switch_to.default_content()
     driver.switch_to.frame(기안_프레임2)
-    clickByXPath(driver, 완료문서)
+    driver.find_element_by_id('LOCKMYCONT').click()
     time.sleep(1)
     first = True
     while True:
