@@ -50,22 +50,24 @@ if __name__ == '__main__':
         # select = '조회'
         # select = '작성'
         # select = '수정'
-        # select = '기안'
-        select = '출근'
+        select = '기안'
+        # select = '출근'
         if select == '조회':
-            manage.lookup(driver)
             driver = autoLogin.afterLogin(driver)
+            manage.lookup(driver)
         elif select == '작성':
             driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
             driver.execute_script("fclick(arguments[0])",
                                   driver.find_element(By.ID, "d4_AHG020P").find_element(By.TAG_NAME, "span"))
             manage.write(driver)
         elif select == '수정':
+            driver = autoLogin.afterLogin(driver)
             manage.modify(driver, False)
-            driver = autoLogin.afterLogin(driver)
         elif select == '기안':
+            driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
+            driver.execute_script("fclick(arguments[0])",
+                                  driver.find_element(By.ID, "d4_AHG029S").find_element(By.TAG_NAME, "span"))
             RUN_DRAFT.draft_write(driver)
-            driver = autoLogin.afterLogin(driver)
         elif select == '출근':
             driver = autoLogin.checkWork(driver)
         elif select == '종료':

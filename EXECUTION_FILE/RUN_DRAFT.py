@@ -238,7 +238,6 @@ def draft_write(driver):
     ig.daemon = True
     ignoreAutoLogout.timer = 0
     ig.start()
-    clickByXPath(driver, 결의서_조회)
     first = True
     while True:
         # Alert 오류 제어
