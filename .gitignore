@@ -31,3 +31,4 @@ requirement.txt
 chromedriver
 **.chromedriver
 env
+venv
