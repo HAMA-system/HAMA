@@ -354,6 +354,7 @@ def write(driver):
                     driver.switch_to.default_content()
                     driver.switch_to.frame("ifr_d4_AHG020P")
 
+                time.sleep(0.3)
                 귀속부서값 = driver.find_element(By.NAME, "txtDetailSosogCd").get_attribute("value")
                 if not 귀속부서값:
                     raise ValueError("귀속부서가 비어있음")
