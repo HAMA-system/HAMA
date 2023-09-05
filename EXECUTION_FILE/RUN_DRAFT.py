@@ -178,42 +178,42 @@ def draft(driver):
             clickByXPath(driver, 인쇄_창닫기)
             driver.switch_to.parent_frame()
 
-            # 첨부파일 프린트
-            try:
-                print("첨부 파일 다운로드를 시작합니다")
-                clickById(driver, "tabAttachInfoDT")
-                pdf_num = 1
-                print_path = download_path
-                while True:
-                    try:
-                        pdf_link = (
-                            "/html/body/div[3]/div[1]/div/span[2]/span[2]/span/span/div[1]/div[3]/div/div[1]/ul/li/ul/ul/li/a["
-                            + str(pdf_num)
-                            + "]/ul/li/span"
-                        )
-                        pdf_down = driver.find_element(by=By.XPATH, value=pdf_link)
-                        pdf_down.click()
-                        pdf_num += 1
-                        t = 0
-                        Max = 0
-                        last_file = ""
-                        # 가장 최근에 추가된 파일로 이용.
-                        # 이름 추출하여 비교하는 게 시간 더 오래 걸림
-                        time.sleep(1.5)
-                        for file in os.listdir(print_path):
-                            if file[0] == ".":
-                                continue
-                            written_time = os.path.getctime(print_path + file)
-                            if Max < written_time:
-                                Max = written_time
-                                last_file = file
-                        print(print_path + last_file, "파일이 프린트되고 있습니다...")
-                        os.startfile(print_path + last_file, "print")
-                    except:
-                        print("첨부파일 출력 완료")
-                        break
-            except:
-                pass
+            # # 첨부파일 프린트
+            # try:
+            #     print("첨부 파일 다운로드를 시작합니다")
+            #     clickById(driver, "tabAttachInfoDT")
+            #     pdf_num = 1
+            #     print_path = download_path
+            #     while True:
+            #         try:
+            #             pdf_link = (
+            #                 "/html/body/div[3]/div[1]/div/span[2]/span[2]/span/span/div[1]/div[3]/div/div[1]/ul/li/ul/ul/li/a["
+            #                 + str(pdf_num)
+            #                 + "]/ul/li/span"
+            #             )
+            #             pdf_down = driver.find_element(by=By.XPATH, value=pdf_link)
+            #             pdf_down.click()
+            #             pdf_num += 1
+            #             t = 0
+            #             Max = 0
+            #             last_file = ""
+            #             # 가장 최근에 추가된 파일로 이용.
+            #             # 이름 추출하여 비교하는 게 시간 더 오래 걸림
+            #             time.sleep(1.5)
+            #             for file in os.listdir(print_path):
+            #                 if file[0] == ".":
+            #                     continue
+            #                 written_time = os.path.getctime(print_path + file)
+            #                 if Max < written_time:
+            #                     Max = written_time
+            #                     last_file = file
+            #             print(print_path + last_file, "파일이 프린트되고 있습니다...")
+            #             os.startfile(print_path + last_file, "print")
+            #         except:
+            #             print("첨부파일 출력 완료")
+            #             break
+            # except:
+            #     pass
 
             driver.switch_to.default_content()
             driver.switch_to.frame(기안_프레임2)

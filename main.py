@@ -40,17 +40,17 @@ if __name__ == '__main__':
     driver = autoLogin.login(driver)
 
     #### only printing option ####
-    dr = True
-    # dr = False
+    # dr = True
+    dr = False
 
     if dr:
         while True:
             RUN_DRAFT.draft(driver)
     while True:
         # select = '조회'
-        # select = '작성'
+        select = '작성'
         # select = '수정'
-        select = '기안'
+        # select = '기안'
         # select = '출근'
         if select == '조회':
             driver = autoLogin.afterLogin(driver)

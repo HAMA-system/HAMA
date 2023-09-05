@@ -490,24 +490,25 @@ def upload(driver, title):
             dpath = 링크[3] + "기안 필요/" + inFolder + "/"
             break
 
-    if path:
-        clickByXPath(driver, 첨부파일)
-        driver.switch_to.window(driver.window_handles[1])
-        for f in os.listdir(path):
-            abs_file_path = os.path.abspath(path + f)
-            driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
-            time.sleep(0.3)
-            clickByXPath(driver, 파일업로드)
-            print(f, "파일 업로드 완료")
+        if path:
+            clickByXPath(driver, 첨부파일)
+            driver.switch_to.window(driver.window_handles[1])
+            for f in os.listdir(path):
+                abs_file_path = os.path.abspath(path + f)
+                time.sleep(1)
+                driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
+                time.sleep(0.5)
+                clickByXPath(driver, 파일업로드)
+                print(f, "파일 업로드 완료")
 
-        os.replace(path, dpath)
-        print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
+            os.replace(path, dpath)
+            print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
 
-        driver.close()
-        driver.switch_to.window(driver.window_handles[0])
-        time.sleep(0.1)
-        driver.switch_to.frame(작성_프레임)
-        save(driver)
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
+            time.sleep(0.1)
+            driver.switch_to.frame(작성_프레임)
+            save(driver)
 
 
 def save(driver):
