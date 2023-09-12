@@ -698,8 +698,9 @@ def modify(driver, isDraft: bool):
             driver.switch_to.window(driver.window_handles[1])
             for f in os.listdir(path):
                 abs_file_path = os.path.abspath(path + f)
+                time.sleep(1)
                 driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
-                time.sleep(0.3)
+                time.sleep(0.5)
                 clickByXPath(driver, 파일업로드)
                 print(f, "파일 업로드 완료")
 
