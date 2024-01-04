@@ -536,7 +536,7 @@ def delete(file):
         print("삭제가 완료되었습니다.")
 
 
-def modify(driver, isDraft):
+def modify(driver, isDraft: bool):
     global sema
     global d
 
@@ -750,6 +750,158 @@ def modify(driver, isDraft):
 
         print("\n=====================================================")
 
+def modify_month(driver, month: int): # 특정 월로 복사 후 기안
+    global sema
+    global d
+
+    while True:
+        driver.switch_to.default_content()
+        driver.switch_to.frame(조회_프레임)
+        driver.switch_to.frame("frmPopup")
+
+        # 결의서 제목 및 날짜 저장
+        title = []
+        res = []
+        tax_date = []
+
+        title.append("temp")
+        res_title = driver.find_element_by_xpath(결의서_제목)
+        title.append(res_title.get_attribute("value"))
+
+        clickByXPath(driver, 복사)
+
+        while True:
+            try:
+                alert = driver.switch_to.alert
+                time.sleep(0.5)
+            except:
+                break
+
+        res_date = driver.find_element_by_xpath(결의일자_번호)
+        title[0] = res_date.get_attribute("value")
+
+        # 내부 데이터 수집 (결의항목)
+        table = driver.find_element_by_xpath(결의서_테이블)
+        tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+        for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
+            i = 0
+            for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+                i += 1
+                if i == 10:
+                    res.append(td.get_attribute("innerText"))
+
+        # 내부 데이터 수집 (세금)
+        table = driver.find_element_by_xpath(세금계산_테이블)
+        tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+        for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
+            i = 0
+            for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+                i += 1
+                if i == 4:
+                    tax_date.append(td.get_attribute("innerText"))
+
+        # 연도 제거
+        title[1] = delete_year_str(title[1])
+        title[1] = change_month(title[1], month).strip()
+        for i in range(len(res)):
+            res[i] = change_month(res[i], month) # 월 변경
+        print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
+
+        # 날짜 및 제목 입력
+        fillByXPath(driver, 집행요청일, title[0])
+        enterByXPath(driver, 집행요청일)
+        time.sleep(0.3)
+        fillByXPath(driver, 결의서_제목, title[1])
+        driver.find_element_by_xpath(세부사항).clear()
+
+        # 결의서 작성
+        for i in range(len(res)):
+            clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
+            fillByXPath(driver, 적요, res[i])
+            clickByXPath(driver, 결의내역_제출)
+            time.sleep(0.1)
+
+        # 세금 작성
+        if tax_date and tax_date[0] != "":
+            clickByXPath(driver, 세금계산_탭)
+
+            try:
+                # dateutil 로 대체
+                for i in range(len(tax_date)):
+                    tax_date[i] = datetime.strptime(
+                        tax_date[i], "%Y-%m-%d"
+                    ) + relativedelta(months=1)
+                    tax_date[i] = datetime.strftime(tax_date[i], "%Y-%m-%d")
+
+                print("세금 날짜", *tax_date, "", sep="\n")
+
+                # 세금 작성
+                for i in range(len(tax_date)):
+                    clickByXPath(driver, 세금계산_링크 + "[" + str(i + 2) + "]")
+                    fillByXPath(driver, 발행일자, tax_date[i])
+                    clickByXPath(driver, 세금계산_제출)
+                    time.sleep(0.1)
+            except:
+                print("세금 날짜 작성에 실패하였습니다")
+            clickByXPath(driver, 결의내역_탭)
+
+        save(driver)
+        print("저장이 완료되었습니다.")
+
+        mkdir_if_not_exist()
+
+        modify_draft(title[1])
+        path = ""
+        depth = ""
+        try:
+            for inFolder in os.listdir(링크[3] + "결의서 작성 필요/"):
+                checkFolder = "".join(inFolder.split("#")[:-1])
+                if checkFolder.replace("$", "/").strip() == title[1].strip():
+                    path = 링크[3] + "결의서 작성 필요/" + inFolder + "/"
+                    dpath = 링크[3] + "기안 필요/" + inFolder + "/"
+                    break
+        except:
+            print("경로 설정 오류 - 파일 저장에 실패했습니다")
+            pass
+
+        print("path:", path)
+
+        if path:
+            clickByXPath(driver, 첨부파일)
+            driver.switch_to.window(driver.window_handles[1])
+            for f in os.listdir(path):
+                abs_file_path = os.path.abspath(path + f)
+                driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
+                time.sleep(0.3)
+                clickByXPath(driver, 파일업로드)
+                print(f, "파일 업로드 완료")
+
+            try:
+                os.replace(path, dpath)
+                print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
+            except:
+                print("경로 설정 오류 - 기안 필요 파일 이동에 실패했습니다")
+                pass
+
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
+            time.sleep(0.1)
+            driver.switch_to.frame(조회_프레임)
+
+            # 해야함
+            driver.switch_to.frame("frmPopup")
+            save(driver)
+        else:
+            print("파일을 찾을 수 없습니다")
+            print("파일을 올리고 저장 후 엔터를 눌러주세요.")
+            input()
+
+        driver.switch_to.default_content()
+        driver.switch_to.frame(조회_프레임)
+        clickByXPath(driver, 닫기)
+        time.sleep(1)
+
+        print("\n=====================================================")
 
 def mkdir_if_not_exist():
     target_dir = "./완료"
@@ -1000,102 +1152,143 @@ def monthly_check(prev):
     result = delete_year_str(result)
     return result
 
+def change_month(prev, to_month): # 특정 월호 날짜 변경
+    r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
+    q2 = re.compile("(\D*)([\d~]*\d+)(월)(\D*)")
+    n = re.compile(("\d[ , ]+\d"))
+    q = re.compile(("~"))
+    y = re.compile("(\d*)(년)")
+    c = re.compile("[']*(\d*)\.(\d*)\.(\d*)(\.)*")
 
-def monthly_next(prev, month, val, ymonth):
+    prev = delete_year_str(prev) # 연도 제거
+
+    # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
+    l, key = 0, 0
+    ret = []
+    ret_y = []
+    if n.search(prev):
+        key = 1
+    if q.search(prev):
+        key = 2
+
+    text_list = prev.split()
+    pprev = ""
+
+    result = ""
+
+    for p in text_list:
+        if c.search(p):
+            f = c.findall(p)
+            if len(f) == 2:
+                date1 = datetime.datetime(int(f[0][0]), int(f[0][1]), int(f[0][2]))
+                date2 = datetime.datetime(int(f[1][0]), int(f[1][1]), int(f[1][2]))
+                if dateController.date2dateByDays(date1, date2) > 300:
+                    # 1년 단위 차이라고 가정
+                    # year_gap = dateController.date2dateByYears(date1,date2)
+                    year_gap = round(dateController.date2dateByDays(date1, date2) / 365)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByYear(date1, year_gap)
+                        + "~"
+                        + dateController.jumpDateByYear(date2, year_gap),
+                        p,
+                    )
+                    result += t + " "
+                    # result += dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap)
+                elif dateController.date2dateByDays(date1, date2) > 31:
+                    month_gap = round(dateController.date2dateByDays(date1, date2) / 31)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByMonth(date1, month_gap)
+                        + "~"
+                        + dateController.jumpDateByMonth(date2, month_gap),
+                        p,
+                    )
+                    result += t + " "
+            elif len(f) == 1:
+                result += p + " "
+        else:
+            check = False
+            # 년도가 등장하는 부분 시작
+            if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
+                # print(pprev)
+                temp = []
+                m = l
+                x = []
+                while m < l + len(p):
+                    if "0" <= prev[m] <= "9":
+                        s = prev[m]
+                        if "0" <= prev[m + 1] <= "9":
+                            s += prev[m + 1]
+                            m += 1
+                        x.append(int(s))
+                    m += 1
+                for tmp in temp:
+                    x.append(int(s))
+                ret_y.append([int(pprev[:-1]), x])
+                # year_part = pprev
+                # 연도 붙이기
+                # print("ret_y = " + str(ret_y))
+            # 년도가 등장하는 부분 종료
+            elif r.match(p) or q2.match(p):
+                temp = []
+                m = l
+                while m < l + len(p):
+                    if "0" <= prev[m] <= "9":
+                        s = prev[m]
+                        if "0" <= prev[m + 1] <= "9":
+                            s += prev[m + 1]
+                            m += 1
+                        temp.append(s)
+                    m += 1
+                ret.append(temp)
+
+            l += len(p) + 1
+            pprev = p
+            # print(pprev)
+
+        if not check:
+            # print(p, ret_y)
+            # print(p, ret)
+            result += change_month_to(p, ret, to_month) + " "
+
+    result = delete_year_str(result)
+    return result
+
+def change_month_to(prev, month, to_month): # 특정 월로 텍스트를 변경
     cmonth = deepcopy(month)
-    cymonth = deepcopy(ymonth)
-    n = len(prev)
-    s = ""
+    cmonth.sort(key=lambda x: int(x[0]))
 
-    # 일반적 케이스
-    for m in cmonth:
-        if val == 0:
-            # %d월 확인
-            next_month = month_inc(cmonth, 1)
-            for i in range(len(cmonth)):
-                cmonth[i] = int(cmonth[i])
-                next_month[i] = int(next_month[i])
-            cmonth.sort(reverse=True)
-            next_month.sort(reverse=True)
-            for i in range(len(cmonth)):
-                cmonth[i] = str(cmonth[i])
-                next_month[i] = str(next_month[i])
-            for i in range(len(cmonth)):
-                cmonth[i] += "월"
-                next_month[i] += "월"
-            for i in range(len(cmonth)):
-                if re.search(cmonth[i], prev):
-                    prev = re.sub(cmonth[i], next_month[i], prev)
-
-        if val == 1:
-            # %d,%d월 확인 + %d월,%d월?
-            last = int(cmonth[-1])
-            first = int(cmonth[0])
-            value = last - first + 1
-            if last < first:
-                value += 12
-            next_month = month_inc(cmonth, value)
-            next_month = ",".join(next_month) + "월"
-            cmonth = ",".join(cmonth) + "월"
-            prev = re.sub(cmonth, next_month, prev)
-
-        # 분기 || 연단위
-        if val == 2:
-            # %d월~%d월 확인 + %d~%d월 ?
-            last = int(cmonth[1])
-            first = int(cmonth[0])
-            value = last - first % 12
-            next_month = month_inc(cmonth, value + 1)
-            for i in range(2):
-                cmonth[i] += "월"
-                next_month[i] += "월"
-
-            for i in range(1, -1, -1):
-                if re.search(cmonth[i], prev):
-                    prev = re.sub(cmonth[i], next_month[i], prev)
-
-    # 연도 포함 대체
-    for m in cymonth:
-        if val == 0:
-            # %d월 확인
-            next_month = ymonth_inc(cymonth, 1)
-            for i in range(len(cymonth[1])):
-                cymonth[1][i] += "월"
-                next_month[1][i] += "월"
-            cymonth[1].sort(reverse=True)
-            next_month.sort(reverse=True)
-            for i in range(len(cymonth[1])):
-                if re.search(cymonth[0] + " " + cymonth[1][i], prev):
-                    prev = re.sub(cymonth[0] + " " + cymonth[1][i], next_month[i], prev)
-
-        if val == 1:
-            # %d,%d월 확인 + %d월,%d월?
-            last = int(cmonth[-1])
-            first = int(cmonth[0])
-            value = last - first + 1
-            if last < first:
-                value += 12
-            next_month = month_inc(cmonth, value)
-            next_month = ",".join(next_month) + "월"
-            cmonth = ",".join(cmonth) + "월"
-            prev = re.sub(cmonth, next_month, prev)
-
-        # 분기 || 연단위
-        if val == 2:
-            # %d월~%d월 확인 + %d~%d월 ?
-            last = int(cmonth[1])
-            first = int(cmonth[0])
-            value = last - first % 12
-            next_month = month_inc(cmonth, value + 1)
-            for i in range(2):
-                cmonth[i] += "월"
-                next_month[i] += "월"
-
-            for i in range(1, -1, -1):
-                if re.search(cmonth[i], prev):
-                    prev = re.sub(cmonth[i], next_month[i], prev)
-
-        return prev
+    # 연도가 모두 없다고 가정
+    for xi in range(len(cmonth) - 1, -1, -1):
+        x = cmonth[xi]
+        for i in range(len(x) - 1, -1, -1):
+            if re.search(str(x[i]), prev):
+                prev = re.sub(
+                    "\A" + str(x[i]) + "월", "" + str(to_month) + "월", prev
+                )
+                prev = re.sub(
+                    "~" + str(x[i]) + "월", "~" + str(to_month) + "월", prev
+                )
+                prev = re.sub(
+                    "\(" + str(x[i]) + "월", "(" + str(to_month) + "월", prev
+                )
+                prev = re.sub(
+                    "\(" + str(x[i]) + ",", "(" + str(to_month) + ",", prev
+                )
+                prev = re.sub(
+                    "\A" + str(x[i]) + "월", "" + str(to_month) + "월", prev
+                )
+                prev = re.sub(
+                    "\A" + str(x[i]) + ",", "" + str(to_month) + ",", prev
+                )
+                prev = re.sub(
+                    "," + str(x[i]) + "월", "," + str(to_month) + "월", prev
+                )
+                prev = re.sub(
+                    "," + str(x[i]) + ",", "," + str(to_month) + ",", prev
+                )
+    return prev
 
 
 def new_monthly_next(prev, month, val, ymonth):
@@ -1365,7 +1558,7 @@ if __name__ == "__main__":
     # for i in range(len(res)):
     #     res[i] = monthly_check(res[i])
 
-    print(monthly_check(test_text))
+    print(change_month(test5, 5))
     # print(monthly_check(test2))
     # print(monthly_check(test3))
     print(monthly_check(test4))

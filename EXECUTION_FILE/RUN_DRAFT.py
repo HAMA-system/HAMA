@@ -260,8 +260,8 @@ def draft_write(driver):
             # 선택지 loop
             while True:
                 print("\n변경하실 페이지를 띄우신 후 원하시는 버튼을 입력해주세요.")
-                put = input("1(다음달로 복사 후 기안) 2(바로 기안) 3(검색으로 돌아가기)\n")
-                if put == "1":
+                put = input("1(다음달로 복사 후 기안) 2(바로 기안) 3(검색으로 돌아가기) 4(특정 월로 복사 후 기안)\n")
+                if put == "1": # 다음달로 복사 후 기안
                     manage.modify(driver, True)
 
                     # Alert 오류 제어
@@ -270,7 +270,7 @@ def draft_write(driver):
                     except:
                         pass
                     break
-                elif put == "2":
+                elif put == "2": # 바로 기안
                     try:
                         print("로드 중입니다. 최대 30초 소요될 수 있습니다.")
                         if no_file == False:
@@ -279,8 +279,26 @@ def draft_write(driver):
                     except:
                         print("잘못된 입력입니다. 다시 시도해주세요")
                     break
-                elif put == "3":
+                elif put == "3": # 검색으로 돌아가기
                     first = True
+                    break
+                elif put == "4": # 특정 월로 복사 후 기안
+                    while True:
+                        month = input("변경하고자 하려는 월을 입력하세요\n")
+                        try:
+                            int_month = int(month)
+                        except:
+                            print("잘못된 입력입니다. 다시 시도해주세요")
+                            continue
+                        if 1 <= int_month <= 12:
+                            manage.modify_month(driver, int_month)
+                            break
+                        print("잘못된 입력입니다. 다시 시도해주세요")
+                    # Alert 오류 제어
+                    try:
+                        driver.switch_to.alert.dismiss()
+                    except:
+                        pass
                     break
                 else:
                     print("잘못된 입력입니다.")
