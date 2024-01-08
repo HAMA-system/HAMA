@@ -256,6 +256,7 @@ def draft_write(driver):
 
         # 기안 메뉴 loop
         no_file = False  # 파일 오류 여부 체크
+        month_change_completed = False # 특정 월로 복사 후 기안완료인지 체크
         while True:
             # 선택지 loop
             while True:
@@ -292,6 +293,7 @@ def draft_write(driver):
                             continue
                         if 1 <= int_month <= 12:
                             manage.modify_month(driver, int_month)
+                            month_change_completed = True
                             break
                         print("잘못된 입력입니다. 다시 시도해주세요")
                     # Alert 오류 제어
@@ -299,6 +301,8 @@ def draft_write(driver):
                         driver.switch_to.alert.dismiss()
                     except:
                         pass
+                    if month_change_completed == True:
+                        continue
                     break
                 else:
                     print("잘못된 입력입니다.")

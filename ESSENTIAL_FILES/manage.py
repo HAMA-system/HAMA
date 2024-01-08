@@ -897,11 +897,12 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
             input()
 
         driver.switch_to.default_content()
-        driver.switch_to.frame(조회_프레임)
-        clickByXPath(driver, 닫기)
+        # driver.switch_to.frame(조회_프레임)
+        # clickByXPath(driver, 닫기)
         time.sleep(1)
 
         print("\n=====================================================")
+        break
 
 def mkdir_if_not_exist():
     target_dir = "./완료"
