@@ -124,6 +124,7 @@ def afterLogin(driver):
     clickByXPath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/a')
     clickByXPath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/a')
     clickByXPath(driver, '/html/body/form/div[3]/div[1]/div/div[1]/ul/li[2]/ul/li/ul/li/ul/li[2]/ul/li[2]/a')
+    checkUpdatePasswordAlert(driver)
     return driver
 
 
@@ -132,6 +133,11 @@ def checkWork(driver):
     clickByXPath(driver, 출근버튼)
     time.sleep(10000)
 
+def checkUpdatePasswordAlert(driver):
+    try:
+        driver.switch_to.alert.accept()
+    except:
+        pass
 
 if __name__ == '__main__':
     driver = webdriver.Chrome('./chromedriver')
