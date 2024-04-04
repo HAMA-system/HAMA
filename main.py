@@ -65,6 +65,7 @@ if __name__ == '__main__':
             manage.modify(driver, False)
         elif select == '기안':
             driver.get('https://itss.hongik.ac.kr/GateWeb/index.aspx')
+            autoLogin.checkUpdatePasswordAlert(driver)
             driver.execute_script("fclick(arguments[0])",
                                   driver.find_element(By.ID, "d4_AHG029S").find_element(By.TAG_NAME, "span"))
             RUN_DRAFT.draft_write(driver)

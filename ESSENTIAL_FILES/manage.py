@@ -535,7 +535,7 @@ def delete(file):
         # xlsxFileController.save_xls(file)
         print("삭제가 완료되었습니다.")
 
-
+# 다음달로 복사 후 기안
 def modify(driver, isDraft: bool):
     global sema
     global d
@@ -626,10 +626,10 @@ def modify(driver, isDraft: bool):
         title[1] = delete_year_str(title[1])
 
         title[1] = monthly_check(title[1]).strip()
+
         for i in range(len(res)):
             res[i] = monthly_check(res[i])
         print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
-
         # 날짜 및 제목 입력
         # time.sleep(0.5)
         fillByXPath(driver, 집행요청일, title[0])
@@ -905,6 +905,200 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
         print("\n=====================================================")
         break
 
+# 다음달로 복사 후 미지급금 기안
+def modify_non_paid(driver, isDraft: bool):
+    global sema
+    global d
+
+    if not isDraft:
+        d = driver
+        ig = threading.Thread(target=ignoreAutoLogout.startTimer)
+        ig.daemon = True
+        ig.start()
+        clickByXPath(driver, 결의서_조회)
+
+    while True:
+        if not isDraft:
+            modify_input()
+
+        driver.switch_to.default_content()
+        driver.switch_to.frame(조회_프레임)
+        driver.switch_to.frame("frmPopup")
+
+        # 결의서 제목 및 날짜 저장
+        title = []
+        res = []
+        tax_date = []
+
+        # title[0] 나중에 변경 해야함
+        title.append("temp")
+        res_title = driver.find_element_by_xpath(결의서_제목)
+        title.append(res_title.get_attribute("value"))
+
+        # 복사 창 이동
+        clickByXPath(driver, 복사)
+
+        while True:
+            try:
+                alert = driver.switch_to.alert
+                time.sleep(0.5)
+            except:
+                break
+
+        res_date = driver.find_element_by_xpath(결의일자_번호)
+        title[0] = res_date.get_attribute("value")
+
+        # 내부 데이터 수집 (결의항목)
+        table = driver.find_element_by_xpath(결의서_테이블)
+        tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+        for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
+            i = 0
+            for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+                i += 1
+                if i == 10:
+                    res.append(td.get_attribute("innerText"))
+
+        # 내부 데이터 수집 (세금)
+        table = driver.find_element_by_xpath(세금계산_테이블)
+        tbody = table.find_element(by=By.TAG_NAME, value="tbody")
+        for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
+            i = 0
+            for td in tr.find_elements(by=By.TAG_NAME, value="td"):
+                i += 1
+                if i == 4:
+                    tax_date.append(td.get_attribute("innerText"))
+
+        ##
+        ## 연도 제거
+        ##
+        title[1] = delete_year_str(title[1])
+
+        title[1] = monthly_check(title[1]).strip()
+
+        for i in range(len(res)):
+            res[i] = monthly_check_item(res[i], title[1])
+        print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
+        # 날짜 및 제목 입력
+        # time.sleep(0.5)
+        fillByXPath(driver, 집행요청일, title[0])
+        enterByXPath(driver, 집행요청일)
+        time.sleep(0.3)
+        # fpath(driver, 지급예정일, title[0])
+        # epath(driver, 지급예정일)
+        # acceptAlert(driver)
+        fillByXPath(driver, 결의서_제목, title[1])
+        driver.find_element_by_xpath(세부사항).clear()
+
+        # 결의서 작성
+        for i in range(len(res)):
+            clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
+            fillByXPath(driver, 적요, res[i])
+            clickByXPath(driver, 결의내역_제출)
+            time.sleep(0.1)
+
+        # 세금 작성
+        if tax_date and tax_date[0] != "":
+            clickByXPath(driver, 세금계산_탭)
+
+            try:
+                # dateutil 로 대체
+                for i in range(len(tax_date)):
+                    tax_date[i] = datetime.strptime(
+                        tax_date[i], "%Y-%m-%d"
+                    ) + relativedelta(months=1)
+                    tax_date[i] = datetime.strftime(tax_date[i], "%Y-%m-%d")
+
+                print("세금 날짜", *tax_date, "", sep="\n")
+
+                # 세금 작성
+                for i in range(len(tax_date)):
+                    clickByXPath(driver, 세금계산_링크 + "[" + str(i + 2) + "]")
+                    fillByXPath(driver, 발행일자, tax_date[i])
+                    clickByXPath(driver, 세금계산_제출)
+                    time.sleep(0.1)
+            except:
+                print("세금 날짜 작성에 실패하였습니다")
+            clickByXPath(driver, 결의내역_탭)
+
+        save(driver)
+        print("저장이 완료되었습니다.")
+
+        mkdir_if_not_exist()
+
+        modify_draft(title[1])
+        path = ""
+        depth = ""
+        try:
+            for inFolder in os.listdir(링크[3] + "결의서 작성 필요/"):
+                checkFolder = "".join(inFolder.split("#")[:-1])
+                if checkFolder.replace("$", "/").strip() == title[1].strip():
+                    path = 링크[3] + "결의서 작성 필요/" + inFolder + "/"
+                    dpath = 링크[3] + "기안 필요/" + inFolder + "/"
+                    break
+        except:
+            print("경로 설정 오류 - 파일 저장에 실패했습니다")
+            pass
+
+        print("path:", path)
+
+        if path:
+            clickByXPath(driver, 첨부파일)
+            driver.switch_to.window(driver.window_handles[1])
+            for f in os.listdir(path):
+                abs_file_path = os.path.abspath(path + f)
+                driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
+                time.sleep(0.3)
+                clickByXPath(driver, 파일업로드)
+                print(f, "파일 업로드 완료")
+
+            try:
+                os.replace(path, dpath)
+                print("첨부된 파일이 ( 기안 필요 ) 폴더로 이동되었습니다.")
+            except:
+                print("경로 설정 오류 - 기안 필요 파일 이동에 실패했습니다")
+                pass
+
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
+            time.sleep(0.1)
+            driver.switch_to.frame(조회_프레임)
+
+            # 해야함
+            driver.switch_to.frame("frmPopup")
+            save(driver)
+        else:
+            print("파일을 찾을 수 없습니다")
+            print("파일을 올리고 저장 후 엔터를 눌러주세요.")
+            input()
+        # print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
+        # s = input()
+        # if s == '1':
+        #     save(driver)
+        #     print("저장이 완료되었습니다.")
+        #
+        # else:
+        #     print("원하시는 버튼을 입력해주세요. 1(저장) 2(창 닫고 재시작)")
+        #     put = input()
+        #     while put != '1' and put != '2':
+        #         print("잘못된 입력입니다.")
+        #         put = input()
+        #     if put == '1':
+        #         save(driver)
+        #         print("저장이 완료되었습니다.")
+        #     if put == '2':
+        #         break
+
+        # Draft에서 실행된 경우
+        if isDraft:
+            return
+        driver.switch_to.default_content()
+        driver.switch_to.frame(조회_프레임)
+        clickByXPath(driver, 닫기)
+        time.sleep(1)
+
+        print("\n=====================================================")
+
+
 def mkdir_if_not_exist():
     target_dir = "./완료"
     need_dir = "./결의서 작성 필요"
@@ -1149,6 +1343,125 @@ def monthly_check(prev):
         if not check:
             # print(p, ret_y)
             # print(p, ret)
+            result += new_monthly_next(p, ret, key, ret_y) + " "
+
+    result = delete_year_str(result)
+    return result
+
+def monthly_check_item(prev, title): # 결의항목 용 달체크(제목으로 연속된달 or 분기인지 확인)
+    r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
+    q2 = re.compile("(\D*)([\d~]*\d+)(월)(\D*)")
+    n = re.compile(("\d[ , ]+\d"))
+    q = re.compile(("~"))
+    y = re.compile("(\d*)(년)")
+    # yy = re.compile('(\d*)( 년)')
+    # yyy = re.compile('(\d*)(년 )')
+    # only_y = re.compile('(\d+)(년)(분*)')
+    c = re.compile("[']*(\d*)\.(\d*)\.(\d*)(\.)*")
+
+    prev = delete_year_str(prev)
+    title_prev = delete_year_str(title)
+
+    # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
+    l, key = 0, 0
+    is_consecutive = 0
+    ret = []
+    ret_y = []
+    if n.search(prev):
+        key = 1
+    if q.search(prev):
+        key = 2
+
+    if q.search(prev) or n.search(prev):
+        is_consecutive = 1
+
+    text_list = prev.split()
+    pprev = ""
+    title_pprev = ""
+
+    result = ""
+
+    print(text_list)
+    print(title)
+    for p in text_list:
+        if c.search(p):
+            f = c.findall(p)
+            if len(f) == 2:
+                date1 = datetime.datetime(int(f[0][0]), int(f[0][1]), int(f[0][2]))
+                date2 = datetime.datetime(int(f[1][0]), int(f[1][1]), int(f[1][2]))
+                if dateController.date2dateByDays(date1, date2) > 300:
+                    # 1년 단위 차이라고 가정
+                    # year_gap = dateController.date2dateByYears(date1,date2)
+                    year_gap = round(dateController.date2dateByDays(date1, date2) / 365)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByYear(date1, year_gap)
+                        + "~"
+                        + dateController.jumpDateByYear(date2, year_gap),
+                        p,
+                    )
+                    result += t + " "
+                    # result += dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap)
+                elif dateController.date2dateByDays(date1, date2) > 31:
+                    month_gap = round(dateController.date2dateByDays(date1, date2) / 31)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByMonth(date1, month_gap)
+                        + "~"
+                        + dateController.jumpDateByMonth(date2, month_gap),
+                        p,
+                    )
+                    result += t + " "
+            elif len(f) == 1:
+                result += p + " "
+        else:
+            check = False
+            # 년도가 등장하는 부분 시작
+            if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
+                # print(pprev)
+                temp = []
+                m = l
+                x = []
+                while m < l + len(p):
+                    if "0" <= prev[m] <= "9":
+                        s = prev[m]
+                        if "0" <= prev[m + 1] <= "9":
+                            s += prev[m + 1]
+                            m += 1
+                        x.append(int(s))
+                    m += 1
+                for tmp in temp:
+                    x.append(int(s))
+                ret_y.append([int(pprev[:-1]), x])
+                # year_part = pprev
+                # 연도 붙이기
+                # print("ret_y = " + str(ret_y))
+            # 년도가 등장하는 부분 종료
+            elif r.match(p) or q2.match(p):
+                temp = []
+                m = l
+                while m < l + len(p):
+                    if "0" <= prev[m] <= "9":
+                        s = prev[m]
+                        if "0" <= prev[m + 1] <= "9":
+                            s += prev[m + 1]
+                            m += 1
+                        temp.append(s)
+                    m += 1
+                ret.append(temp)
+
+            l += len(p) + 1
+            pprev = p
+            # print(pprev)
+
+        if not check:
+            # print(p, ret_y)
+            # print(p, ret)
+            print("ret : ",end="")
+            print(ret)
+            time.sleep(1000)
+            # if :
+            #     ret[0][0] +=
             result += new_monthly_next(p, ret, key, ret_y) + " "
 
     result = delete_year_str(result)
