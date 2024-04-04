@@ -628,7 +628,7 @@ def modify(driver, isDraft: bool):
         title[1] = monthly_check(title[1]).strip()
 
         for i in range(len(res)):
-            res[i] = monthly_check_item(res[i], title[1])
+            res[i] = monthly_check(res[i])
         print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
         # 날짜 및 제목 입력
         # time.sleep(0.5)
