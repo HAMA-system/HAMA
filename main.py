@@ -33,6 +33,11 @@ def set_chromedriver():
 
 if __name__ == '__main__':
     # start = time.time()
+    try:
+        driver = set_chromedriver()
+    except Exception as ex:
+        print(ex)
+        input()
     driver = set_chromedriver()
     driver.implicitly_wait(time_to_wait=5)
     # print(time.time()-start)

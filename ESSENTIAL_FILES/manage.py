@@ -679,7 +679,7 @@ def modify(driver, isDraft: bool):
 
         modify_draft(title[1])
         path = ""
-        depth = ""
+        dpath = ""
         try:
             for inFolder in os.listdir(링크[3] + "결의서 작성 필요/"):
                 checkFolder = "".join(inFolder.split("#")[:-1])
@@ -1101,12 +1101,15 @@ def modify_non_paid(driver, isDraft: bool):
 
 def mkdir_if_not_exist():
     target_dir = "./완료"
+    standard_dir = "./기준"
     need_dir = "./결의서 작성 필요"
     draft_dir = "./기안 필요"
     input_dir = "./in"
 
     if not os.path.exists(target_dir):
         os.mkdir(target_dir)
+    if not os.path.exists(standard_dir):
+        os.mkdir(standard_dir)
     if not os.path.exists(need_dir):
         os.mkdir(need_dir)
     if not os.path.exists(draft_dir):
@@ -1117,7 +1120,7 @@ def mkdir_if_not_exist():
 
 # in에 있는거를 결의서 작성필요로
 def modify_draft(title):
-    target_dir = "./완료"
+    target_dir = "./기준"
     need_dir = "./결의서 작성 필요"
     draft_dir = "./기안 필요"
     input_dir = "./in"
@@ -1125,20 +1128,20 @@ def modify_draft(title):
     find_modify_list = []
     find_draft_list = []
 
-    # 완료에서 가져오기
+    # 기준에서 폴더찾고 안에서 파일이름 가져오기
     for modify_folder in os.listdir(target_dir):
         modify_title = "".join(modify_folder.split("#")[:-1])
-        # 폴더 제목에서 %d월 형식의 숫자 제외하기 (결의서 제목으로 완료에서 찾아)
+        # 폴더 제목에서 %d월 형식의 숫자 제외하기 (결의서 제목으로 기준에서 찾아)
 
         if delete_month(modify_title) == delete_month(title.replace("/", "$")):
             # %d월 형식 제외한 title과 비교하여 일치하면 폴더 진입
             for pdf in os.listdir(target_dir + "/" + modify_folder):
                 # 폴더 내 pdf 파일의 %d월 형식 제외
-                print("완료 파일 match : [", delete_month(pdf), "]")
+                print("기준 파일 match : [", delete_month(pdf), "]")
                 find_modify_list.append(delete_month(pdf))
             break
 
-    # 결의서 제목으로 완료에 있는 파일 찾고.. 똑같은 이름인거 in에서 가져오기
+    # 기준에서 찾은 파일이름과 똑같은 이름인거 in에서 가져오기
     for pdf in os.listdir(input_dir):
         # print("findmodifylist, pdf : ", find_modify_list, pdf, delete_month(pdf))
         if delete_month(pdf) in find_modify_list:
