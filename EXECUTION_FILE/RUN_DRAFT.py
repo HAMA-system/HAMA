@@ -446,24 +446,23 @@ def draft_upload(driver, title, isFile):
                     .replace("$", "/")
                     .replace("(", "\(")
                     .replace(")", "\)")
-                .strip()
-            )
-            if re.search(searchKey, title.strip()):
-                draftFolder = path + folder + "/"
+                .strip())
+                if re.search(searchKey, title.strip()):
+                    draftFolder = path + folder + "/"
 
-                # print(draftFolder)
+                    # print(draftFolder)
 
-                for file in os.listdir(draftFolder):
-                    abs_file_path = os.path.abspath(draftFolder + file)
-                    driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
+                    for file in os.listdir(draftFolder):
+                        abs_file_path = os.path.abspath(draftFolder + file)
+                        driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
 
-                    time.sleep(1.5)
-                    print(file, "업로드 완료")
-                    uploaded = True
-                break
-            else:
-                print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
-                uploaded = False
+                        time.sleep(1.5)
+                        print(file, "업로드 완료")
+                        uploaded = True
+                    break
+                else:
+                    print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
+                    uploaded = False
 
     if uploaded:
         # time.sleep(1)
