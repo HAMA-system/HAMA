@@ -464,7 +464,6 @@ def draft_upload(driver, title, isFile):
             else:
                 print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
                 uploaded = False
-    time.sleep(1000)
 
     if uploaded:
         # time.sleep(1)
