@@ -460,9 +460,9 @@ def draft_upload(driver, title, isFile):
                         print(file, "업로드 완료")
                         uploaded = True
                     break
-                else:
+
+                if not uploaded:
                     print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
-                    uploaded = False
 
     if uploaded:
         # time.sleep(1)
