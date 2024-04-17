@@ -435,35 +435,37 @@ def draft_upload(driver, title, isFile):
                 os.mkdir(링크[3] + "완료")
             os.replace(draftFolder, 링크[3] + "완료/" + folder)
             break
-    else:
-        print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
-        uploaded = False
+        else:
+            print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
+            # 없을 시 완료 폴더에서 찾도록 변경
+            uploaded = False
+            path = 링크[3] + "완료/"
+            for folder in os.listdir(path):
+                searchKey = (
+                    "".join(folder.split("#")[:-1])
+                    .replace("$", "/")
+                    .replace("(", "\(")
+                    .replace(")", "\)")
+                .strip()
+            )
+            if re.search(searchKey, title.strip()):
+                draftFolder = path + folder + "/"
 
-    # 없을 시 완료 폴더에서 찾도록 변경
-    path = 링크[3] + "완료/"
-    for folder in os.listdir(path):
-        searchKey = (
-            "".join(folder.split("#")[:-1])
-            .replace("$", "/")
-            .replace("(", "\(")
-            .replace(")", "\)")
-            .strip()
-        )
-        if re.search(searchKey, title.strip()):
-            draftFolder = path + folder + "/"
+                # print(draftFolder)
 
-            # print(draftFolder)
+                for file in os.listdir(draftFolder):
+                    abs_file_path = os.path.abspath(draftFolder + file)
+                    driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
 
-            for file in os.listdir(draftFolder):
-                abs_file_path = os.path.abspath(draftFolder + file)
-                driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
+                    time.sleep(1.5)
+                    print(file, "업로드 완료")
+                    uploaded = True
+                break
+            else:
+                print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
+                uploaded = False
+    time.sleep(1000)
 
-                time.sleep(1.5)
-                print(file, "업로드 완료")
-            break
-    else:
-        print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
-        uploaded = False
     if uploaded:
         # time.sleep(1)
         # driver.switch_to.parent_frame()
