@@ -305,14 +305,14 @@ def draft_write(driver):
                         continue
                     break
 
-                if put == "5": # 다음달로 복사 후 미지급금 기안
-                    manage.modify_non_paid(driver, True)
-                    # Alert 오류 제어
-                    try:
-                        driver.switch_to.alert.dismiss()
-                    except:
-                        pass
-                    break
+                # if put == "5": # 다음달로 복사 후 미지급금 기안
+                #     manage.modify_non_paid(driver, True)
+                #     # Alert 오류 제어
+                #     try:
+                #         driver.switch_to.alert.dismiss()
+                #     except:
+                #         pass
+                #     break
 
                 else:
                     print("잘못된 입력입니다.")
@@ -435,9 +435,34 @@ def draft_upload(driver, title, isFile):
                 os.mkdir(링크[3] + "완료")
             os.replace(draftFolder, 링크[3] + "완료/" + folder)
             break
-    else:
-        print("기안 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
-        uploaded = False
+        else:
+            print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
+            # 없을 시 완료 폴더에서 찾도록 변경
+            uploaded = False
+            path = 링크[3] + "완료/"
+            for folder in os.listdir(path):
+                searchKey = (
+                    "".join(folder.split("#")[:-1])
+                    .replace("$", "/")
+                    .replace("(", "\(")
+                    .replace(")", "\)")
+                .strip())
+                if re.search(searchKey, title.strip()):
+                    draftFolder = path + folder + "/"
+
+                    # print(draftFolder)
+
+                    for file in os.listdir(draftFolder):
+                        abs_file_path = os.path.abspath(draftFolder + file)
+                        driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
+
+                        time.sleep(1.5)
+                        print(file, "업로드 완료")
+                        uploaded = True
+                    break
+
+                if not uploaded:
+                    print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
 
     if uploaded:
         # time.sleep(1)
