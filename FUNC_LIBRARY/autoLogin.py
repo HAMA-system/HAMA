@@ -108,7 +108,7 @@ def login(driver):
     fillByName(driver, 'USER_ID', login_data[0])
     fillByName(driver, 'PASSWD', login_data[1])
     enterByName(driver, 'PASSWD')
-    # time.sleep(1)
+    time.sleep(1)
     try:
         driver.switch_to.alert.accept()
     except:
