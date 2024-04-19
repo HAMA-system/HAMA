@@ -450,7 +450,7 @@ def draft_upload(driver, title, isFile):
                 if re.search(searchKey, title.strip()):
                     draftFolder = path + folder + "/"
                     if draftFolder is not None:
-                        uploaded = upload_files(draftFolder)
+                        uploaded = upload_files(draftFolder, driver)
                         if uploaded:
                             break
 
@@ -491,7 +491,7 @@ def draft_upload(driver, title, isFile):
     clickByXPath(driver, 닫기)
 
 
-def upload_files(draftFolder):
+def upload_files(draftFolder, driver):
     uploaded = False
     for file in os.listdir(draftFolder):
         abs_file_path = os.path.abspath(draftFolder + file)
