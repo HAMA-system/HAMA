@@ -449,20 +449,13 @@ def draft_upload(driver, title, isFile):
                 .strip())
                 if re.search(searchKey, title.strip()):
                     draftFolder = path + folder + "/"
+                    if draftFolder is not None:
+                        uploaded = upload_files(draftFolder)
+                        if uploaded:
+                            break
 
-                    # print(draftFolder)
-
-                    for file in os.listdir(draftFolder):
-                        abs_file_path = os.path.abspath(draftFolder + file)
-                        driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
-
-                        time.sleep(1.5)
-                        print(file, "업로드 완료")
-                        uploaded = True
-                    break
-
-                if not uploaded:
-                    print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
+            if not uploaded:
+                print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
 
     if uploaded:
         # time.sleep(1)
@@ -496,3 +489,14 @@ def draft_upload(driver, title, isFile):
     driver.switch_to.default_content()
     driver.switch_to.frame(조회_프레임)
     clickByXPath(driver, 닫기)
+
+
+def upload_files(draftFolder):
+    uploaded = False
+    for file in os.listdir(draftFolder):
+        abs_file_path = os.path.abspath(draftFolder + file)
+        driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
+        time.sleep(1.5)
+        print(file, "업로드 완료")
+        uploaded = True
+    return uploaded
