@@ -403,7 +403,7 @@ def draft_write(driver):
 
 
 def draft_upload(driver, title, isFile):
-    uploaded = True
+    uploaded = False
 
     driver.switch_to.default_content()
     clickById(driver, 기안_파일버튼)
@@ -434,28 +434,28 @@ def draft_upload(driver, title, isFile):
             if "완료" not in os.listdir(링크[3]):
                 os.mkdir(링크[3] + "완료")
             os.replace(draftFolder, 링크[3] + "완료/" + folder)
+            uploaded = True
             break
-        else:
-            print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
-            # 없을 시 완료 폴더에서 찾도록 변경
-            uploaded = False
-            path = 링크[3] + "완료/"
-            for folder in os.listdir(path):
-                searchKey = (
-                    "".join(folder.split("#")[:-1])
-                    .replace("$", "/")
-                    .replace("(", "\(")
-                    .replace(")", "\)")
-                .strip())
-                if re.search(searchKey, title.strip()):
-                    draftFolder = path + folder + "/"
-                    if draftFolder is not None:
-                        uploaded = upload_files(draftFolder, driver)
-                        if uploaded:
-                            break
+    if not uploaded:
+        print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
+        # 없을 시 완료 폴더에서 찾도록 변경
+        path = 링크[3] + "완료/"
+        for folder in os.listdir(path):
+            searchKey = (
+                "".join(folder.split("#")[:-1])
+                .replace("$", "/")
+                .replace("(", "\(")
+                .replace(")", "\)")
+            .strip())
+            if re.search(searchKey, title.strip()):
+                draftFolder = path + folder + "/"
+                if draftFolder is not None:
+                    uploaded = upload_files(draftFolder, driver)
+                    if uploaded:
+                        break
 
-            if not uploaded:
-                print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
+        if not uploaded:
+            print("완료 필요 폴더에 알맞은 폴더가 없습니다\n파일 업로드 후 결재올림을 눌러주세요.")
 
     if uploaded:
         # time.sleep(1)
