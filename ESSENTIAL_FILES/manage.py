@@ -2,6 +2,7 @@ import datetime
 import os
 import re
 import sys
+import time
 
 from datetime import *
 
@@ -624,9 +625,7 @@ def modify(driver, isDraft: bool):
         ## 연도 제거
         ##
         title[1] = delete_year_str(title[1])
-
         title[1] = monthly_check(title[1]).strip()
-
         for i in range(len(res)):
             res[i] = monthly_check(res[i])
         print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
@@ -1200,12 +1199,11 @@ def modify_input():
 def month_inc(month, val):
     ret = []
     for m in month:
-        nm = int(m) + val
-        if nm > 12:
-            y = int(nm / 12)
-            nm %= 12
-            nm = y * 100 + nm
-        ret.append(str(nm))
+        new_month = int(m) + val
+        if new_month > 12:
+            new_month %= 12
+        ret.append(str(new_month))
+
     return ret
 
 
@@ -1249,7 +1247,7 @@ def monthly_check(prev):
     r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
     q2 = re.compile("(\D*)([\d~]*\d+)(월)(\D*)")
     n = re.compile(("\d[ , ]+\d"))
-    q = re.compile(("~"))
+    q = re.compile(("(\d*)~(\d*)"))
     y = re.compile("(\d*)(년)")
     # yy = re.compile('(\d*)( 년)')
     # yyy = re.compile('(\d*)(년 )')
@@ -1262,10 +1260,6 @@ def monthly_check(prev):
     l, key = 0, 0
     ret = []
     ret_y = []
-    if n.search(prev):
-        key = 1
-    if q.search(prev):
-        key = 2
 
     text_list = prev.split()
     pprev = ""
@@ -1326,7 +1320,7 @@ def monthly_check(prev):
                 # 연도 붙이기
                 # print("ret_y = " + str(ret_y))
             # 년도가 등장하는 부분 종료
-            elif r.match(p) or q2.match(p):
+            elif r.match(p) or q2.match(p) or q.match(p):
                 temp = []
                 m = l
                 while m < l + len(p):
@@ -1346,126 +1340,20 @@ def monthly_check(prev):
         if not check:
             # print(p, ret_y)
             # print(p, ret)
-            result += new_monthly_next(p, ret, key, ret_y) + " "
 
-    result = delete_year_str(result)
-    return result
+            if q.search(p):
+                key = 2
+            if(key == 2):
+                first_month = int(ret[0][0])
+                second_month = int(ret[0][1])
+                val = second_month - first_month + 1
+                if (val < 0):
+                    val += 12
+                result += new_monthly_next(p, ret, val, ret_y) + " "
+                key = 0
+            else:
+                result += new_monthly_next(p, ret, 1, ret_y) + " "
 
-def monthly_check_item(prev, title): # 결의항목 용 달체크(제목으로 연속된달 or 분기인지 확인)
-    r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
-    q2 = re.compile("(\D*)([\d~]*\d+)(월)(\D*)")
-    n = re.compile(("\d[ , ]+\d"))
-    q = re.compile(("~"))
-    y = re.compile("(\d*)(년)")
-    # yy = re.compile('(\d*)( 년)')
-    # yyy = re.compile('(\d*)(년 )')
-    # only_y = re.compile('(\d+)(년)(분*)')
-    c = re.compile("[']*(\d*)\.(\d*)\.(\d*)(\.)*")
-
-    prev = delete_year_str(prev)
-    title_prev = delete_year_str(title)
-
-    # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
-    l, key = 0, 0
-    is_consecutive = 0
-    ret = []
-    ret_y = []
-    if n.search(prev):
-        key = 1
-    if q.search(prev):
-        key = 2
-
-    if q.search(prev) or n.search(prev):
-        is_consecutive = 1
-
-    text_list = prev.split()
-    pprev = ""
-    title_pprev = ""
-
-    result = ""
-
-    print(text_list)
-    print(title)
-    for p in text_list:
-        if c.search(p):
-            f = c.findall(p)
-            if len(f) == 2:
-                date1 = datetime.datetime(int(f[0][0]), int(f[0][1]), int(f[0][2]))
-                date2 = datetime.datetime(int(f[1][0]), int(f[1][1]), int(f[1][2]))
-                if dateController.date2dateByDays(date1, date2) > 300:
-                    # 1년 단위 차이라고 가정
-                    # year_gap = dateController.date2dateByYears(date1,date2)
-                    year_gap = round(dateController.date2dateByDays(date1, date2) / 365)
-                    t = re.sub(
-                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
-                        dateController.jumpDateByYear(date1, year_gap)
-                        + "~"
-                        + dateController.jumpDateByYear(date2, year_gap),
-                        p,
-                    )
-                    result += t + " "
-                    # result += dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap)
-                elif dateController.date2dateByDays(date1, date2) > 31:
-                    month_gap = round(dateController.date2dateByDays(date1, date2) / 31)
-                    t = re.sub(
-                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
-                        dateController.jumpDateByMonth(date1, month_gap)
-                        + "~"
-                        + dateController.jumpDateByMonth(date2, month_gap),
-                        p,
-                    )
-                    result += t + " "
-            elif len(f) == 1:
-                result += p + " "
-        else:
-            check = False
-            # 년도가 등장하는 부분 시작
-            if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
-                # print(pprev)
-                temp = []
-                m = l
-                x = []
-                while m < l + len(p):
-                    if "0" <= prev[m] <= "9":
-                        s = prev[m]
-                        if "0" <= prev[m + 1] <= "9":
-                            s += prev[m + 1]
-                            m += 1
-                        x.append(int(s))
-                    m += 1
-                for tmp in temp:
-                    x.append(int(s))
-                ret_y.append([int(pprev[:-1]), x])
-                # year_part = pprev
-                # 연도 붙이기
-                # print("ret_y = " + str(ret_y))
-            # 년도가 등장하는 부분 종료
-            elif r.match(p) or q2.match(p):
-                temp = []
-                m = l
-                while m < l + len(p):
-                    if "0" <= prev[m] <= "9":
-                        s = prev[m]
-                        if "0" <= prev[m + 1] <= "9":
-                            s += prev[m + 1]
-                            m += 1
-                        temp.append(s)
-                    m += 1
-                ret.append(temp)
-
-            l += len(p) + 1
-            pprev = p
-            # print(pprev)
-
-        if not check:
-            # print(p, ret_y)
-            # print(p, ret)
-            print("ret : ",end="")
-            print(ret)
-            time.sleep(1000)
-            # if :
-            #     ret[0][0] +=
-            result += new_monthly_next(p, ret, key, ret_y) + " "
 
     result = delete_year_str(result)
     return result
@@ -1614,6 +1502,7 @@ def new_monthly_next(prev, month, val, ymonth):
     cmonth.sort(key=lambda x: int(x[0]))
     cymonth = deepcopy(ymonth)
     cymonth.sort(key=lambda x: int(x[0]))
+    q = re.compile(("(\d*)~(\d*)"))
 
     # 1. 그냥 개별 월 ex) 3월, 4월 -> 5월, 6월
     #                   3,4월 -> 5,6월
@@ -1629,10 +1518,12 @@ def new_monthly_next(prev, month, val, ymonth):
     if len(cymonth) == 0:
         for xi in range(len(cmonth) - 1, -1, -1):
             x = cmonth[xi]
-            interval = int(x[-1]) - int(x[0]) + 1
-            if interval < 0:
-                interval += 12
-            next_months = month_inc(x, interval)
+            next_months = month_inc(x, val)
+            if q.search(prev):
+                prev = re.sub(
+                    str(x[0]) + "~" + str(x[1]) + "월",str(next_months[0]) +  "~" + next_months[1] + "월", prev
+                )
+                return prev
 
             for i in range(len(x) - 1, -1, -1):
                 if re.search(str(x[i]), prev):
@@ -1745,7 +1636,7 @@ def new_monthly_next(prev, month, val, ymonth):
         for x in cymonth:
             year = x[0]
             months = x[1]
-            next_months.append(month_inc(months, months[-1] - months[0] + 1))
+            next_months.append(month_inc(months, val))
         # months.sort(reverse=True)
         # next_months.sort(reverse=True)
 
