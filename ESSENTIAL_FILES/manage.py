@@ -558,7 +558,7 @@ def modify(driver, isDraft: bool):
 
         # 결의서 제목 및 날짜 저장
         title = []
-        res = []
+        res_summary = []
         tax_date = []
 
         # title[0] 나중에 변경 해야함
@@ -609,7 +609,7 @@ def modify(driver, isDraft: bool):
             for td in tr.find_elements(by=By.TAG_NAME, value="td"):
                 i += 1
                 if i == 10:
-                    res.append(td.get_attribute("innerText"))
+                    res_summary.append(td.get_attribute("innerText"))
 
         # 내부 데이터 수집 (세금)
         table = driver.find_element_by_xpath(세금계산_테이블)
@@ -626,9 +626,9 @@ def modify(driver, isDraft: bool):
         ##
         title[1] = delete_year_str(title[1])
         title[1] = monthly_check(title[1]).strip()
-        for i in range(len(res)):
-            res[i] = monthly_check(res[i])
-        print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
+        for i in range(len(res_summary)):
+            res_summary[i] = monthly_check_for_summary(res_summary[i], title[1])
+        print("결의서 날짜 + 제목", title, "", "적요", *res_summary, "", sep="\n")
         # 날짜 및 제목 입력
         # time.sleep(0.5)
         fillByXPath(driver, 집행요청일, title[0])
@@ -641,9 +641,9 @@ def modify(driver, isDraft: bool):
         driver.find_element_by_xpath(세부사항).clear()
 
         # 결의서 작성
-        for i in range(len(res)):
+        for i in range(len(res_summary)):
             clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
-            fillByXPath(driver, 적요, res[i])
+            fillByXPath(driver, 적요, res_summary[i])
             clickByXPath(driver, 결의내역_제출)
             time.sleep(0.1)
 
@@ -1358,6 +1358,151 @@ def monthly_check(prev):
     result = delete_year_str(result)
     return result
 
+def monthly_check_for_summary(prev, title):
+    r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
+    q2 = re.compile("(\D*)([\d~]*\d+)(월)(\D*)")
+    n = re.compile(("\d[ , ]+\d"))
+    q = re.compile(("(\d*)~(\d*)"))
+    y = re.compile("(\d*)(년)")
+    # yy = re.compile('(\d*)( 년)')
+    # yyy = re.compile('(\d*)(년 )')
+    # only_y = re.compile('(\d+)(년)(분*)')
+    c = re.compile("[']*(\d*)\.(\d*)\.(\d*)(\.)*")
+
+    prev = delete_year_str(prev)
+    title = delete_year_str(title)
+
+    inc_month_value = 1
+    if q.search(title):
+        title_str = title.split(sep="~")
+        # ~ 앞에나오는 문자열의 끝두자리(숫자부분)
+        first_str = ""
+        if title_str[0].strip()[-1] == "월":
+            first_str = title_str[0].strip()[-3:-1]
+        else:
+            first_str = title_str[0].strip()[-2:]
+        # ~ 뒤에 나오는 문자열의 앞 두자리(숫자부분)
+        second_str = title_str[1].strip()[:2]
+
+        if "0" <= first_str[1] <= "9":
+            first_month = first_str[1]
+            if "0" <= first_str[0] <= "9":
+                first_month += first_str[0]
+                first_month = first_str[::-1]
+            first_month = int(first_month)
+
+        if "0" <= second_str[0] <= "9":
+            second_month = second_str[0]
+            if "0" <= second_str[1] <= "9":
+                second_month += second_str[1]
+            second_month = int(second_month)
+
+        inc_month_value = second_month - first_month + 1
+        if(inc_month_value < 0):
+            inc_month_value += 12
+
+
+    # Key : 0 == 일반적인 케이스 / 1 == 연속된 달 / 2 == 분기
+    l, key = 0, 0
+    ret = []
+    ret_y = []
+
+    text_list = prev.split()
+    pprev = ""
+
+    result = ""
+
+    for p in text_list:
+        if c.search(p):
+            f = c.findall(p)
+            if len(f) == 2:
+                date1 = datetime.datetime(int(f[0][0]), int(f[0][1]), int(f[0][2]))
+                date2 = datetime.datetime(int(f[1][0]), int(f[1][1]), int(f[1][2]))
+                if dateController.date2dateByDays(date1, date2) > 300:
+                    # 1년 단위 차이라고 가정
+                    # year_gap = dateController.date2dateByYears(date1,date2)
+                    year_gap = round(dateController.date2dateByDays(date1, date2) / 365)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByYear(date1, year_gap)
+                        + "~"
+                        + dateController.jumpDateByYear(date2, year_gap),
+                        p,
+                    )
+                    result += t + " "
+                    # result += dateController.jumpDateByYear(date1,year_gap)+"~"+dateController.jumpDateByYear(date2,year_gap)
+                elif dateController.date2dateByDays(date1, date2) > 31:
+                    month_gap = round(dateController.date2dateByDays(date1, date2) / 31)
+                    t = re.sub(
+                        "[']*(\d*)\.(\d*)\.(\d*)(\.)*[~\-][']*(\d*)\.(\d*)\.(\d*)(\.)*",
+                        dateController.jumpDateByMonth(date1, month_gap)
+                        + "~"
+                        + dateController.jumpDateByMonth(date2, month_gap),
+                        p,
+                    )
+                    result += t + " "
+            elif len(f) == 1:
+                result += p + " "
+        else:
+            check = False
+            # 년도가 등장하는 부분 시작
+            if (y.match(pprev) and r.match(p)) or (y.match(pprev) and q2.match(p)):
+                # print(pprev)
+                temp = []
+                m = l
+                x = []
+                while m < l + len(p):
+                    if "0" <= prev[m] <= "9":
+                        s = prev[m]
+                        if "0" <= prev[m + 1] <= "9":
+                            s += prev[m + 1]
+                            m += 1
+                        x.append(int(s))
+                    m += 1
+                for tmp in temp:
+                    x.append(int(s))
+                ret_y.append([int(pprev[:-1]), x])
+                # year_part = pprev
+                # 연도 붙이기
+                # print("ret_y = " + str(ret_y))
+            # 년도가 등장하는 부분 종료
+            elif r.match(p) or q2.match(p) or q.match(p):
+                temp = []
+                m = l
+                while m < l + len(p):
+                    if "0" <= prev[m] <= "9":
+                        s = prev[m]
+                        if "0" <= prev[m + 1] <= "9":
+                            s += prev[m + 1]
+                            m += 1
+                        temp.append(s)
+                    m += 1
+                ret.append(temp)
+
+            l += len(p) + 1
+            pprev = p
+            # print(pprev)
+
+        if not check:
+            # print(p, ret_y)
+            # print(p, ret)
+
+            if q.search(p):
+                key = 2
+            if(key == 2):
+                first_month = int(ret[0][0])
+                second_month = int(ret[0][1])
+                val = second_month - first_month + 1
+                if (val < 0):
+                    val += 12
+                result += new_monthly_next(p, ret, val, ret_y) + " "
+                key = 0
+            else:
+                result += new_monthly_next(p, ret, inc_month_value, ret_y) + " "
+
+
+    result = delete_year_str(result)
+    return result
 def change_month(prev, to_month): # 특정 월호 날짜 변경
     r = re.compile("(\D*)([\d,]*\d+)(월)(\D*)")
     q2 = re.compile("(\D*)([\d~]*\d+)(월)(\D*)")
