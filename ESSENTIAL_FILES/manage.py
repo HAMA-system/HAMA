@@ -682,6 +682,8 @@ def modify(driver, isDraft: bool):
         try:
             for inFolder in os.listdir(링크[3] + "결의서 작성 필요/"):
                 checkFolder = "".join(inFolder.split("#")[:-1])
+                if checkFolder[-5:] == ".pLDH":
+                    checkFolder = checkFolder[:-5]
                 if checkFolder.replace("$", "/").strip() == title[1].strip():
                     path = 링크[3] + "결의서 작성 필요/" + inFolder + "/"
                     dpath = 링크[3] + "기안 필요/" + inFolder + "/"
@@ -904,8 +906,8 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
         print("\n=====================================================")
         break
 
-# 다음달로 복사 후 미지급금 기안
-def modify_non_paid(driver, isDraft: bool):
+# 다음달로 복사 후 미수금 설정
+def set_next_month_account_receivable(driver, isDraft: bool):
     global sema
     global d
 
@@ -926,16 +928,35 @@ def modify_non_paid(driver, isDraft: bool):
 
         # 결의서 제목 및 날짜 저장
         title = []
-        res = []
+        res_summary = []
         tax_date = []
 
         # title[0] 나중에 변경 해야함
         title.append("temp")
+        # res_date = driver.find_element_by_xpath(결의일자_번호)
+        # title.append(res_date.get_attribute("value"))
         res_title = driver.find_element_by_xpath(결의서_제목)
-        title.append(res_title.get_attribute("value"))
+        title.append(res_title.get_attribute("value") + " 미수금 설정")
+
+        # 필요 없어짐
+        # # 결의서 날짜 변경
+        # change = str(int(title[0][5:7])%12 + 1)
+        # if int(change) < 10:
+        #     change = "0" + change
+        # title[0] = title[0][:5] + change + title[0][7:]
+        #
+        # # 달마다 없는 날짜 처리
+        # if int(change) == 1:
+        #     if int(title[0][8:]) > 28:
+        #         title[0] = title[0][:8] + str(28)
+        # if int(title[0][8:]) == 31:
+        #     if int(change) != 7:
+        #         title[0] = title[0][:8] + str(30)
 
         # 복사 창 이동
         clickByXPath(driver, 복사)
+        # alert = driver.switch_to.alert
+        # alert.send_keys(title[0])
 
         while True:
             try:
@@ -943,6 +964,9 @@ def modify_non_paid(driver, isDraft: bool):
                 time.sleep(0.5)
             except:
                 break
+
+        # for _ in range(3):
+        #     acceptAlert(driver)
 
         res_date = driver.find_element_by_xpath(결의일자_번호)
         title[0] = res_date.get_attribute("value")
@@ -955,7 +979,7 @@ def modify_non_paid(driver, isDraft: bool):
             for td in tr.find_elements(by=By.TAG_NAME, value="td"):
                 i += 1
                 if i == 10:
-                    res.append(td.get_attribute("innerText"))
+                    res_summary.append(td.get_attribute("innerText"))
 
         # 내부 데이터 수집 (세금)
         table = driver.find_element_by_xpath(세금계산_테이블)
@@ -971,12 +995,14 @@ def modify_non_paid(driver, isDraft: bool):
         ## 연도 제거
         ##
         title[1] = delete_year_str(title[1])
-
         title[1] = monthly_check(title[1]).strip()
+        for i in range(len(res_summary)):
+            if i == (len(res_summary) - 1):
+                res_summary[i] = monthly_check_for_summary(res_summary[i], title[1]) + " 미수금 설정"
+            else:
+                res_summary[i] = monthly_check_for_summary(res_summary[i], title[1])
 
-        for i in range(len(res)):
-            res[i] = monthly_check_item(res[i], title[1])
-        print("결의서 날짜 + 제목", title, "", "적요", *res, "", sep="\n")
+        print("결의서 날짜 + 제목", title, "", "적요", *res_summary, "", sep="\n")
         # 날짜 및 제목 입력
         # time.sleep(0.5)
         fillByXPath(driver, 집행요청일, title[0])
@@ -989,11 +1015,33 @@ def modify_non_paid(driver, isDraft: bool):
         driver.find_element_by_xpath(세부사항).clear()
 
         # 결의서 작성
-        for i in range(len(res)):
-            clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
-            fillByXPath(driver, 적요, res[i])
-            clickByXPath(driver, 결의내역_제출)
-            time.sleep(0.1)
+        for i in range(len(res_summary)):
+            # 다음달로 복사후 기안이랑 마지막 항목만 다름
+            if i == (len(res_summary) - 1):
+                clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
+                # 데이터 복사
+                manage_code = driver.find_element_by_xpath(관리코드_조회용 + "[" + str(i + 2) + "]/td[7]").text
+                # 계정 과목 작성(112304 - (미수금)미수금(관리비-서울))
+                fillByXPath(driver, 계정과목, "112304")
+                enterByXPath(driver, 계정과목)
+                time.sleep(0.7)
+
+                # 관리코드 1 입력
+                print("관리코드 : " + manage_code)
+                fillByXPath(driver, 관리코드, manage_code)
+                enterByXPath(driver, 관리코드)
+                time.sleep(0.3)
+
+                # 적요 입력
+                fillByXPath(driver, 적요, res_summary[i])
+                clickByXPath(driver, 결의내역_제출)
+                time.sleep(0.1)
+            else:
+                clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
+                fillByXPath(driver, 적요, res_summary[i])
+                clickByXPath(driver, 결의내역_제출)
+                time.sleep(0.1)
+
 
         # 세금 작성
         if tax_date and tax_date[0] != "":
@@ -1026,10 +1074,12 @@ def modify_non_paid(driver, isDraft: bool):
 
         modify_draft(title[1])
         path = ""
-        depth = ""
+        dpath = ""
         try:
             for inFolder in os.listdir(링크[3] + "결의서 작성 필요/"):
                 checkFolder = "".join(inFolder.split("#")[:-1])
+                if checkFolder[-5:] == ".pLDH":
+                    checkFolder = checkFolder[:-5]
                 if checkFolder.replace("$", "/").strip() == title[1].strip():
                     path = 링크[3] + "결의서 작성 필요/" + inFolder + "/"
                     dpath = 링크[3] + "기안 필요/" + inFolder + "/"
@@ -1045,8 +1095,9 @@ def modify_non_paid(driver, isDraft: bool):
             driver.switch_to.window(driver.window_handles[1])
             for f in os.listdir(path):
                 abs_file_path = os.path.abspath(path + f)
+                time.sleep(1)
                 driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
-                time.sleep(0.3)
+                time.sleep(0.5)
                 clickByXPath(driver, 파일업로드)
                 print(f, "파일 업로드 완료")
 
@@ -1097,7 +1148,6 @@ def modify_non_paid(driver, isDraft: bool):
 
         print("\n=====================================================")
 
-
 def mkdir_if_not_exist():
     target_dir = "./완료"
     standard_dir = "./기준"
@@ -1130,11 +1180,16 @@ def modify_draft(title):
     # 기준에서 폴더찾고 안에서 파일이름 가져오기
     for modify_folder in os.listdir(target_dir):
         modify_title = "".join(modify_folder.split("#")[:-1])
+
+        if modify_title[-5:] == ".pLDH":
+            modify_title = modify_title[:-5]
         # 폴더 제목에서 %d월 형식의 숫자 제외하기 (결의서 제목으로 기준에서 찾아)
 
         if delete_month(modify_title) == delete_month(title.replace("/", "$")):
             # %d월 형식 제외한 title과 비교하여 일치하면 폴더 진입
             for pdf in os.listdir(target_dir + "/" + modify_folder):
+                if pdf[-5:] == ".pLDH":
+                    pdf = pdf[:-5]
                 # 폴더 내 pdf 파일의 %d월 형식 제외
                 print("기준 파일 match : [", delete_month(pdf), "]")
                 find_modify_list.append(delete_month(pdf))

@@ -261,7 +261,7 @@ def draft_write(driver):
             # 선택지 loop
             while True:
                 print("\n변경하실 페이지를 띄우신 후 원하시는 버튼을 입력해주세요.")
-                put = input("1(다음달로 복사 후 기안) 2(바로 기안) 3(검색으로 돌아가기) 4(특정 월로 복사 후 기안) 5(다음달로 복사 후 미지급금 기안)\n")
+                put = input("1(다음달로 복사 후 기안) 2(바로 기안) 3(검색으로 돌아가기) 4(특정 월로 복사 후 기안) 5(다음달로 복사 후 미수금 설정)\n")
                 if put == "1": # 다음달로 복사 후 기안
                     manage.modify(driver, True)
 
@@ -305,14 +305,14 @@ def draft_write(driver):
                         continue
                     break
 
-                # if put == "5": # 다음달로 복사 후 미지급금 기안
-                #     manage.modify_non_paid(driver, True)
-                #     # Alert 오류 제어
-                #     try:
-                #         driver.switch_to.alert.dismiss()
-                #     except:
-                #         pass
-                #     break
+                if put == "5": # 다음달로 복사 후 미수금 설정
+                    manage.set_next_month_account_receivable(driver, True)
+                    # Alert 오류 제어
+                    try:
+                        driver.switch_to.alert.dismiss()
+                    except:
+                        pass
+                    break
 
                 else:
                     print("잘못된 입력입니다.")
