@@ -494,6 +494,7 @@ def upload(driver, title):
 
     if path:
         clickByXPath(driver, 첨부파일)
+        time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
         for f in os.listdir(path):
             abs_file_path = os.path.abspath(path + f)
@@ -696,6 +697,7 @@ def modify(driver, isDraft: bool):
 
         if path:
             clickByXPath(driver, 첨부파일)
+            time.sleep(1)
             driver.switch_to.window(driver.window_handles[1])
             for f in os.listdir(path):
                 abs_file_path = os.path.abspath(path + f)
