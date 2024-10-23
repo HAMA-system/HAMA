@@ -9,6 +9,7 @@ from FUNC_LIBRARY.autoLogin import *
 from FUNC_LIBRARY import ignoreAutoLogout
 from selenium.webdriver.support.ui import Select
 
+
 t = 0
 
 
@@ -305,7 +306,7 @@ def draft_write(driver):
                         continue
                     break
 
-                if put == "5": # 다음달로 복사 후 미수금 설정
+                elif put == "5": # 다음달로 복사 후 미수금 설정
                     manage.set_next_month_account_receivable(driver, True)
                     # Alert 오류 제어
                     try:
@@ -411,6 +412,8 @@ def draft_upload(driver, title, isFile):
     path = 링크[3] + "기안 필요/"
     driver.switch_to.frame(메인_프레임)
     driver.switch_to.frame("dadiframe")
+
+    # 기안 필요에서 파일찾기
     for folder in os.listdir(path):
         searchKey = (
             "".join(folder.split("#")[:-1])
@@ -440,6 +443,7 @@ def draft_upload(driver, title, isFile):
         print("기안 필요 폴더에 알맞은 폴더가 없습니다.")
         # 없을 시 완료 폴더에서 찾도록 변경
         path = 링크[3] + "완료/"
+        # 완료 안에 폴더명 확인
         for folder in os.listdir(path):
             searchKey = (
                 "".join(folder.split("#")[:-1])
@@ -447,6 +451,7 @@ def draft_upload(driver, title, isFile):
                 .replace("(", "\(")
                 .replace(")", "\)")
             .strip())
+            # 폴더명이 제목과 같으면 업로드
             if re.search(searchKey, title.strip()):
                 draftFolder = path + folder + "/"
                 if draftFolder is not None:

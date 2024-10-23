@@ -726,23 +726,6 @@ def modify(driver, isDraft: bool):
             print("파일을 찾을 수 없습니다")
             print("파일을 올리고 저장 후 엔터를 눌러주세요.")
             input()
-        # print("작성되었습니다.\n저장하시겠습니까? 1(예)/2(아니오)")
-        # s = input()
-        # if s == '1':
-        #     save(driver)
-        #     print("저장이 완료되었습니다.")
-        #
-        # else:
-        #     print("원하시는 버튼을 입력해주세요. 1(저장) 2(창 닫고 재시작)")
-        #     put = input()
-        #     while put != '1' and put != '2':
-        #         print("잘못된 입력입니다.")
-        #         put = input()
-        #     if put == '1':
-        #         save(driver)
-        #         print("저장이 완료되었습니다.")
-        #     if put == '2':
-        #         break
 
         # Draft에서 실행된 경우
         if isDraft:
@@ -900,10 +883,6 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
             print("파일을 올리고 저장 후 엔터를 눌러주세요.")
             input()
 
-        driver.switch_to.default_content()
-        # driver.switch_to.frame(조회_프레임)
-        # clickByXPath(driver, 닫기)
-        time.sleep(1)
 
         print("\n=====================================================")
         break
