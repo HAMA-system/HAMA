@@ -104,10 +104,13 @@ def clickById(driver, id):
 
 def login(driver):
     login_data = xlsxFileController.all_data_fetch(xlsxFileController.load_xls(링크[1]), '로그인', 'B60', 'C60')
-
+    login_data[2] = str(login_data[2]).strip('[]')
     fillByName(driver, 'USER_ID', login_data[0])
     fillByName(driver, 'PASSWD', login_data[1])
     enterByName(driver, 'PASSWD')
+    time.sleep(1)
+    fillByName(driver, 'SEC_CODE', login_data[2])
+    enterByName(driver, 'SEC_CODE')
     time.sleep(1)
     try:
         driver.switch_to.alert.accept()
