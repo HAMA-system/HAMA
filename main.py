@@ -18,8 +18,14 @@ def set_chromedriver():
     options.add_argument("disable-gpu")
     try:
         # 로컬 크롬 드라이버 확인
-        chrome_driver_root_path = os.path.abspath("./chromedriver")
-        return webdriver.Chrome(executable_path=chrome_driver_root_path, options=options)
+        chrome_driver_root_path = os.path.abspath("./chromedriver.exe")
+        # print(chrome_driver_root_path)
+        service = Service(chrome_driver_root_path)
+        # 'C:/Users/kyh57/python_proj/HAMA-system'
+        if not os.path.exists(chrome_driver_root_path):
+            raise FileNotFoundError(f"ChromeDriver not found at {chrome_driver_root_path}")
+
+        return webdriver.Chrome(service=service, options=options)
     except Exception as e:
         print("예외가 발생했습니다:", str(e))
         print("크롬드라이버 실행에 실패했습니다. 외부 크롬드라이버를 다운로드 합니다.")

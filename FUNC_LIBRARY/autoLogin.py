@@ -11,9 +11,9 @@ from . import xlsxFileController
 
 def fillByName(driver, name, value):
     time.sleep(0.1)
-    driver.find_element_by_name(name).clear()
+    driver.find_element(By.NAME,name).clear()
     time.sleep(0.2)
-    driver.find_element_by_name(name).send_keys(value)
+    driver.find_element(By.NAME,name).send_keys(value)
 
 
 def clickByName(driver, name):
