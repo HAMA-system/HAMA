@@ -64,6 +64,7 @@ if __name__ == '__main__':
         # select = '수정'
         select = '기안'
         # select = '출근'
+        # select = '종료'
         if select == '조회':
             driver = autoLogin.afterLogin(driver)
             manage.lookup(driver)

@@ -30,14 +30,14 @@ def fillByXPath(driver, path, value):
     time.sleep(0.1)
     while True:
         try:
-            driver.find_element_by_xpath(path).clear()
+            driver.find_element(By.XPATH, path).clear()
             break
         except:
             pass
     time.sleep(0.2)
     while True:
         try:
-            driver.find_element_by_xpath(path).send_keys(value)
+            driver.find_element(By.XPATH, path).send_keys(value)
             break
         except:
             pass
@@ -63,7 +63,7 @@ def enterByXPath(driver, path):
     time.sleep(0.2)
     while True:
         try:
-            driver.find_element_by_xpath(path).send_keys(Keys.ENTER)
+            driver.find_element(By.XPATH, path).send_keys(Keys.ENTER)
             break
         except:
             pass
@@ -73,14 +73,14 @@ def fillById(driver, id, value):
     time.sleep(0.1)
     while True:
         try:
-            driver.find_element_by_id(id).clear()
+            driver.find_element(By.ID, id).clear()
             break
         except:
             pass
     time.sleep(0.2)
     while True:
         try:
-            driver.find_element_by_id(id).send_keys(value)
+            driver.find_element(By.ID, id).send_keys(value)
             break
         except:
             pass

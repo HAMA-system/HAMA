@@ -61,13 +61,13 @@ def draft(driver):
     time.sleep(3)
     driver.switch_to.default_content()
     driver.switch_to.frame(기안_프레임2)
-    driver.find_element_by_id('LOCKMYCONT').click()
+    driver.find_element(By.ID, 'LOCKMYCONT').click()
     time.sleep(1)
     first = True
     while True:
         while True:
             te.t = 0
-            table = driver.find_element_by_id("DocList")
+            table = driver.find_element(By.ID, "DocList")
             print()
             i = 1
             for tr in table.find_elements(by=By.TAG_NAME, value="tr")[1:]:
@@ -93,9 +93,9 @@ def draft(driver):
                     clickByXPath(driver, page)
                     time.sleep(1)
                 except:
-                    driver.find_element_by_id("txt_keyword").clear()
-                    driver.find_element_by_id("txt_keyword").send_keys(inp)
-                    driver.find_element_by_id("txt_keyword").send_keys(Keys.ENTER)
+                    driver.find_element(By.ID, "txt_keyword").clear()
+                    driver.find_element(By.ID, "txt_keyword").send_keys(inp)
+                    driver.find_element(By.ID, "txt_keyword").send_keys(Keys.ENTER)
                     time.sleep(2)
         for i in range(start, end + 1):
             # 시작할 때, 반복할 때 주소가 달라야 클릭이 됨
@@ -429,7 +429,7 @@ def draft_upload(driver, title, isFile):
 
             for file in os.listdir(draftFolder):
                 abs_file_path = os.path.abspath(draftFolder + file)
-                driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
+                driver.find_element(By.XPATH, 기안_파일).send_keys(abs_file_path)
 
                 # 로딩 안되고 올라가면 스킵되는 듯?
                 time.sleep(1.5)
@@ -500,7 +500,7 @@ def upload_files(draftFolder, driver):
     uploaded = False
     for file in os.listdir(draftFolder):
         abs_file_path = os.path.abspath(draftFolder + file)
-        driver.find_element_by_xpath(기안_파일).send_keys(abs_file_path)
+        driver.find_element(By.XPATH, 기안_파일).send_keys(abs_file_path)
         time.sleep(1.5)
         print(file, "업로드 완료")
         uploaded = True

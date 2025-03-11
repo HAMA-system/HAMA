@@ -88,13 +88,13 @@ def search(driver):
         fillByName(driver, "txtSAcctYear", month)
     else:
         fillByName(driver, "txtSAcctYear", "2021")
-    select = Select(driver.find_element_by_xpath(회계구분_조회))
+    select = Select(driver.find_element(By.XPATH, 회계구분_조회))
     if acc == "1":
         select.select_by_index(0)
     elif acc == "2":
         select.select_by_index(1)
 
-    select = Select(driver.find_element_by_xpath(결의서구분))
+    select = Select(driver.find_element(By.XPATH, 결의서구분))
     if res == "1":
         select.select_by_index(0)
     elif res == "2":
@@ -229,7 +229,7 @@ def write(driver):
 
             time.sleep(0.2)
             try:
-                select = Select(driver.find_element_by_xpath(회계구분_작성))
+                select = Select(driver.find_element(By.XPATH, 회계구분_작성))
                 if (
                     target_data[i][5] is not None
                     and target_data[i][5] != ""
@@ -253,7 +253,7 @@ def write(driver):
                     and target_data[i][4] != "_"
                 ):
                     fillByXPath(driver, 결의일자_번호, target_data[i][4])
-                select = Select(driver.find_element_by_id("ddlResolutionDiv"))
+                select = Select(driver.find_element(By.ID, "ddlResolutionDiv"))
                 print("결의일자 번호 입력 완료")
             except Exception as e:
                 print("예외가 발생했습니다:", str(e))
@@ -343,7 +343,7 @@ def write(driver):
                             enterByXPath(driver, 소속코드)
                             time.sleep(0.3)
                             actions = ActionChains(driver)
-                            doubleClick = driver.find_element_by_xpath(소속테이블)
+                            doubleClick = driver.find_element(By.XPATH, 소속테이블)
                             actions.move_to_element(doubleClick)
                             actions.double_click(doubleClick)
                             actions.perform()
@@ -367,7 +367,7 @@ def write(driver):
                 sys.stdin.flush()
 
             try:
-                select = Select(driver.find_element_by_id("ddlDetailEvidenceGb"))
+                select = Select(driver.find_element(By.ID, "ddlDetailEvidenceGb"))
                 test2 = {"없음": 0, "세금": 1, "기타": 2, "현금": 3}
                 select.select_by_index(test2[target_data[i][13]])
 
@@ -440,7 +440,7 @@ def taxWrite(driver, num, file, isMonthly, row):
                     "수입계산": 8,
                     "매입세금-간": 9,
                 }
-                select = Select(driver.find_element_by_xpath(과세구분))
+                select = Select(driver.find_element(By.XPATH, 과세구분))
                 select.select_by_index(test[tax_data[j][1]])
                 fillByXPath(driver, 발행일자, tax_data[j][2].strftime("%Y%m%d"))
                 enterByXPath(driver, 발행일자)
@@ -464,7 +464,7 @@ def taxWrite(driver, num, file, isMonthly, row):
                     fillByXPath(driver, 공급가액, tax_data[j][4])
                     fillByXPath(driver, 세액, tax_data[j][5])
 
-                select = Select(driver.find_element_by_id("ddlBillDiv"))
+                select = Select(driver.find_element(By.ID, "ddlBillDiv"))
                 test1 = {"일반": 1, "전자": 2, "현금": 3}
                 select.select_by_index(test1[tax_data[j][6]])
                 clickByXPath(driver, 세금계산_제출)
@@ -499,7 +499,7 @@ def upload(driver, title):
         for f in os.listdir(path):
             abs_file_path = os.path.abspath(path + f)
             time.sleep(1)
-            driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
+            driver.find_element(By.XPATH, 파일선택).send_keys(abs_file_path)
             time.sleep(0.5)
             clickByXPath(driver, 파일업로드)
             print(f, "파일 업로드 완료")
@@ -564,9 +564,9 @@ def modify(driver, isDraft: bool):
 
         # title[0] 나중에 변경 해야함
         title.append("temp")
-        # res_date = driver.find_element_by_xpath(결의일자_번호)
+        # res_date = driver.find_element(By.XPATH, 결의일자_번호)
         # title.append(res_date.get_attribute("value"))
-        res_title = driver.find_element_by_xpath(결의서_제목)
+        res_title = driver.find_element(By.XPATH, 결의서_제목)
         title.append(res_title.get_attribute("value"))
 
         # 필요 없어짐
@@ -599,11 +599,11 @@ def modify(driver, isDraft: bool):
         # for _ in range(3):
         #     acceptAlert(driver)
 
-        res_date = driver.find_element_by_xpath(결의일자_번호)
+        res_date = driver.find_element(By.XPATH, 결의일자_번호)
         title[0] = res_date.get_attribute("value")
 
         # 내부 데이터 수집 (결의항목)
-        table = driver.find_element_by_xpath(결의서_테이블)
+        table = driver.find_element(By.XPATH, 결의서_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
@@ -613,7 +613,7 @@ def modify(driver, isDraft: bool):
                     res_summary.append(td.get_attribute("innerText"))
 
         # 내부 데이터 수집 (세금)
-        table = driver.find_element_by_xpath(세금계산_테이블)
+        table = driver.find_element(By.XPATH, 세금계산_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
@@ -639,7 +639,7 @@ def modify(driver, isDraft: bool):
         # epath(driver, 지급예정일)
         # acceptAlert(driver)
         fillByXPath(driver, 결의서_제목, title[1])
-        driver.find_element_by_xpath(세부사항).clear()
+        driver.find_element(By.XPATH, 세부사항).clear()
 
         # 결의서 작성
         for i in range(len(res_summary)):
@@ -702,7 +702,7 @@ def modify(driver, isDraft: bool):
             for f in os.listdir(path):
                 abs_file_path = os.path.abspath(path + f)
                 time.sleep(1)
-                driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
+                driver.find_element(By.XPATH, 파일선택).send_keys(abs_file_path)
                 time.sleep(0.5)
                 clickByXPath(driver, 파일업로드)
                 print(f, "파일 업로드 완료")
@@ -752,7 +752,7 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
         tax_date = []
 
         title.append("temp")
-        res_title = driver.find_element_by_xpath(결의서_제목)
+        res_title = driver.find_element(By.XPATH, 결의서_제목)
         title.append(res_title.get_attribute("value"))
 
         clickByXPath(driver, 복사)
@@ -764,11 +764,11 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
             except:
                 break
 
-        res_date = driver.find_element_by_xpath(결의일자_번호)
+        res_date = driver.find_element(By.XPATH, 결의일자_번호)
         title[0] = res_date.get_attribute("value")
 
         # 내부 데이터 수집 (결의항목)
-        table = driver.find_element_by_xpath(결의서_테이블)
+        table = driver.find_element(By.XPATH, 결의서_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
@@ -778,7 +778,7 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
                     res.append(td.get_attribute("innerText"))
 
         # 내부 데이터 수집 (세금)
-        table = driver.find_element_by_xpath(세금계산_테이블)
+        table = driver.find_element(By.XPATH, 세금계산_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
@@ -799,7 +799,7 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
         enterByXPath(driver, 집행요청일)
         time.sleep(0.3)
         fillByXPath(driver, 결의서_제목, title[1])
-        driver.find_element_by_xpath(세부사항).clear()
+        driver.find_element(By.XPATH, 세부사항).clear()
 
         # 결의서 작성
         for i in range(len(res)):
@@ -858,7 +858,7 @@ def modify_month(driver, month: int): # 특정 월로 복사 후 기안
             driver.switch_to.window(driver.window_handles[1])
             for f in os.listdir(path):
                 abs_file_path = os.path.abspath(path + f)
-                driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
+                driver.find_element(By.XPATH, 파일선택).send_keys(abs_file_path)
                 time.sleep(0.3)
                 clickByXPath(driver, 파일업로드)
                 print(f, "파일 업로드 완료")
@@ -914,9 +914,9 @@ def set_next_month_account_receivable(driver, isDraft: bool):
 
         # title[0] 나중에 변경 해야함
         title.append("temp")
-        # res_date = driver.find_element_by_xpath(결의일자_번호)
+        # res_date = driver.find_element(By.XPATH, 결의일자_번호)
         # title.append(res_date.get_attribute("value"))
-        res_title = driver.find_element_by_xpath(결의서_제목)
+        res_title = driver.find_element(By.XPATH, 결의서_제목)
         title.append(res_title.get_attribute("value") + " 미수금 설정")
 
         # 필요 없어짐
@@ -949,11 +949,11 @@ def set_next_month_account_receivable(driver, isDraft: bool):
         # for _ in range(3):
         #     acceptAlert(driver)
 
-        res_date = driver.find_element_by_xpath(결의일자_번호)
+        res_date = driver.find_element(By.XPATH, 결의일자_번호)
         title[0] = res_date.get_attribute("value")
 
         # 내부 데이터 수집 (결의항목)
-        table = driver.find_element_by_xpath(결의서_테이블)
+        table = driver.find_element(By.XPATH, 결의서_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
@@ -963,7 +963,7 @@ def set_next_month_account_receivable(driver, isDraft: bool):
                     res_summary.append(td.get_attribute("innerText"))
 
         # 내부 데이터 수집 (세금)
-        table = driver.find_element_by_xpath(세금계산_테이블)
+        table = driver.find_element(By.XPATH, 세금계산_테이블)
         tbody = table.find_element(by=By.TAG_NAME, value="tbody")
         for tr in tbody.find_elements(by=By.TAG_NAME, value="tr")[1:]:
             i = 0
@@ -993,7 +993,7 @@ def set_next_month_account_receivable(driver, isDraft: bool):
         # epath(driver, 지급예정일)
         # acceptAlert(driver)
         fillByXPath(driver, 결의서_제목, title[1])
-        driver.find_element_by_xpath(세부사항).clear()
+        driver.find_element(By.XPATH, 세부사항).clear()
 
         # 결의서 작성
         for i in range(len(res_summary)):
@@ -1001,7 +1001,7 @@ def set_next_month_account_receivable(driver, isDraft: bool):
             if i == (len(res_summary) - 1):
                 clickByXPath(driver, 결의서_링크 + "[" + str(i + 2) + "]")
                 # 데이터 복사
-                manage_code = driver.find_element_by_xpath(관리코드_조회용 + "[" + str(i + 2) + "]/td[7]").text
+                manage_code = driver.find_element(By.XPATH, 관리코드_조회용 + "[" + str(i + 2) + "]/td[7]").text
                 # 계정 과목 작성(112304 - (미수금)미수금(관리비-서울))
                 fillByXPath(driver, 계정과목, "112304")
                 enterByXPath(driver, 계정과목)
@@ -1077,7 +1077,7 @@ def set_next_month_account_receivable(driver, isDraft: bool):
             for f in os.listdir(path):
                 abs_file_path = os.path.abspath(path + f)
                 time.sleep(1)
-                driver.find_element_by_xpath(파일선택).send_keys(abs_file_path)
+                driver.find_element(By.XPATH, 파일선택).send_keys(abs_file_path)
                 time.sleep(0.5)
                 clickByXPath(driver, 파일업로드)
                 print(f, "파일 업로드 완료")
